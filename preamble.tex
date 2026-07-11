@@ -1,0 +1,221 @@
+% =========================
+% XCPC Algorithm Template Book - Preamble
+% Compile with XeLaTeX
+% =========================
+
+\usepackage{geometry}
+\geometry{
+    a4paper,
+    left=2.05cm,
+    right=2.05cm,
+    top=2.25cm,
+    bottom=2.25cm,
+    headsep=0.35cm
+}
+
+\usepackage{xcolor}
+\usepackage{fontspec}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tikz}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+% \usepackage{titlesec}
+\usepackage[most]{tcolorbox}
+\tcbuselibrary{listings,breakable,skins,theorems}
+
+% ---------- Fonts ----------
+\IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}}{\setmainfont{Noto Serif}}
+\IfFontExistsTF{SimSun}{\setCJKmainfont{SimSun}}{\setCJKmainfont{Noto Sans CJK SC}}
+\IfFontExistsTF{Consolas}{\setmonofont{Consolas}}{\setmonofont{DejaVu Sans Mono}}
+
+% ---------- Color palette ----------
+\definecolor{MainBlue}{RGB}{28, 87, 166}
+\definecolor{DeepBlue}{RGB}{20, 48, 96}
+\definecolor{LightBlue}{RGB}{235, 243, 255}
+\definecolor{CodeBg}{RGB}{248, 250, 252}
+\definecolor{CodeFrame}{RGB}{218, 226, 236}
+\definecolor{CodeKeyword}{RGB}{0, 84, 166}
+\definecolor{CodeComment}{RGB}{92, 128, 92}
+\definecolor{CodeString}{RGB}{174, 65, 65}
+\definecolor{SoftGreen}{RGB}{235, 249, 241}
+\definecolor{GreenFrame}{RGB}{66, 153, 96}
+\definecolor{SoftYellow}{RGB}{255, 249, 230}
+\definecolor{YellowFrame}{RGB}{221, 160, 42}
+\definecolor{SoftRed}{RGB}{255, 241, 241}
+\definecolor{RedFrame}{RGB}{211, 80, 80}
+
+% ---------- Hyperref ----------
+\hypersetup{
+    colorlinks=true,
+    linkcolor=MainBlue,
+    urlcolor=MainBlue,
+    citecolor=MainBlue,
+    bookmarksnumbered=true
+}
+
+% ---------- Header / footer ----------
+\pagestyle{fancy}
+\setlength{\headheight}{15pt}
+\fancyhf{}
+\fancyhead[L]{\small\color{DeepBlue}XCPC Algorithm Template}
+\fancyhead[R]{\small\color{DeepBlue}\leftmark}
+\fancyfoot[C]{\small\color{gray}\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% ---------- Chapter / section style ----------
+\ctexset{
+    chapter = {
+        name = {第 , 章},
+        number = \chinese{chapter},
+        format = \centering\heiti\bfseries\Huge,
+        aftername = \quad,
+        beforeskip = 0pt,
+        afterskip = 2em
+    },
+    section = {
+        format = \centering\heiti\bfseries\LARGE,
+        aftername = \quad,
+        beforeskip = 1.5em,
+        afterskip = 0.8em
+    },
+    subsection = {
+        format = \heiti\bfseries\Large,
+        aftername = \quad,
+        beforeskip = 1.2em,
+        afterskip = 0.5em
+    }
+}
+
+% 保持小节编号仍然是 4.1、4.1.1，而不是 四.1
+\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
+\renewcommand{\thesubsection}{\arabic{chapter}.\arabic{section}.\arabic{subsection}}
+
+% ---------- Lists ----------
+\setlist[itemize]{itemsep=2pt, topsep=4pt}
+\setlist[enumerate]{itemsep=2pt, topsep=4pt}
+
+% ---------- Code style ----------
+\lstdefinestyle{cpplist}{
+    language=C++,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{CodeKeyword}\bfseries,
+    commentstyle=\color{CodeComment}\itshape,
+    stringstyle=\color{CodeString},
+    numbers=left,
+    numberstyle=\scriptsize\color{gray},
+    stepnumber=1,
+    numbersep=10pt,
+    tabsize=4,
+    showstringspaces=false,
+    breaklines=true,
+    columns=fullflexible,
+    keepspaces=true,
+    xleftmargin=0.6em,
+    xrightmargin=0.4em
+}
+
+% External C++ file input. Usage: \cppfile{code/math/xxx.cpp}
+\newtcbinputlisting{\cppfile}[2][]{
+    enhanced,
+    breakable,
+    listing only,
+    listing file={#2},
+    listing options={style=cpplist,#1},
+    colback=CodeBg,
+    colframe=CodeFrame,
+    boxrule=0.45pt,
+    arc=2.2mm,
+    outer arc=2.2mm,
+    left=5.5mm,
+    right=2mm,
+    top=1.5mm,
+    bottom=1.5mm,
+    before skip=8pt,
+    after skip=10pt,
+    borderline west={2pt}{0pt}{MainBlue}
+}
+
+% Inline C++ block. Usage: \begin{cppcode} ... \end{cppcode}
+\newtcblisting{cppcode}{
+    enhanced,
+    breakable,
+    listing only,
+    listing options={style=cpplist},
+    colback=CodeBg,
+    colframe=CodeFrame,
+    boxrule=0.45pt,
+    arc=2.2mm,
+    left=5.5mm,
+    right=2mm,
+    top=1.5mm,
+    bottom=1.5mm,
+    before skip=8pt,
+    after skip=10pt,
+    borderline west={2pt}{0pt}{MainBlue}
+}
+
+% Keep old \lstinputlisting usable, but use \cppfile for better boxes.
+\lstset{style=cpplist}
+
+% ---------- Information boxes ----------
+\newtcolorbox{algorithmnote}{
+    enhanced,
+    breakable,
+    colback=LightBlue,
+    colframe=MainBlue,
+    title=要点,
+    fonttitle=\bfseries,
+    arc=2mm,
+    boxrule=0.5pt,
+    left=2mm,
+    right=2mm,
+    top=1mm,
+    bottom=1mm
+}
+
+\newtcolorbox{complexity}{
+    enhanced,
+    breakable,
+    colback=SoftGreen,
+    colframe=GreenFrame,
+    title=复杂度,
+    fonttitle=\bfseries,
+    arc=2mm,
+    boxrule=0.5pt,
+    left=2mm,
+    right=2mm,
+    top=1mm,
+    bottom=1mm
+}
+
+\newtcolorbox{warningbox}{
+    enhanced,
+    breakable,
+    colback=SoftRed,
+    colframe=RedFrame,
+    title=易错点,
+    fonttitle=\bfseries,
+    arc=2mm,
+    boxrule=0.5pt,
+    left=2mm,
+    right=2mm,
+    top=1mm,
+    bottom=1mm
+}
+
+% ---------- Theorem environments ----------
+\newtheorem{theorem}{定理}[chapter]
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{corollary}[theorem]{推论}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{定义}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{说明}
+
+\renewcommand{\proofname}{证明}

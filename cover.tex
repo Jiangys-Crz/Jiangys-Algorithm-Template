@@ -1,0 +1,64 @@
+\begin{titlepage}
+\thispagestyle{empty}
+
+\begin{tikzpicture}[remember picture, overlay]
+    % 背景
+    \fill[white] (current page.north west) rectangle (current page.south east);
+
+    % 顶部细线
+    \draw[black!70, line width=0.8pt]
+        ([xshift=2.4cm,yshift=-2.2cm]current page.north west)
+        --
+        ([xshift=-2.4cm,yshift=-2.2cm]current page.north east);
+
+    % 底部细线
+    \draw[black!40, line width=0.5pt]
+        ([xshift=2.4cm,yshift=2.0cm]current page.south west)
+        --
+        ([xshift=-2.4cm,yshift=2.0cm]current page.south east);
+\end{tikzpicture}
+
+\vspace*{2.8cm}
+
+\begin{center}
+
+    {\heiti\bfseries\Huge 算法竞赛模板册\par}
+
+    \vspace{0.55cm}
+
+    {\bfseries\Large XCPC / ICPC / CCPC Template Book\par}
+
+    \vspace{4.2cm}
+
+    % Logo 位置
+    % 把 your-logo.png 换成你的 logo 文件名
+    % 推荐把图片放在 images/logo.png
+    \IfFileExists{images/logo.png}{
+        \includegraphics[width=0.4\textwidth]{images/logo.png}
+    }{
+        \begin{tikzpicture}
+            \draw[black!35, line width=0.7pt, rounded corners=3pt]
+                (0,0) rectangle (4.5,4.5);
+            \node[black!45] at (2.25,2.25) {LOGO};
+        \end{tikzpicture}
+    }
+
+    \vspace{2.2cm}
+
+    {\large Made by Gaoming\par}
+
+    \vspace{0.6cm}
+
+    {\normalsize 西华师范大学程序设计算法协会\par}
+
+\end{center}
+
+\vfill
+
+\begin{center}
+    {\normalsize \today\par}
+\end{center}
+
+\vspace*{0.8cm}
+
+\end{titlepage}

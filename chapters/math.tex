@@ -1,0 +1,213 @@
+\chapter{数学}
+
+\section{MInt}
+
+\subsection{MInt (取模类新)}
+
+\cppfile{code/math/MInt-new.cpp}
+
+\subsection{MInt (取模类旧)}
+
+\cppfile{code/math/MInt-old.cpp}
+
+\subsection{MInt (避免除以零)}
+
+\cppfile{code/math/MInt-zero.cpp}
+
+\section{Comb (组合数)}
+
+\subsection{预处理}
+
+\cppfile{code/math/Comb1.cpp}
+
+\subsection{不预处理}
+
+\cppfile{code/math/Comb2.cpp}
+
+\section{欧拉函数}
+
+\begin{definition}
+对于正整数 $n$ ，欧拉函数是小于等于 $n$ 的正整数中与 $n$ 互质的数的数目，记作 $\varphi(n)$ 。特别地 $\varphi(1)=1$
+\end{definition}
+
+\begin{remark}
+$\varphi(n)=\sum\limits^n_{i=1}[\gcd(i,n)=1]$
+\end{remark}
+
+\begin{definition}
+在算术基本定理中，$n = p_1^{c_1} \times p_2^{c_2} \times ... \times p_k^{c_k}$，则：
+\[
+\varphi\left(n\right)=n\times \frac{p_1-1}{p_1} \times \frac{p_2-1}{p_2}\times ...\times \frac{p_k-1}{p_k}=n\times \prod_{i=1}^k\left(1-\frac{1}{p_i}\right)
+\]
+\end{definition}
+
+\begin{theorem}
+    设 $p$ 为质数，若 $p|n$ 且 $p^2|n$ ，则 $\varphi(n)=\varphi\left(\frac{n}{p}\right)\times p$
+\end{theorem}
+\begin{theorem}
+    设 $p$ 为质数，若 $p|n$ 且 $p^2\nmid n$ ，则 $\varphi(n)=\varphi\left(\frac{n}{p}\right)\times (p-1) $
+\end{theorem}
+\begin{theorem}
+    $\sum\limits_{d\mid n}\varphi(d)=n$
+\end{theorem}
+
+\subsection{单个欧拉函数}
+
+\cppfile{code/math/phi1.cpp}
+
+\subsection{线性求}
+
+\cppfile{code/math/phi2.cpp}
+
+\section{Exgcd (扩展欧几里得定理)}
+
+\begin{algorithmnote}
+    扩展欧几里得算法解决如下问题:
+    \begin{enumerate}
+        \item 求解方程 $ax+by=\gcd(a,b)$ 的解
+        \item 求解更一般的方程 $ax+by=c$
+        \item 求解一次同余方程 $ax\equiv b(\text{mod}\ m)$
+    \end{enumerate}
+\end{algorithmnote}
+
+\cppfile{code/math/exgcd.cpp}
+
+\section{乘法逆元}
+
+\begin{definition}
+    若整数 $b,m$ 互质， 并且对于任意整数 $a$ ，如果满足 $b \mid a$ ，则存在一个 $x$ ，使得 $a \times b^{-1} \equiv a\times x\pmod m$ ，则称 $x$ 为 $b$ 的模 $m$ 的乘法逆元，记为 $b^{-1}\pmod m$。
+\end{definition}
+
+\subsection{快速幂求逆元}
+
+\begin{warningbox}
+    当且仅当 $m$ 为质数时才可使用此方法。
+\end{warningbox}
+
+当 $m$ 为质数时, $b$ 的乘法逆元 $x=b^{m-2}\pmod m$, 直接使用快速幂可求得。
+
+\subsection{扩展欧几里得算法求逆元}
+
+\begin{warningbox}
+    $a$ 有逆元的充要条件是 $a$ 与 $m$ 互质，所以有 $\gcd(a,m)=1$
+\end{warningbox}
+
+假设 $a$ 的逆元为 $x$, 那么有 $a\times x \equiv 1\pmod m$, 等价为 $ax+my=1$ 直接使用扩展欧几里得算法 $\rm{exgcd}(a, m, x, y)$。
+
+\subsection{欧拉定理求逆元}
+
+\begin{theorem}
+    设 $m,a\in N^+$ ，且 $\gcd(a,m)=1$ ，则我们有 $a^{\varphi(m)}\equiv 1\pmod m$, $\varphi(m)$ 为 $m$ 的欧拉函数。
+\end{theorem}
+
+对上式定理进行变形得: $a \times a^{\varphi(m)-1}\equiv 1\pmod m$, 所以 $a$ 的逆元是 $a^{-1}$ 即 $a^{-1}= a^{\varphi(m)-1}\pmod m$。
+
+\subsection{线性求逆元}
+
+\begin{algorithmnote}
+    在线性时间复杂度求出 $1\sim n$ 在模 $p$ 意义下的逆元。
+\end{algorithmnote}
+
+\begin{warningbox}
+    $p$ 必须是质数。
+\end{warningbox}
+
+\cppfile{code/math/lp.cpp}
+
+\section{MR与Pollard-Rho}
+
+\subsection{MR-素数测试}
+
+\begin{complexity}
+时间复杂度：$\mathcal{O}(k\log n)$
+\end{complexity}
+
+\cppfile{code/math/MR.cpp}
+
+\subsection{Pollard-Rho分解}
+
+\begin{complexity}
+时间复杂度：$\mathcal{O}\left(n^{\tfrac{1}{4}}\log n\right)$
+\end{complexity}
+
+\cppfile{code/math/PR.cpp}
+
+\section{中国剩余定理 (CRT)}
+
+\begin{algorithmnote}
+可求解如下形式的一元线性同余方程组 (其中 $c_1,c_2,...,c_k$ 两两互质)
+\[
+\begin{cases}
+x \equiv r_1(\text{mod}\ c_1) \\
+x \equiv r_2(\text{mod}\ c_2) \\
+\ \ \ \ \vdots\quad \\
+x \equiv r_k(\text{mod}\ c_k)
+\end{cases}
+\]
+\end{algorithmnote}
+
+\cppfile{code/math/CRT.cpp}
+
+\section{扩展中国剩余定理 (EXCRT)}
+
+\begin{algorithmnote}
+求解 $c_1,c_2,...,c_k$ 两两不一定互质的情况
+\end{algorithmnote}
+
+\cppfile{code/math/exCRT.cpp}
+
+\section{BSGS算法}
+
+\begin{algorithmnote}
+给定整数 $a,b,p$, 其中 $a,p$ 互质。\\
+求满足 $a^x \equiv b\pmod p$ 的最小非负整数 $x$。
+\end{algorithmnote}
+
+\cppfile{code/math/bsgs.cpp}
+
+\section{扩展BSGS算法}
+
+\begin{algorithmnote}
+给定整数 $a,b,p$。\\
+求满足 $a^x \equiv b\pmod p$ 的最小非负整数 $x$。
+\end{algorithmnote}
+
+\cppfile{code/math/exbsgs.cpp}
+
+\section{莫比乌斯反演}
+
+\cppfile{code/math/mu.cpp}
+
+\section{杜教筛}
+
+\begin{complexity}
+    $\mathcal{O}\left(n^{\frac{2}{3}}\right)$
+\end{complexity}
+
+\cppfile{code/math/djs.cpp}
+
+\section{筛法}
+
+\subsection{欧拉筛}
+
+\cppfile{code/math/els.cpp}
+
+\subsection{约数个数}
+
+\cppfile{code/math/ysgs.cpp}
+
+\subsection{约数之和}
+
+\cppfile{code/math/yszh.cpp}
+
+\section{矩阵相关}
+
+\cppfile{code/math/jz.cpp}
+
+\section{多项式}
+
+\cppfile{code/math/poly.cpp}
+
+\section{线性基}
+
+\cppfile{code/math/basis.cpp}

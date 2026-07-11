@@ -1,0 +1,45 @@
+\chapter{字符串}
+
+\section{字符串双哈希}
+
+\cppfile{code/string/hash.cpp}
+
+\section{马拉车}
+
+\begin{complexity}
+    $\mathcal{O}(n)$
+\end{complexity}
+
+\cppfile{code/string/manacher.cpp}
+
+\section{Z函数}
+
+\begin{algorithmnote}
+    获取字符串 $s$ 和 $s[i,n-1]$ (即以 $s_i$ 开头的后缀) 的最长公共前缀 (LCP) 的长度。
+\end{algorithmnote}
+
+\begin{complexity}
+    $\mathcal{O}(n)$
+\end{complexity}
+
+\cppfile{code/string/Z.cpp}
+
+\section{KMP}
+
+\cppfile{code/string/kmp.cpp}
+
+\section{字典树}
+
+\cppfile{code/string/trie.cpp}
+
+\section{AC自动机}
+
+\begin{algorithmnote}
+    定义 $|s_i|$ 是模板串的长度，$|S|$ 是文本串的长度， $|\sum|$是字符集的大小 (常数，一般为 $26$)。
+\end{algorithmnote}
+
+\begin{complexity}
+    $\mathcal{O}\left(\sum|s_i|+|S|\right)$
+\end{complexity}
+
+\cppfile{code/string/ac.cpp}

@@ -1,0 +1,54 @@
+\chapter{杂项}
+
+\section{重载int128输出}
+
+\cppfile{code/zx/zx1.cpp}
+
+\section{模拟退火}
+
+\cppfile{code/zx/SA.cpp}
+
+\section{随机化}
+
+\cppfile{code/zx/sjh.cpp}
+
+\section{连续按位异或和}
+
+设
+
+$$
+S(n)=1\oplus 2\oplus 3\oplus \cdots \oplus n
+$$
+
+则有：
+
+$$
+S(n)=
+\begin{cases}
+n, & n\bmod 4=0 \\
+1, & n\bmod 4=1 \\
+n+1, & n\bmod 4=2 \\
+0, & n\bmod 4=3
+\end{cases}
+$$
+
+\section{排列中 $\rm{mex}$ 与 $\min$ 的转化}
+
+对于一个排列，前缀 mex 的询问，可以转换为后缀最小值：
+
+$$
+\operatorname{mex}_{i = 1}^j a_i = \min_{i = j + 1}^n a_i
+$$
+
+\section{曼哈顿距离和切比雪夫距离}
+
+令 $(x, y) \to (x + y, x - y)$。 则$|x_1 - x_2| + |y_1 - y_2| = \max(|x'_1 - x'_2|, |y'_1 - y'_2|)$。
+处理最大曼哈顿距离时，只需在新坐标系下维护 $x'$ 和 $y'$ 的 $\min/\max$ 值，即可 $O(1)$ 得到结果。(曼哈顿转切比雪夫距离)。
+
+\section{线下赛运行脚本 (run.sh)}
+
+\cppfile{code/zx/run.sh}
+
+\section{线下赛无限对拍脚本 (stress.sh)}
+
+\cppfile{code/zx/stress.sh}
