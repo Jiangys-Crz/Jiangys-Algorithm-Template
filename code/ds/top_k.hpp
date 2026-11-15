@@ -1,0 +1,46 @@
+#pragma once
+
+#include <functional>
+#include <optional>
+#include <queue>
+#include <vector>
+
+#include "../types.hpp"
+
+template<class Better>
+class TopK {
+public:
+    explicit TopK(int k, Better better = Better{})
+        : k(k), better(better), q(better) {}
+
+    void insert(ll x) {
+        if (!k) return;
+        if (static_cast<int>(q.size()) < k) {
+            q.push(x);
+            sum += x;
+        } else if (better(x, q.top())) {
+            ll removed = q.top();
+            q.pop();
+            q.push(x);
+            sum = static_cast<ll>(lll(sum) - removed + x);
+        }
+    }
+
+    ll total() const {
+        return sum;
+    }
+
+    std::optional<ll> kth() const {
+        if (!k || static_cast<int>(q.size()) < k) return std::nullopt;
+        return q.top();
+    }
+
+private:
+    int k;
+    ll sum = 0;
+    Better better;
+    std::priority_queue<ll, std::vector<ll>, Better> q;
+};
+
+using KLargest = TopK<std::greater<ll>>;
+using KSmallest = TopK<std::less<ll>>;

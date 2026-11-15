@@ -1,0 +1,31 @@
+#pragma once
+
+#include <numeric>
+#include <utility>
+#include <vector>
+
+struct GraphDSU {
+    std::vector<int> fa, siz;
+
+    explicit GraphDSU(int n) : fa(n + 1), siz(n + 1, 1) {
+        std::iota(fa.begin(), fa.end(), 0);
+    }
+
+    int find(int u) {
+        while (u != fa[u]) {
+            fa[u] = fa[fa[u]];
+            u = fa[u];
+        }
+        return u;
+    }
+
+    bool merge(int u, int v) {
+        u = find(u);
+        v = find(v);
+        if (u == v) return false;
+        if (siz[u] < siz[v]) std::swap(u, v);
+        fa[v] = u;
+        siz[u] += siz[v];
+        return true;
+    }
+};

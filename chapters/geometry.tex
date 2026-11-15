@@ -1,1 +1,578 @@
 \chapter{计算几何}
+
+点和向量共用 \texttt{Point<T>}，直线和线段共用两个端点的 \texttt{Line<T>}。
+整数坐标通常用 \texttt{ll}，差值、乘积或求和可能超出范围时，
+在运算之前换成更宽的类型，例如编译器支持时使用 \texttt{lll}。
+需要开根、除法或输出实数坐标时，使用 \texttt{Real}，即 \texttt{long double}。
+模板假设输入和计算所需的浮点值有限。
+
+\section{基础几何}
+
+\subsection{点、向量}
+
+平面点用 $(x,y)$ 表示。两点相减得到位移向量，点加位移得到新点。向量加减和数乘都对两个坐标分别计算。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 从 $a$ 指向 $b$ 的向量写作 $b-a$。同一个类型可存点或向量，具体含义由使用场景决定。
+    \item 点可以先按横坐标、再按纵坐标排序。相等判断按两个坐标分别精确比较。
+    \item 需要实数坐标时，可显式转成 \texttt{RealPoint}。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：可复用的点、向量与双端点直线类型。}
+
+包含点积、叉积、长度和距离。整数几何可用 \texttt{Point<ll>}，求实数交点用 \texttt{RealPoint}。
+
+\cppfile{code/geometry/point.hpp}
+
+\begin{complexity}
+基础运算和比较均为 $O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+先选好参与运算的类型。操作完成后才转宽，会保留原类型已经出现的溢出。
+\end{warningbox}
+
+
+\subsection{向量点积}
+
+点积 $u\cdot v=u_xv_x+u_yv_y$，也等于两向量长度的乘积乘夹角余弦。它可判断正交、夹角锐钝和投影。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 两个非零向量点积为正、零、负，分别表示夹角为锐角、直角、钝角。
+    \item $v$ 在非零向量 $u$ 方向的有符号投影长度是 $(u\cdot v)/|u|$。
+    \item 向量长度平方等于 $u\cdot u$。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{用法}
+
+调用 \texttt{dot(u,v)} 或用 \texttt{square(u)} 取得长度平方。
+
+\begin{complexity}
+点积、长度平方与投影均为 $O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+零向量没有固定方向。求投影或夹角前应先检查分母。
+\end{warningbox}
+
+
+\subsection{向量叉积}
+
+平面叉积 $u\times v=u_xv_y-u_yv_x$，绝对值是两向量张成的平行四边形面积。符号可以用来判断转向。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item $\operatorname{cross}(a,b,c)=(b-a)\times(c-a)$。对有向边 $a\to b$，正值代表 $c$ 在左侧，负值代表在右侧。
+    \item 值为零表示共线，端点重合也会产生零叉积。
+    \item 三角形的有向面积是这个叉积的一半。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{用法}
+
+两向量使用 \texttt{cross(u,v)}，三点转向使用 \texttt{cross(a,b,c)}。
+
+\begin{complexity}
+时间与额外空间均为 $O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+交换两个操作数会使符号反转。坐标轴向下的画布坐标也会颠倒几何转向的含义。
+\end{warningbox}
+
+
+\subsection{两点距离}
+
+两点 $a,b$ 的欧氏距离为 $\sqrt{(a_x-b_x)^2+(a_y-b_y)^2}$。只比较远近时可以比较距离平方。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 距离平方可用 \texttt{dist2(a,b)}，返回点坐标类型 $T$。
+    \item 需要实数距离时用 \texttt{dist(a,b)}。先做坐标差，再把差值转换为实数并用 \texttt{hypot} 计算长度。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{用法}
+
+整数最近点对、凸包直径都可以在平方距离上比较，最后只对答案开方一次。
+
+\begin{complexity}
+每次计算为 $O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+若要用宽整数保存距离平方，差值和平方过程也必须在相应的宽类型中执行。
+\end{warningbox}
+
+
+\subsection{点到直线距离}
+
+点 $p$ 到经过 $a,b$ 的直线的距离，等于由 $b-a,p-a$ 张成的平行四边形面积除以底边长度。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 公式为 $|(b-a)\times(p-a)|/|b-a|$。先把方向单位化也可得到相同结果。
+    \item 两端点重合时，无法确定一条直线。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：点到直线距离与直线相交。}
+
+\texttt{pointLineDistance(p,l)} 可接收整数或实数坐标。退化直线返回空值。
+
+\cppfile{code/geometry/line.hpp}
+
+\begin{complexity}
+时间和额外空间均为 $O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+点到线段的最近距离还要检查投影是否落在两个端点之间。
+\end{warningbox}
+
+
+\subsection{线段相交}
+
+判断两条闭线段是否相交，可以用叉积检查两对端点是否跨过对方直线。端点落在另一条线段上、共线重叠都属于相交。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 两边的端点都严格位于对方直线的两侧时，发生内部交叉。
+    \item 叉积为零时还需判断点是否落在端点之间。若四次叉积均为零，可直接求共线点序区间的交集。
+    \item 线段只有一个点时，也可以使用相同的边界判定。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：区分无交、内部交叉、单点接触和重叠。}
+
+整数版用精确叉积。单点接触和重叠返回相交区间的端点。
+内部交点可用直线相交模板求出。
+
+\cppfile{code/geometry/segment.hpp}
+
+\begin{complexity}
+时间和额外空间均为 $O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+只判断叉积符号会把共线但分开的线段算作相交。需要再判定区间是否重叠。
+\end{warningbox}
+
+
+\subsection{直线相交}
+
+令两条直线分别为 $a+tu$ 和 $b+sv$。当方向叉积非零，交点满足
+$t=((b-a)\times v)/(u\times v)$。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 两个方向先单位化，方向叉积反映夹角正弦，可用角度容差判断近似平行。
+    \item 平行时，再用到另一条直线的垂直距离区分重合和平行异线。
+    \item 只有返回唯一交点时，交点坐标有效。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{用法}
+
+用两个 \texttt{Line<Real>} 调用 \texttt{lineIntersection}。
+返回唯一交点、平行、重合或退化，角度与距离容差可以分别传入。
+
+\begin{complexity}
+时间和额外空间均为 $O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+近乎平行时，交点坐标对输入误差很敏感。整数题可先以整数叉积做精确分类，再用实数计算坐标。
+\end{warningbox}
+
+
+\subsection{极角排序}
+
+极角排序把向量按绕原点逆时针的方向排列。整数坐标可用半平面和叉积比较，无需计算三角函数。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 先按是否位于上半平面划分，正横轴归前半，负横轴归后半。
+    \item 在同一半平面内，叉积符号决定先后。方向相同时再比较长度平方。
+    \item 零向量没有极角，模板约定它排在非零向量之前。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：从正横轴开始的整数极角比较器。}
+
+对围绕某点 $o$ 的点集排序时，比较 $a-o,b-o$。等方向的较短向量排在前面。
+
+\cppfile{code/geometry/polar_order.hpp}
+
+\begin{complexity}
+每次比较为 $O(1)$，排序 $n$ 个向量耗时 $O(n\log n)$。
+\end{complexity}
+
+\begin{warningbox}
+叉积和平方中间量须精确且不溢出。实数极角排序可预先用 atan2 计算排序键，比较键时不加 EPS。
+\end{warningbox}
+
+
+\section{多边形}
+
+\subsection{多边形面积}
+
+按边界顺序给出顶点的简单多边形，可以把每条边对有向面积的贡献相加。逆时针顺序为正，顺时针顺序为负。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 边界可为凸多边形或凹多边形。凹处的三角形允许负贡献，累加后会抵消多算的部分。
+    \item 函数返回两倍有向面积。实际面积为 $\lvert S_2\rvert/2$。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：两倍有向面积及点在多边形内判定。}
+
+\texttt{signedArea2(p)} 接收顺序顶点，默认不额外重复首点。整数坐标可避免过早除以二。
+
+\cppfile{code/geometry/polygon.hpp}
+
+\begin{complexity}
+扫描时间为 $O(n)$，额外空间为 $O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+面积累加值可能比单次叉积大。自交边界得到的是代数面积，填充面积要按题意计算。
+\end{warningbox}
+
+
+\subsection{鞋带公式}
+
+设多边形顶点依次为 $p_0,\ldots,p_{n-1}$，$p_n=p_0$。
+两倍有向面积等于 $\sum_{i=0}^{n-1}(x_i y_{i+1}-y_i x_{i+1})$。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 每一项等于相邻两个位置向量的叉积，最后还要接回首点。
+    \item 将坐标原点平移到首点后，绝对位置会在环上抵消。模板因此用从首点出发的三角形叉积累加。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{用法}
+
+对顺序顶点调用 \texttt{signedArea2}。顶点数少于三时，结果为零。
+
+\begin{complexity}
+耗时 $O(n)$，额外空间为 $O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+无序点不能直接代入公式。若题目给的是散点凸包面积，应先求凸包。
+\end{warningbox}
+
+
+\subsection{点在多边形内判定}
+
+从查询点向右作水平射线。对于简单多边形，穿过边界奇数次表示在内部，穿过偶数次表示在外部。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 先检查查询点是否在线段上，边或顶点上的点单独返回边界。
+    \item 每条非水平边只在其高度的左闭右开区间内参加统计，以免射线穿过相邻边的公共顶点时重复计算。
+    \item 使用叉积判断交点是否在查询点右方，避免求交点坐标和做除法。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{用法}
+
+\texttt{pointInPolygon(q,p)} 返回 \texttt{outside}、\texttt{boundary} 或 \texttt{inside}。
+输入可按顺时针或逆时针排列。
+
+\begin{complexity}
+单次查询耗时 $O(n)$，额外空间为 $O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+同一顶点的两条边必须遵循一致的半开规则。水平边只用于判断边界。
+\end{warningbox}
+
+
+\subsection{凸包（Andrew、Graham）}
+
+凸包是包含所有输入点的最小凸集合。两种算法都在排序后用栈删去破坏凸性的点。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item Andrew 按坐标字典序排序，再沿正序和逆序分别构建两条链。
+    \item Graham 选纵坐标最小的点为基点，若并列取横坐标最小。其余点按相对于基点的极角排序。
+    \item 扫描时遇到非左转就弹栈。两种模板都去重，并删除同一直边中间的共线点。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：Andrew 与 Graham 凸包。}
+
+两者返回逆时针顶点序列，末尾不重复首点。全部共线时只保留两个端点。
+
+\cppfile{code/geometry/convex_hull.hpp}
+
+\begin{complexity}
+排序为 $O(n\log n)$，栈扫描为 $O(n)$，空间为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+两个模板的起点定义不同，返回序列可能循环平移。Graham 的极角比较使用精确整数运算。
+\end{warningbox}
+
+
+\subsection{旋转卡壳}
+
+旋转卡壳利用凸多边形边界的单调性，在一端沿边移动时，另一端的支持点也只需沿同一方向移动。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 固定一条有向凸包边，比较各点和它构成的有向面积，就能比较点到该边的距离。
+    \item 当下一点的面积更大时推进对侧指针。下一条凸包边可以从这个位置继续扫描。
+    \item 当两个连续对侧点面积相同，支持线包含一条边，需要检查两端。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：在线性扫描中求凸包最远点对。}
+
+传入逆时针、去重且去掉直边中间点的凸包。可以直接使用 Andrew 或 Graham 的输出。
+
+\cppfile{code/geometry/rotating_calipers.hpp}
+
+\begin{complexity}
+设凸包有 $h$ 个点。两个指针总共推进 $O(h)$ 步，额外空间为 $O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+比较前先确定凸包方向。此处以逆时针顺序的有向面积单调性推进指针。
+\end{warningbox}
+
+
+\subsection{凸包直径}
+
+点集的最远点对一定可以在凸包顶点中找到。固定一个点时，沿凸包内部的一段线段移动，最远位置可以取为端点。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 先求严格凸包，再用卡壳枚举候选对。
+    \item 同一条凸包边的两个端点都参与比较，对侧有并列顶点时也都要检查。
+    \item 若点集只有一个不同的点，其直径为零。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{用法}
+
+调用 \texttt{convexDiameter(convexHullAndrew(p))}。
+返回端点和距离平方，空点集返回空值。
+
+\begin{complexity}
+散点求凸包再取直径共 $O(n\log n)$ 时间。已知凸包时仅需 $O(h)$。
+\end{complexity}
+
+\begin{warningbox}
+距离平方和实际距离是不同的输出量。题目要求长度时，最后再开方。
+\end{warningbox}
+
+
+\section{常考进阶}
+
+\subsection{平面最近点对}
+
+先按横坐标排序并分治。递归求出两半各自的最近点对，只需再检查跨越分界的候选。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 当前最小距离为 $d$ 时，只考虑横坐标距分界线小于 $d$ 的点。
+    \item 递归返回时把两半归并成纵坐标有序的序列。扫描条带时，只需检查纵坐标之差小于当前最短距离的先前点。
+    \item 条带中每一半内的点间距至少为分治子结果。由平面上的间距限制，每个点只需与常数个候选比较。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：分治求最近点对及距离平方。}
+
+点数不足两个时返回空值。重复点可以形成距离为零的点对。
+
+\cppfile{code/geometry/closest_pair.hpp}
+
+\begin{complexity}
+时间为 $O(n\log n)$，额外空间为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+分界横坐标要在递归打乱原有横坐标顺序之前保存。排序可用精确坐标键。
+\end{warningbox}
+
+
+\subsection{扫描线}
+
+扫描线把平面问题转化为事件序列。相邻事件之间，活跃对象及其截面统计值不变，可以按这一段的宽度或时间长度累计贡献。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 以竖直扫描线为例，把矩形左边界记为加入，右边界记为删除。活跃对象的纵区间保存在覆盖长度树中。
+    \item 离散化的是区间端点，线段树的叶子对应两个相邻端点之间的实际区间。
+    \item 节点覆盖次数大于零时，整个区间都被覆盖。否则叶子长度为零，内部节点用两个孩子的覆盖长度之和。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：增删区间并维护当前总覆盖长度。}
+
+输入至少两个严格递增的端点。\texttt{modify(l,r,delta)} 更新端点编号间的半开区间。
+删除时应对应此前加入且仍活跃的同一区间。
+
+\cppfile{code/geometry/covered_length.hpp}
+
+\begin{complexity}
+$m$ 个端点占 $O(m)$ 空间，单次区间操作为 $O(\log m)$，读取总长度为 $O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+压缩编号只供定位。覆盖长度要用原坐标端点相减，不能用编号差。
+\end{warningbox}
+
+
+\subsection{矩形面积并}
+
+矩形面积并统计至少被一个矩形覆盖的面积。扫描线按横坐标经过每组事件，用此前的纵向覆盖长度乘扫描宽度。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 每个非退化矩形恰产生两个事件。活跃纵区间为 $[y_1,y_2)$。
+    \item 到达某个横坐标时，先用旧截面结算上一段面积，再一并处理该坐标上的事件。
+    \item 零宽或零高矩形没有面积，可以跳过。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：轴对齐矩形的面积并。}
+
+允许对角点以任意顺序给出。使用 \texttt{Rectangle<ll>} 或 \texttt{Rectangle<lll>} 时，面积及中间结果须能用该类型表示。
+
+\cppfile{code/geometry/rectangle_union.hpp}
+
+\begin{complexity}
+排序与线段树更新总耗时 $O(n\log n)$，额外空间为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+同坐标事件之间没有宽度。坐标排序和离散化应使用一致的精确键。
+\end{warningbox}
+
+
+\subsection{圆与直线相交}
+
+把圆心投影到直线上，垂足到圆心的距离决定交点个数。若有两个交点，它们以垂足为中点，沿直线方向对称。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 设半径为 $r$，垂距为 $d$，比较 $d$ 与 $r$ 可区分无交、相切和两交点。
+    \item 有两个交点时，到垂足的偏移长度为 $\sqrt{(r-d)(r+d)}$。
+    \item 方向单位化后，沿该方向加减偏移即可得到实数交点。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：统一的圆、圆与直线、圆与圆相交接口。}
+
+半径非负，直线用两个实数端点。
+结果为 \texttt{one} 或 \texttt{two} 时，数组依次给出有效交点。
+
+\cppfile{code/geometry/circle.hpp}
+
+\begin{complexity}
+时间和额外空间均为 $O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+端点重合构成退化直线，单独返回。近切情形按指定容差分类。
+\end{warningbox}
+
+
+\subsection{两圆相交}
+
+比较圆心距 $d$ 与半径和 $r_1+r_2$、半径差 $\lvert r_1-r_2\rvert$，即可识别分离、包含和相切。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 同心且半径相等的非退化圆有无穷多个公共点。半径为零的圆按一个点处理。
+    \item 有两个交点时，先沿圆心连线求出弦中点，其到第一圆心的有向投影长度为 $(d^2+r_1^2-r_2^2)/(2d)$。
+    \item 再计算弦半长，沿垂直于圆心连线的方向加减偏移。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{用法}
+
+调用 \texttt{circleIntersection(a,b)}。
+返回无交、单点、双点或重合。两个相同的点圆返回单点。
+
+\begin{complexity}
+时间和额外空间均为 $O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+同心情形要先处理，否则计算弦中点时会除以零。半径接近或圆近切时应结合坐标尺度设置容差。
+\end{warningbox}
+
+
+\subsection{最小覆盖圆}
+
+最小覆盖圆是能容纳所有点的最小半径圆。非空点集的答案由一个、两个或三个边界点决定。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 先打乱点序，再逐点加入。若新点已经在圆内，当前答案仍可用。
+    \item 若新点在圆外，重算答案时让它位于边界上。进一步发现越界点，就依次固定第二、第三个边界点。
+    \item 两个边界点用直径圆，三个非共线边界点用外接圆。共线时用最远的两个点。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：随机增量求最小覆盖圆。}
+
+\texttt{minEnclosingCircle} 返回圆心、半径，空输入返回空值。
+可传入随机种子重现点序。最后按输出圆心重新计算覆盖所需半径。
+
+\cppfile{code/geometry/minimum_enclosing_circle.cpp}
+
+\begin{complexity}
+随机顺序下期望时间为 $O(n)$，三层扫描最坏为 $O(n^3)$。按值接收点集，占 $O(n)$ 空间。
+\end{complexity}
+
+\begin{warningbox}
+外接圆对接近共线的数据敏感。输入尺度很大或点非常接近时，应根据允许误差调整容差，必要时先平移、缩放。
+\end{warningbox}
+
+
+\subsection{浮点数精度处理}
+
+误差处理要看比较量的尺度和单位。位置误差、夹角误差、长度误差和面积误差使用同一个阈值时，含义可能不同。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 比较实数 $a,b$ 时，可取绝对容差与相对容差乘 $\max(|a|,|b|)$ 中的较大值。
+    \item 整数拓扑判定尽量用精确叉积，只在需要返回实数坐标时用浮点。
+    \item 排序需要严格弱序。可用精确坐标或预先算好的排序键，容差留到分类和查询阶段。
+    \item 开根前若理论值应非负，可对舍入产生的微小负值作截断。应先独立排除确实无交等情况。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：整数符号和可调容差的实数比较。}
+
+\texttt{sgn} 精确取符号，\texttt{sign} 按给定阈值判断是否近零，
+\texttt{dcmp} 同时接收绝对容差与相对容差。
+
+\cppfile{code/geometry/precision.hpp}
+
+\begin{complexity}
+单次比较为 $O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+绝对容差与被比较量同单位，相对容差无单位。临界结果取决于题目给定的误差规则和计算所用类型的精度。
+\end{warningbox}
+
+
+\paragraph{参考资料}
+\href{https://raw.githubusercontent.com/kth-competitive-programming/kactl/main/content/geometry/ConvexHull.h}{KACTL：凸包}和
+\href{https://raw.githubusercontent.com/kth-competitive-programming/kactl/main/content/geometry/HullDiameter.h}{凸包直径}，
+\href{https://oi-wiki.org/geometry/scanning/}{OI Wiki：扫描线}，
+以及 \href{https://doi.org/10.1007/BFB0038202}{Welzl 的最小覆盖圆论文}。

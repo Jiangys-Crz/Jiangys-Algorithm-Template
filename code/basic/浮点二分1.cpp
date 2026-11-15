@@ -1,8 +1,11 @@
-const double eps = 1e-8;
-double l = 0, r = 1e9;
-while(r - l > eps){
-    double mid = l + (r - l) / 2.0;
-    if(check(mid)) r = mid;
-    else l = mid;
+template<class Check>
+long double minFeasibleReal(long double l, long double r, Check check,
+                           long double eps = 1e-8L) {
+    while (r - l > eps) {
+        long double mid = l + (r - l) / 2;
+        if (mid == l || mid == r) break;
+        if (check(mid)) r = mid;
+        else l = mid;
+    }
+    return r;
 }
-cout << fixed << setprecision(10) << r << endl;

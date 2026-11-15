@@ -1,7 +1,12 @@
-ll l = 0, r = 1e18;
-while(l < r){
-    ll mid = l + (r - l) / 2;
-    if(check(mid)) r = mid;
-    else l = mid + 1;
+#include "../types.hpp"
+
+template<class Check>
+ll minFeasible(ll l, ll r, Check check) {
+    while (l < r) {
+        ull width = ull(r) - ull(l);
+        ll mid = l + static_cast<ll>(width / 2);
+        if (check(mid)) r = mid;
+        else l = mid + 1;
+    }
+    return l;
 }
-cout << l << endl;

@@ -1,12 +1,12 @@
-const double eps = 1e-8;
-double l = 0, r = 1e6;
-while(r - l > eps){
-    double mid1 = l + (r - l) / 3.0;
-    double mid2 = r - (r - l) / 3.0;
-    if(mid1 == l || mid2 == r) break;
-
-    if(calc(mid1) > calc(mid2)) l = mid1;
-    else r = mid2;
+template<class Calc>
+long double ternaryMinimum(long double l, long double r, Calc calc,
+                           long double eps = 1e-8L) {
+    while (r - l > eps) {
+        long double third = (r - l) / 3;
+        long double m1 = l + third, m2 = r - third;
+        if (m1 == l || m2 == r || m1 >= m2) break;
+        if (calc(m1) > calc(m2)) l = m1;
+        else r = m2;
+    }
+    return l + (r - l) / 2;
 }
-double ans = (l + r) / 2.0;
-cout << fixed << setprecision(10) << ans << endl;

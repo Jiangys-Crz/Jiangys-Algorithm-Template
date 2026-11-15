@@ -1,10 +1,12 @@
 #include <algorithm>
 #include <vector>
 
-long long maxNonAdjacentSum(const std::vector<long long>& a) {
-    long long twoBack = 0, oneBack = 0;
-    for (long long value : a) {
-        long long current = std::max(oneBack, twoBack + value);
+#include "../types.hpp"
+
+ll maxNonAdjacentSum(const std::vector<ll>& a) {
+    ll twoBack = 0, oneBack = 0;
+    for (ll value : a) {
+        ll current = std::max(oneBack, twoBack + value);
         twoBack = oneBack;
         oneBack = current;
     }

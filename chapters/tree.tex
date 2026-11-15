@@ -1,1 +1,720 @@
 \chapter{树}
+
+本章模板使用 $1$ 到 $n$ 编号，输入为至少有一个节点的无向树。
+先用 \texttt{add(u, v)} 加入每条边，再以指定根调用 \texttt{work(root)}。
+根的深度为 $0$，父节点编号为 $0$。以下点权数组均从下标 $1$ 开始；
+用子节点存边权时，根的权值取 $0$。
+权值、累加值和乘积均应在对应整型的范围内。
+
+\section{树的基础}
+
+\subsection{树的 DFS、BFS}
+
+深度优先搜索（DFS）沿一条分支深入，回退后再访问其他分支。
+广度优先搜索（BFS）按到起点的距离分层访问。在无向树中，
+每个节点到起点只有一条简单路径，遍历时跳过父节点即可。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item DFS 用栈保存待访问点，按邻接表的逆序入栈可保持原来的访问顺序。
+    \item BFS 用队列依次访问节点，编号进入队列的顺序也是距离非递减的顺序。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板一：迭代 DFS 与有根树预处理。}
+
+\texttt{Tree} 同时记录父节点、深度、子树大小和 DFS 序。
+\texttt{dfn[u]} 是 $u$ 的序号，\texttt{id[i]} 是序号为 $i$ 的节点。
+
+\cppfile{code/tree/tree.hpp}
+
+\textbf{模板二：从指定起点做 BFS。}
+
+\texttt{TreeBfs} 只读取邻接表，建边后即可使用。\texttt{order} 从下标 $0$ 开始，
+\texttt{fa} 和 \texttt{dep} 按节点编号访问。
+
+\cppfile{code/tree/tree_bfs.hpp}
+
+\begin{complexity}
+DFS 和 BFS 均耗时 $O(n)$，额外空间均为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+跳过父节点依赖输入是一棵树。用于有环图时，应另设访问标记。
+\end{warningbox}
+
+
+\subsection{树的前序、中序、后序遍历}
+
+前序在访问子树前记录当前节点，后序在访问完子树后记录当前节点。
+中序用于具有左右孩子的二叉树，在访问完左子树后、访问右子树前记录当前节点。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 二叉树前序为根、左、右，中序为左、根、右，后序为左、右、根。
+    \item 一般树的前序和后序按给定的孩子顺序遍历。只需自底向上转移时，
+    倒序扫描 DFS 序即可使每个孩子先于父节点。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：一次迭代遍历得到二叉树的三种序列。}
+
+\texttt{lc[u]} 与 \texttt{rc[u]} 分别表示左右孩子，$0$ 表示空节点。
+传入空根时返回空序列。
+
+\cppfile{code/tree/二叉树遍历.cpp}
+
+\begin{complexity}
+时间复杂度为 $O(n)$，除三组输出外，显式栈占 $O(h)$ 空间，
+其中 $h$ 是树高。
+\end{complexity}
+
+\begin{warningbox}
+倒序 DFS 序会改变兄弟子树的相对次序。题目要求固定顺序的后序时，
+应在退出节点时记录。
+\end{warningbox}
+
+
+\subsection{子树大小、节点深度}
+
+设 $\operatorname{fa}(u)$ 是父节点。深度是从根到 $u$ 的边数，
+子树大小是 $u$ 和其所有后代的节点总数。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 从根向下，令 $\mathrm{dep}[v]=\mathrm{dep}[u]+1$，其中 $v$ 是 $u$ 的孩子。
+    \item 从下往上，令 $\mathrm{siz}[u]=1+\sum_{v\text{ 是 }u\text{ 的孩子}}\mathrm{siz}[v]$。
+    \item \texttt{Tree::work} 入栈时确定深度，再沿 DFS 序从后往前把大小累加给父节点。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{用法：}调用 \texttt{tr.work(root)} 后读取 \texttt{tr.siz[u]} 和 \texttt{tr.dep[u]}。
+
+\begin{complexity}
+预处理耗时 $O(n)$，单次读取为 $O(1)$，两个数组共占 $O(n)$ 空间。
+\end{complexity}
+
+\begin{warningbox}
+更换根会改变父子关系。复用同一棵树时，需要为新根重新执行预处理。
+\end{warningbox}
+
+
+\subsection{DFS 序、欧拉序}
+
+DFS 序只记录每个节点第一次进入的时刻。欧拉序在第一次进入节点时记录它，
+每处理完一棵孩子子树并回到该节点时再记录一次。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item DFS 序长度为 $n$。子树 $u$ 对应的闭区间为
+    $[\mathrm{dfn}[u],\mathrm{dfn}[u]+\mathrm{siz}[u]-1]$。
+    \item 欧拉序长度为 $2n-1$，相邻两项在原树上相邻。
+    两节点首次出现位置之间，深度最小的节点就是它们的 LCA。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：在 DFS 序上重建欧拉序。}
+
+给出初次出现的每个节点时，先沿栈中的路径回退到它的父节点。
+\texttt{id} 和 \texttt{first[u]} 表示欧拉序及其中的位置，均从 $0$ 开始。
+
+\cppfile{code/tree/欧拉序.cpp}
+
+\begin{complexity}
+两种序列均可在 $O(n)$ 时间和空间内获得。
+预处理后，DFS 序上的子树区间和祖先判定均为 $O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+子树区间公式使用每个点只出现一次的 DFS 序。
+欧拉序的 \texttt{first} 用于深度最小值查询。
+\end{warningbox}
+
+
+\subsection{树的直径}
+
+树的直径是任意两点间最长简单路径的长度。
+无权树上，从任意节点做 BFS 得到一个最远点 $u$，
+再从 $u$ 做 BFS 得到最远点 $v$，两点间的路径即为一条直径。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 无权树的 BFS 队列按深度非递减排列，末尾节点可作为最远点。
+    第二次 BFS 的父节点数组用于还原整条路径。
+    \item 带权树可从下往上维护每个节点的最长下行分支。
+    处理新分支时，将它与从其他孩子得到的最长下行分支拼接。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板一：恢复无权树的直径路径。}
+
+\texttt{len} 按边数计算，\texttt{path} 包含两个端点。
+单点树的路径只含该点，长度为 $0$。
+
+\cppfile{code/tree/diameter.hpp}
+
+\textbf{模板二：计算带权树的最大路径权值。}
+
+边权存于子节点，允许负权。树有至少两个节点时选非空边路径，
+因此边权全为负时，结果为最大的单条边权。单点树返回 $0$。
+
+\cppfile{code/tree/带权直径.cpp}
+
+\begin{complexity}
+两种模板的时间复杂度均为 $O(n)$，额外空间复杂度均为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+两次找最远点的结论要求边权非负。边权有负数时，使用下行分支的 DP。
+\end{warningbox}
+
+
+\subsection{树的重心}
+
+树的重心使删除该点后最大的连通块尽可能小。
+删除重心后，每个连通块的节点数都至多为 $\lfloor n/2\rfloor$。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 删除 $u$ 后，孩子 $v$ 对应大小为 $\mathrm{siz}[v]$ 的连通块。
+    \item 父节点所在的一侧有 $n-\mathrm{siz}[u]$ 个节点。
+    对这些大小取最大值即可检验 $u$。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：求树的所有重心。}
+
+调用 \texttt{tr.work(root)} 后使用 \texttt{treeCentroids(tr)}，
+结果包含一个重心或两个相邻的重心。
+
+\cppfile{code/tree/树的重心.cpp}
+
+\begin{complexity}
+扫描所有点和边耗时 $O(n)$。给定预处理结果后，额外空间为 $O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+计算最大连通块时也要考虑父节点所在的一侧。
+\end{warningbox}
+
+
+\subsection{树上距离}
+
+记 $p=\mathrm{lca}(u,v)$。简单路径由 $u$ 到 $p$ 与 $p$ 到 $v$ 两段组成，
+无权距离为 $\mathrm{dep}[u]+\mathrm{dep}[v]-2\mathrm{dep}[p]$。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 若 $D[u]$ 是根到 $u$ 的边权和，带权距离为 $D[u]+D[v]-2D[p]$。
+    \item 路径上的节点个数为无权距离加 $1$。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{用法：}无权树调用 \texttt{LCA::dist(u, v)}。
+带权树将权值存到边的子节点，通过 \texttt{edgeSum(u, v, p)} 求和。
+模板见\hyperref[tree:lca]{倍增求 LCA}和\hyperref[tree:prefix]{树上前缀和}。
+
+\begin{complexity}
+已知 $p$ 时，两种距离均可 $O(1)$ 求出。使用倍增取得 $p$ 时，
+单次查询总时间为 $O(\log n)$。
+\end{complexity}
+
+\begin{warningbox}
+$u=v$ 时路径有一个点和零条边，两种距离均为 $0$。
+\end{warningbox}
+
+
+\section{树上算法}
+
+\subsection{最近公共祖先（LCA）}
+
+最近公共祖先是两点的共同祖先中深度最大的节点，节点本身也计为自己的祖先。
+在有根树中，每两点恰有一个 LCA。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item $u$ 是 $v$ 的祖先时，$\mathrm{lca}(u,v)=u$。可用 DFS 序区间包含关系判断。
+    \item 朴素做法先将深点向上走到同一深度，再同步向上走到第一个相同节点。
+    \item 欧拉序做法在两点首次出现位置之间查找深度最小的点。
+    用稀疏表做区间最小值查询可将单次 LCA 查询降到 $O(1)$。
+\end{itemize}
+\end{algorithmnote}
+
+\begin{complexity}
+朴素查询最坏耗时 $O(h)$。欧拉序加稀疏表的预处理时间和空间均为
+$O(n\log n)$。下节给出可同时查询任意级祖先的倍增模板。
+\end{complexity}
+
+\begin{warningbox}
+LCA 依赖根的选择。查询过程中使用的父节点、深度和序列必须来自同一次预处理。
+\end{warningbox}
+
+
+\subsection{倍增求 LCA}
+\label{tree:lca}
+
+预处理 $\mathrm{up}[j][u]$，表示从 $u$ 向上走 $2^j$ 条边得到的祖先。
+跳到根的上方时，用哨兵 $0$ 表示。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item $\mathrm{up}[0][u]=\mathrm{fa}[u]$，
+    $\mathrm{up}[j][u]=\mathrm{up}[j-1][\mathrm{up}[j-1][u]]$。
+    \item 先把深点跳到与浅点同深度。若此时相同，直接返回该点。
+    \item 从大到小尝试同步跳跃，只有两者跳后仍不相同时才执行。
+    循环结束时返回任一点的父节点。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：倍增查询 LCA、任意级祖先及无权距离。}
+
+用预处理好的 \texttt{Tree} 构造 \texttt{LCA}。
+\texttt{jump(u, k)} 要求 $k\geq 0$，若 $k$ 超过节点深度则返回 $0$。
+
+\cppfile{code/tree/lca.hpp}
+
+\begin{complexity}
+建表耗时 $O(n\log n)$，空间复杂度为 $O(n\log n)$。
+查询 LCA、祖先或两点距离均耗时 $O(\log n)$。
+\end{complexity}
+
+\begin{warningbox}
+两个点对齐深度后若已重合，应直接返回。继续取父节点会向上多走一步。
+\end{warningbox}
+
+
+\subsection{树上差分}
+
+树上差分适合一批路径加法完成后再统一读取结果。
+先改动少数差分点，最后逆 DFS 序把差分累加到父节点。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 设 $p=\mathrm{lca}(u,v)$，两种差分都先给 $d[u]$ 和 $d[v]$ 加 $x$。
+    \item 点差分另外从 $d[p]$ 和 $d[\mathrm{fa}[p]]$ 各减 $x$，保留 $p$ 自身的贡献。
+    \item 边差分从 $d[p]$ 减去 $2x$。还原后，节点 $v$ 的值对应边
+    $(\mathrm{fa}[v],v)$。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：离线路径加权，支持点差分或边差分。}
+
+提前求好 $p$，分别用独立的 \texttt{TreeDifference} 处理点权和边权。
+累加结束后用 \texttt{collect()} 得到结果。
+
+\cppfile{code/tree/树上差分.cpp}
+
+\begin{complexity}
+已知 LCA 时，单条路径更新耗时 $O(1)$，统一还原耗时 $O(n)$，
+额外空间为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+点差分中 $p$ 为根时，跳过父节点处的修改。边差分中根对应的项没有实际边。
+模板借用原树，更新期间应保留其对象和根。
+\end{warningbox}
+
+
+\subsection{树上前缀和}
+\label{tree:prefix}
+
+令 $P[u]=P[\mathrm{fa}[u]]+a[u]$，其中 $P[0]=0$。
+按 DFS 序从父到子就能计算根到每个点的前缀。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 包含两个端点的路径点权和为 $P[u]+P[v]-P[p]-P[\mathrm{fa}[p]]$，
+    其中 $p$ 是两点的 LCA。
+    \item 若 $a[u]$ 表示从父节点到 $u$ 的边权，公共前缀去掉后，
+    路径边权和为 $P[u]+P[v]-2P[p]$。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：静态路径点权和、边权和查询。}
+
+传入点权时使用 \texttt{nodeSum}，传入按子节点存放的边权时使用 \texttt{edgeSum}。
+查询参数 $p$ 是同一棵有根树上的 LCA。
+
+\cppfile{code/tree/path_prefix.hpp}
+
+\begin{complexity}
+预处理时间和空间均为 $O(n)$，已知 LCA 后单次查询为 $O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+更新一个节点的权值会影响整棵子树的前缀。
+存在在线修改时可使用树链剖分。
+\end{warningbox}
+
+
+\subsection{树形 DP}
+
+树形 DP 以子树为状态。若固定当前节点的选择后各棵孩子子树能独立求解，
+就可以从叶子开始合并答案。以最大权独立集为例，要求任意相邻点不同时选择。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item $f[u][0]$、$f[u][1]$ 分别记录不选与选择 $u$ 时的最优值。
+    \item 不选 $u$，每个孩子 $v$ 可在两种状态中取较大值。
+    选择 $u$，每个孩子只能贡献 $f[v][0]$。
+    \item 初值分别为 $0$ 和 $a[u]$，在逆 DFS 序中将孩子的贡献加到父节点。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：求最大权独立集的总权值。}
+
+支持负点权，也允许选择空集。结果为根节点两种状态的最大值。
+
+\cppfile{code/tree/树形DP.cpp}
+
+\begin{complexity}
+时间复杂度为 $O(n)$，额外空间复杂度为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+若题目要求至少选择一个点，需要单独区分空集与已选点的状态。
+\end{warningbox}
+
+
+\subsection{换根 DP}
+
+换根 DP 先求一个根的答案，再沿边把答案转移到相邻节点。
+以求每个点到全树所有点的距离和为例，从 $u$ 移到孩子 $v$ 后，
+$v$ 的子树整体变近一条边，其他节点整体变远一条边。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 初始根的距离和为 $\sum_x\mathrm{dep}[x]$。
+    \item 对父子边 $(u,v)$，有
+    $f[v]=f[u]+n-2\mathrm{siz}[v]$。按 DFS 序从父到子转移。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：求无权树上每个节点到所有节点的距离和。}
+
+若边长为 $w$，该次换根的增量改为
+$w\bigl(n-2\mathrm{siz}[v]\bigr)$，初始答案也改用根到各点的边权和。
+
+\cppfile{code/tree/换根DP.cpp}
+
+\begin{complexity}
+单次预处理和全树换根均耗时 $O(n)$，额外空间为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+整次推导中的 $\mathrm{siz}[v]$ 均基于初始根。转移发生后无需重算子树大小。
+\end{warningbox}
+
+
+\subsection{树上背包}
+
+树上背包通过合并子树分配资源。以下模板恰选 $k$ 个节点，
+要求点集连通且包含根。选了某个子树内的点，就必须选入该子树的根。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item $f[u][j]$ 表示在已合并的孩子子树中，连同 $u$ 共选 $j$ 个点的最大总权。
+    初值 $f[u][1]=a[u]$。状态 $0$ 仅用于父节点跳过这一整棵子树。
+    \item 合并孩子 $v$，将原来的 $x$ 个点与从 $v$ 中取的 $y$ 个点组合，
+    令 $g[x+y]=\max\bigl(g[x+y], f[u][x]+f[v][y]\bigr)$。
+    \item 合并时用新数组，循环上界取实际可选数和 $k$ 的较小值。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：选择包含根的连通点集，最大化总点权。}
+
+支持负权，若 $k<1$ 或 $k>n$ 则返回空值。
+从一个连通子树中包含根地选点，可以达到从 $1$ 到子树大小的每种规模。
+
+\cppfile{code/tree/树上背包.cpp}
+
+\begin{complexity}
+限制 $x+y\le k$，总时间为 $O(nk)$，保存 DP 表最坏占 $O(nk)$ 空间。
+按孩子合并顺序给节点做 DFS 编号。对每个 $x,y>0$ 的转移，
+可将其记为左块倒数第 $x$ 点和右块正数第 $y$ 点的一对。
+每对点只在其所在两块合并时出现一次，且两点编号之差小于 $k$。
+$y=0$ 的转移每次合并至多 $k$ 个。
+\end{complexity}
+
+\begin{warningbox}
+合并不同孩子时，保持旧状态和新状态独立，避免把同一个孩子重复合并。
+恰选问题需要保留负权答案。
+\end{warningbox}
+
+
+\subsection{树链剖分}
+
+重链剖分（Heavy-Light Decomposition）将每个点最大的孩子子树设为重儿子，
+把相连的重边串成重链。以重儿子优先重新编号后，同一条重链和每棵子树
+都对应 DFS 序上的连续区间。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item \texttt{son[u]} 保存重儿子，\texttt{top[u]} 保存当前重链的链头。
+    \item 每次把链头较深的一端提到该链头的父节点，并交出刚经过的序号区间。
+    两点同链时再交出最后一段。
+    \item 轻儿子的子树至多是父子树的一半。每向上跨一条轻边，
+    子树大小至少翻倍，所以一条路径只跨 $O(\log n)$ 条重链。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：预处理重链、求 LCA、枚举路径闭区间。}
+
+\texttt{for\_path(u, v, visit)} 遍历路径点权区间。
+若边权存于子节点，传入最后一个参数 \texttt{true} 来跳过 LCA 对应的序号。
+底层数据结构可以替换。
+
+\cppfile{code/tree/hld.hpp}
+
+\begin{complexity}
+预处理时间和空间均为 $O(n)$。LCA 和单条路径拆分耗时 $O(\log n)$，
+未计入对每段执行操作的耗时。
+\end{complexity}
+
+\begin{warningbox}
+回调区间的先后顺序可能和从 $u$ 到 $v$ 的顺序不同。
+维护字符串拼接等有方向的运算时，需要分别收集路径两侧并按方向合并。
+\end{warningbox}
+
+
+\subsection{树上启发式合并（DSU on Tree）}
+
+树上启发式合并可以共享相邻子树查询的维护结果。
+例如，要同时求出每个节点子树中的不同颜色数，可以维护一份颜色频次表，
+并在处理完重儿子后保留它的数据。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 先分别处理轻儿子的答案，并清除它们留下的数据。
+    再处理重儿子，保留它的频次表。
+    \item 加入当前节点与所有轻子树，得到该节点的完整答案。
+    若当前节点是轻儿子，返回前清除整棵子树。
+    \item 轻子树在重儿子子树之后连续排列，可在重链剖分序上枚举对应区间。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：统计每棵子树中的不同颜色数。}
+
+传入已预处理的 \texttt{HLD}。颜色编号要求在 $[1,n]$，
+若原颜色取值较大，可先离散化。显式栈按轻子树、重子树、收集答案的顺序执行。
+
+\cppfile{code/tree/树上启发式合并.cpp}
+
+\begin{complexity}
+每个点最多因跨越 $O(\log n)$ 条轻边被重复加入或清除。
+总时间复杂度为 $O(n\log n)$，额外空间为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+清除操作要与加入操作相反。若维护的数据无法支持删除，
+可考虑用容器做小并大。
+\end{warningbox}
+
+
+\section{常考进阶}
+
+\subsection{树上路径查询}
+
+静态路径和可用树上前缀和。若查询间穿插修改，
+可以用树链剖分将路径拆成序号区间，再交给支持区间操作的数据结构。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 对区间 $[l,r]$ 加 $x$，在差分数组中让 $d[l]$ 加 $x$、$d[r+1]$ 减 $x$。
+    \item 位置 $p$ 的前缀和为
+    $\sum_{i=1}^p(p-i+1)d[i]$。
+    两棵树状数组分别维护 $d[i]$ 与 $(i-1)d[i]$。
+    \item 修改和查询沿用 \texttt{HLD::for\_path}，子树操作只对应一个 DFS 序区间。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：支持点权的路径加、路径求和、子树加和子树求和。}
+
+先完成 \texttt{hld.work(root)}，再用 \texttt{TreePathSum} 装入初始点权。
+使用期间保留同一个 \texttt{HLD} 对象及其剖分结果。
+区间树状数组复用第四章的 \texttt{Fenwick<ll>}。
+
+\cppfile{code/tree/树上路径查询.cpp}
+
+\begin{complexity}
+载入初始点权耗时 $O(n\log n)$，额外空间为 $O(n)$。
+路径修改或查询耗时 $O(\log^2 n)$，子树修改或查询耗时 $O(\log n)$。
+\end{complexity}
+
+\begin{warningbox}
+本模板维护点权，路径包含两端。改为边权时，应开启剖分的边权模式，
+并在子树操作中跳过子树根的序号。
+\end{warningbox}
+
+
+\subsection{树上路径统计}
+
+要统计无权树中长度恰为 $k$ 的简单路径，可以把每条路径按其两个端点的 LCA 分类。
+固定 LCA 后，两个端点可以分别来自不同孩子子树，或者其中一个就是 LCA。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item $f[u][d]$ 记录已合并分支中与 $u$ 相距 $d$ 的节点数，初值 $f[u][0]=1$。
+    \item 合并孩子 $v$ 时，先累加 $f[u][k-1-d]f[v][d]$，
+    再把 $f[v][d]$ 加到 $f[u][d+1]$。
+    \item 一对端点只在后处理的那棵子树加入时计数一次。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：统计距离恰为 $k$ 的不同无序点对。}
+
+$k$ 以边数计，两个端点必须不同。
+若 $k\le0$ 或 $k\ge n$，结果为 $0$。
+
+\cppfile{code/tree/树上路径统计.cpp}
+
+\begin{complexity}
+当 $1\le k<n$ 时，时间和空间复杂度均为 $O(nk)$。
+其余情况下直接返回。
+\end{complexity}
+
+\begin{warningbox}
+先用已有分支与新分支配对，再更新状态。
+若题目给出若干条路径并要求统计每个节点或每条边被经过的次数，
+对每条路径用权值 $1$ 做树上差分即可。
+\end{warningbox}
+
+
+\subsection{树上异或}
+
+异或两次相同的值会抵消。预处理根到各节点的异或前缀，
+将两个前缀异或后只剩下路径上出现一次的部分。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 边权模式下，公共前缀恰好抵消，结果为 $P[u]\oplus P[v]$。
+    \item 点权模式下，LCA 自身也在两个前缀中。令 $p=\mathrm{lca}(u,v)$，
+    结果为 $P[u]\oplus P[v]\oplus a[p]$。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：静态路径异或，支持点权和边权。}
+
+用无符号 64 位整数存储权值。
+边权查询无需 LCA，点权查询由调用方传入 $p$。
+
+\cppfile{code/tree/树上异或.cpp}
+
+\begin{complexity}
+前缀预处理时间和空间均为 $O(n)$。边权查询为 $O(1)$，
+点权查询在已知 LCA 后也是 $O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+当 $u=v$ 时，点权异或为 $a[u]$，边权异或为 $0$。
+\end{warningbox}
+
+
+\subsection{树的直径与重心应用}
+
+无权树的中心最小化到最远点的距离。设直径的长度为 $D$，
+任意节点到两个直径端点的距离中至少有一个不小于 $\lceil D/2\rceil$。
+沿直径取中间节点即可达到这个下界。
+重心则使删除节点后最大的连通块尽量小，可用于在树上分治。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 直径有偶数条边时，中心是唯一的中间节点。
+    有奇数条边时，中间两个相邻点都是中心。
+    \item 重心分解每次选出当前连通块的重心，删去它后对各块独立处理。
+    每一层的连通块大小至少减半。
+    \item 分治统计路径时，可以先处理经过当前重心的路径，
+    再在剩余连通块内继续计数。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板一：沿直径找无权树的中心。}
+
+结果包含一个或两个节点。单点树的中心就是该点。
+
+\cppfile{code/tree/直径求中心.cpp}
+
+\textbf{模板二：建立重心分解树。}
+
+\texttt{fa[c]} 表示 $c$ 在重心分解树上的父节点。
+若要在分治时统计路径，可在标记当前重心被删除之前处理当前连通块。
+
+\cppfile{code/tree/重心分解.cpp}
+
+\begin{complexity}
+求中心耗时和空间均为 $O(n)$。
+重心分解耗时 $O(n\log n)$，额外空间为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+树的中心由距离决定，树的重心由连通块节点数决定。
+重心分解树的父子关系与原树的父子关系分别维护。
+\end{warningbox}
+
+
+\subsection{树上贪心}
+
+树上贪心常从最深的未处理部分作选择。
+以无权最小点覆盖为例，需要选择尽量少的点，使每条边至少有一个端点被选。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 逆 DFS 序扫描每条父子边。若其两端都未选，则选择父节点。
+    \item 每次做选择所对应的边两两不共端点。
+    已选父节点会挡住与它相连的后续选择，当前孩子也已完成处理。
+    \item 这些互不相交的边给出所需选点数的下界，贪心得到的覆盖恰好达到下界。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：求一组最小点覆盖。}
+
+返回被选节点的编号；答案大小为返回数组的长度。
+单点树没有边，返回空数组。
+
+\cppfile{code/tree/树上贪心.cpp}
+
+\begin{complexity}
+时间复杂度为 $O(n)$，额外空间为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+该选择规则以点数最少为目标。点有代价时，可分别定义选与不选的树形 DP 状态。
+\end{warningbox}
+
+
+\subsection{树上计数}
+
+固定父节点的选择后，孩子子树的方案可以独立组合。
+例如，统计树上不存在相邻选点的方案数时，先分开计算选与不选当前节点的方案，
+再把各棵孩子子树的方案数相乘。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 令 $f[u][0]$ 和 $f[u][1]$ 分别表示不选或选择 $u$ 的方案数。
+    叶子的两种状态均有一种方案。
+    \item 不选 $u$ 时，每个孩子 $v$ 贡献 $f[v][0]+f[v][1]$；
+    选 $u$ 时，每个孩子只贡献 $f[v][0]$。
+    \item 对各孩子的贡献取乘积，再将根的两种状态相加。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：统计树上独立集个数。}
+
+结果对 $10^9+7$ 取模，并计入空集。
+要求非空时，可以在最终求和后减去一个方案再规范取模。
+
+\cppfile{code/tree/树上计数.cpp}
+
+\begin{complexity}
+时间复杂度为 $O(n)$，额外空间为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+不同孩子的选择能独立组合，因此用乘法。根节点的两种状态互斥，因此用加法。
+\end{warningbox}
+
+\paragraph{参考资料}
+\href{https://oi-wiki.org/graph/lca/}{OI Wiki：最近公共祖先}、
+\href{https://oi-wiki.org/graph/tree-centroid/}{树的重心}、
+\href{https://oi-wiki.org/graph/dsu-on-tree/}{树上启发式合并}，以及
+\href{https://github.com/kth-competitive-programming/kactl/blob/main/content/graph/HLD.h}{KACTL：树链剖分}。

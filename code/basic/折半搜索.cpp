@@ -2,8 +2,10 @@
 #include <cstddef>
 #include <vector>
 
-long long countSubsetsWithSum(const std::vector<int>& a, long long target) {
-    long long minSum = 0, maxSum = 0;
+#include "../types.hpp"
+
+ll countSubsetsWithSum(const std::vector<int>& a, ll target) {
+    ll minSum = 0, maxSum = 0;
     for (int value : a) {
         minSum += std::min(value, 0);
         maxSum += std::max(value, 0);
@@ -13,7 +15,7 @@ long long countSubsetsWithSum(const std::vector<int>& a, long long target) {
     }
 
     auto sums = [&](int l, int r) {
-        std::vector<long long> result{0};
+        std::vector<ll> result{0};
         for (int i = l; i < r; ++i) {
             std::size_t oldSize = result.size();
             for (std::size_t j = 0; j < oldSize; ++j) {
@@ -28,8 +30,8 @@ long long countSubsetsWithSum(const std::vector<int>& a, long long target) {
     auto right = sums(n / 2, n);
     std::sort(right.begin(), right.end());
 
-    long long count = 0;
-    for (long long sum : left) {
+    ll count = 0;
+    for (ll sum : left) {
         auto [first, last] = std::equal_range(right.begin(), right.end(), target - sum);
         count += last - first;
     }

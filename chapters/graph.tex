@@ -1,1 +1,1046 @@
 \chapter{图论}
+
+本章用 $n$ 表示点数，$m$ 表示原始边数。顶点从 $1$ 开始编号，
+边编号从 $0$ 开始。默认使用有向图，传入 \texttt{Graph(n, false)} 可建无向图。
+
+权值使用 \texttt{ll}。使用距离哨兵时，预期返回的有限距离和状态值须严格落在
+$(-\mathrm{graphInf},\mathrm{graphInf})$ 内。
+部分模板用 \texttt{lll} 保存中间结果，需要支持 128 位整数的编译器。
+其他加减、取反、累加和费用乘积应在对应整型范围内。
+
+\section{图的基础}
+
+\subsection{图的存储}
+
+邻接表适合按顶点枚举出边，边表适合按输入顺序处理每条原边。邻接矩阵可以直接按两个端点查询信息，常用于点数少或边很稠密的图。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item \texttt{edges[id]} 保存端点和权值，\texttt{adj[u]} 保存从 $u$ 可走的弧及原边编号。
+    \item 无向边在边表中只存一次，在两个端点的邻接表中都存入同一个边编号。
+    \item 需要枚举邻居时使用邻接表。对于 Floyd 等需要整个点对表的算法，直接建立 $n\times n$ 矩阵。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：同时维护邻接表和边表。}
+
+\texttt{addEdge(u, v, w)} 返回原边编号。无权图省略 $w$，表示边长为 $1$。
+
+\cppfile{code/graph/graph.hpp}
+
+\begin{complexity}
+建图及存储均为 $O(n+m)$，插入一条边的均摊时间为 $O(1)$。邻接矩阵占 $O(n^2)$ 空间。
+\end{complexity}
+
+\begin{warningbox}
+自环、重边是否允许由具体算法决定。矩阵若要表示重边，须先明确合并规则，例如最短路取最小权。
+\end{warningbox}
+
+
+\subsection{DFS、BFS 遍历}
+
+DFS 沿当前分支深入后回退。BFS 从起点开始逐层访问，在无权图上，层号就是最少经过的边数。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 迭代 DFS 的栈帧记录节点及下一条待处理的边，可以得到与递归 DFS 相同的访问次序。
+    \item BFS 发现新节点时立即设置距离并入队，同一节点只入队一次。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：返回 DFS 访问顺序与 BFS 距离。}
+
+两种遍历都从给定起点开始。有向图沿出边走。BFS 对不可达点返回 $-1$。
+
+\cppfile{code/graph/图的遍历.cpp}
+
+\begin{complexity}
+扫描所有节点和边时，时间为 $O(n+m)$，额外空间为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+图中可能有环或多条路径到同一点，需要用访问状态去重。
+\end{warningbox}
+
+
+\subsection{连通分量}
+
+无向图上互相可达的点属于同一个连通分量。从尚未编号的节点开始一次遍历，就能标记一个完整分量。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 外层扫描所有点。每遇到一个尚未编号的点，把分量编号 $\mathrm{cnt}$ 加一。
+    \item 从该点访问所有可达点，并在第一次发现时填入同一个编号。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：求无向图的连通分量编号。}
+
+返回数组 \texttt{bel}，编号从 $1$ 开始。孤立点各自构成一个分量。
+
+\cppfile{code/graph/连通分量.cpp}
+
+\begin{complexity}
+时间为 $O(n+m)$，额外空间为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+有向图的互相可达需要求强连通分量。若只需弱连通分量，可以对忽略方向后的图应用此模板。
+\end{warningbox}
+
+
+\subsection{拓扑排序}
+
+拓扑序将有向图的每条边排成起点在终点之前。存在这样的顺序，当且仅当图中没有有向环。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 先把所有入度为零的点放入队列。每取出一点，就删除它的出边，并将入度新变为零的点入队。
+    \item 若最终无法取出所有点，剩余部分存在有向环。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：Kahn 算法。}
+
+输入有向图。图无环时返回一个拓扑序，有环时返回空值。
+
+\cppfile{code/graph/toposort.hpp}
+
+\begin{complexity}
+时间为 $O(n+m)$，额外空间为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+每条重边都需要计进入度，也要逐条扣除。拓扑序可以有多种。
+\end{warningbox}
+
+
+\subsection{DAG 动态规划}
+
+在有向无环图上，按拓扑序处理节点，可以保证当前状态所依赖的前驱已经计算。这里用它求从给定源点出发的最长路。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 令 $f[s]=0$，其他状态初始化为 $-\infty$。
+    \item 对可达点 $u$ 的每条出边，令 $f[v]\gets\max(f[v],f[u]+w(u,v))$。
+    \item 同一拓扑序也可用于最短路、路径计数或依赖关系转移。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：允许负权的 DAG 单源最长路。}
+
+图有环时返回空值。图无环时，不可达点的值为 \texttt{-graphInf}。
+
+\cppfile{code/graph/DAG动态规划.cpp}
+
+\begin{complexity}
+拓扑排序和转移合计耗时 $O(n+m)$，额外空间为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+转移前跳过不可达点。若从任意点均可出发，需要根据题意调整初值。
+\end{warningbox}
+
+
+\subsection{图的判环}
+
+有向图和无向图的边方向约束不同，适合用不同的判环方法。有向图可检查拓扑序，无向图可逐条并入边并检查连通性。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 有向图若拓扑排序不能取出全部节点，则有环。用 DFS 时，也可检测是否有边指向当前递归栈中的节点。
+    \item 无向图若一条新边连接了已经连通的两个点，这条新边与已有路径形成环。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板一：并查集。}
+
+\texttt{merge(u,v)} 返回是否真的合并了两个分量。
+
+\cppfile{code/graph/graph_dsu.hpp}
+
+\textbf{模板二：分别检查有向图和无向图。}
+
+无向图的自环视为一条环，两条平行边也可以构成环。
+
+\cppfile{code/graph/图的判环.cpp}
+
+\begin{complexity}
+有向图耗时 $O(n+m)$。无向图使用按大小合并和路径压缩，耗时 $O(n+m\alpha(n))$。额外空间均为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+并查集判环依赖边无方向。遇到一般有向图时应使用拓扑序或 DFS 栈状态。
+\end{warningbox}
+
+
+\subsection{二分图判定}
+
+二分图可以将节点染成两种颜色，每条边的两个端点颜色都不同。无向图是二分图，当且仅当它没有奇环。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 从每个未染色点开始 BFS，相邻节点染成相反的颜色。
+    \item 若遇到颜色相同的边，其两端间已确定的奇偶性互相矛盾。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：二染色并返回两侧划分。}
+
+传入无向图。成功时每个点的颜色为 $0$ 或 $1$，失败时返回空值。
+
+\cppfile{code/graph/二分图判定.cpp}
+
+\begin{complexity}
+时间为 $O(n+m)$，额外空间为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+遍历所有连通分量。孤立点可染任意一种颜色，自环会直接造成冲突。
+\end{warningbox}
+
+
+\subsection{图的建模、分层图}
+
+当后续可以走哪些边还取决于已用资源时，把资源使用量并入顶点状态。每个状态对应新图上的一个点。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 以最多免费经过 $k$ 条边为例，状态 $(u,j)$ 表示在点 $u$ 已使用 $j$ 次机会。
+    \item 付费经过一条边时留在同层。免费经过时进入下一层，这条跨层边的权值为零。
+    \item 起点是 $(s,0)$。若限制为至多 $k$ 次，答案是所有 $(t,j)$ 的距离最小值。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：将免费通行次数建成分层图。}
+
+$k$ 为非负整数。编号为 $j n+u$，各状态和原边编号均应可用 \texttt{int} 表示。
+
+\cppfile{code/graph/分层图.cpp}
+
+\begin{complexity}
+$k+1$ 层共有 $(k+1)n$ 个点，弧数为 $O((k+1)m)$。建图时间和空间均为 $O((k+1)(n+m))$。
+\end{complexity}
+
+\begin{warningbox}
+带方向的资源消耗必须按允许的方向加边。分层后根据边权重新选择最短路算法。
+\end{warningbox}
+
+
+\section{最短路}
+
+\subsection{Dijkstra}
+
+当边权均非负时，可以用小根堆优先处理当前距离最小的状态。从堆中取出该节点的有效状态时，它的最短距离已经确定。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 初始化源点距离为 $0$，随后用 $d[u]+w$ 尝试减小 $d[v]$。
+    \item 标准库优先队列无法直接减少已有项的键，模板插入新状态并在弹出时丢弃旧状态。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：堆优化单源和多源 Dijkstra。}
+
+直接传单个源点，或传起点数组。不可达点的距离为 \texttt{graphInf}。
+达到哨兵的候选距离会在加法前舍弃。
+
+\cppfile{code/graph/dijkstra.hpp}
+
+\begin{complexity}
+最多入堆 $O(n+m)$ 次，时间为 $O((n+m)\log(n+m))$，额外空间为 $O(n+m)$。简单图中可写为 $O((n+m)\log n)$。
+\end{complexity}
+
+\begin{warningbox}
+负边会破坏出堆时距离已确定的结论。先按边权条件选择算法。
+\end{warningbox}
+
+
+\subsection{Bellman-Ford}
+
+Bellman-Ford 反复扫描所有边进行松弛，允许负边。在没有可达负环时，最短路可以取成不重复顶点的简单路径。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 只有 $u$ 可达时才能用 $d[u]+w$ 更新 $d[v]$。一次完整扫描没有更新即可停止。
+    \item 简单路径最多有 $n-1$ 条边。第 $n$ 轮仍有更新时，存在源点可达的负环。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：支持负边和可达负环检测。}
+
+\texttt{negativeCycle} 为真时，这次结果中的距离还可能继续减小。
+松弛用 \texttt{lll} 计算，结束后在两个哨兵之间截断并转为 \texttt{ll}。
+
+\cppfile{code/graph/bellman_ford.hpp}
+
+\begin{complexity}
+每轮扫描 $O(m)$ 条边，最坏 $O(n+nm)$ 时间，额外空间 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+单源版只检测源点可达的负环。若须检查整张图，可加一个向所有点连零边的超级源点。
+\end{warningbox}
+
+
+\subsection{SPFA}
+
+SPFA 使用队列减少 Bellman-Ford 的部分无效扫描。某点距离变小后，把它加入队列，以传播新的距离。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 出队时扫描出边。已经在队列中的节点继续使用最新距离，避免重复入队。
+    \item 每次成功松弛记录新路径的边数 $\mathrm{len}[v]=\mathrm{len}[u]+1$。达到 $n$ 时报告可达负环。
+    \item 它支持负边，但没有适合在对抗数据下依赖的平均耗时承诺。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：队列优化与可达负环判定。}
+
+返回类型与 Bellman-Ford 相同，不可达点仍为 \texttt{graphInf}。
+
+\cppfile{code/graph/SPFA.cpp}
+
+\begin{complexity}
+最坏时间为 $O(n+nm)$，额外空间为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+边数统计随松弛更新。题目保证非负边时通常选 Dijkstra，只有零一边时优先用 0-1 BFS。
+\end{warningbox}
+
+
+\subsection{Floyd-Warshall}
+
+$d[u][v]$ 记录只允许经过已处理的中转点时，$u$ 到 $v$ 的最短距离。逐个允许新的中转点，就能求出所有点对的距离。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 用 $d[u][u]=0$ 和直接边初始化。平行边取最小权。
+    \item 以 $k$ 为最外层循环，令 $d[u][v]\gets\min(d[u][v],d[u][k]+d[k][v])$。
+    \item 若 $d[k][k]<0$，则 $k$ 所在部分存在负环。能经该负环到达的点对没有有限最短路。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：全源最短路矩阵。}
+
+用 \texttt{graphInf} 标记不可达。模板对负方向越过哨兵的值做截断以防溢出。
+
+\cppfile{code/graph/Floyd.cpp}
+
+\begin{complexity}
+时间为 $O(n^3)$，空间为 $O(n^2)$。
+\end{complexity}
+
+\begin{warningbox}
+存在负环时，先判断每个点对是否可经过负环，再解释矩阵中的值。
+\end{warningbox}
+
+
+\subsection{0-1 BFS}
+
+边权只有 $0$ 和 $1$ 时，处理距离 $d$ 的节点只会产生距离 $d$ 或 $d+1$ 的新状态，可以用双端队列维护顺序。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 通过零边松弛成功时压到队首，通过一边松弛成功时压到队尾。
+    \item 出队时跳过不再等于当前最短距离的状态。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：零一边权单源最短路。}
+
+输入可以有向或无向。不可达点返回 \texttt{graphInf}。
+
+\cppfile{code/graph/01BFS.cpp}
+
+\begin{complexity}
+时间为 $O(n+m)$，额外空间为 $O(n+m)$。
+\end{complexity}
+
+\begin{warningbox}
+初次入队的距离仍可能被零边改善。保留松弛判断。
+\end{warningbox}
+
+
+\subsection{多源最短路}
+
+多源最短路求每个点到最近一个源点的最小距离。等价于增加一个超级源点，并向每个源点连接一条零权边。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 直接把所有源点的距离置零并加入队列或堆，即可省略显式建超级源点。
+    \item 无权图用 BFS，零一边权用双端队列，非负权图可用 Dijkstra。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{用法}
+
+当边权非负时，调用 \texttt{dijkstra(g, sources)}，其中 \texttt{sources} 为源点数组。
+存在负权边时，可显式建超级源点并使用 Bellman-Ford。
+
+\begin{complexity}
+与在同规模图上执行一次对应的单源算法同阶，另需扫描一次源点数组。
+\end{complexity}
+
+\begin{warningbox}
+模板计算从源点走向节点的距离。有向图若要求每个点到最近源点，先反转边。
+\end{warningbox}
+
+
+\subsection{最短路计数}
+
+先算出最短距离，再沿满足最短路等式的边累加方案数。边权严格为正时，每次转移的距离都严格增加。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 只使用满足 $d[u]+w(u,v)=d[v]$ 的边，按 $d[u]$ 的递增顺序做 DP。
+    \item 令源点方案数为 $1$，对每条合法边把 $\mathrm{ways}[u]$ 加到 $\mathrm{ways}[v]$。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：统计正权图各点的最短路径条数。}
+
+对 $10^9+7$ 取模。平行边能产生不同的路径，源点的空路径计为一个方案。
+
+\cppfile{code/graph/最短路计数.cpp}
+
+\begin{complexity}
+Dijkstra 后额外排序 $O(n\log n)$，再扫描 $O(n+m)$，总时间为 $O((n+m)\log(n+m))$。
+\end{complexity}
+
+\begin{warningbox}
+零权边可能连接等距离的点。若最短路子图仍是 DAG，可以改按拓扑序计数。
+存在零权环时，先明确题目要求的是简单路径还是可重复走边的路径。
+\end{warningbox}
+
+
+\subsection{差分约束}
+
+形如 $x_u-x_v\le w$ 的约束可以表示为一条 $v\to u$ 的有向边，权值为 $w$。所有约束要求变量满足这些边上的松弛不等式。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 从超级源点向每个变量连零边，让所有顶点可达。
+    \item 若存在负环，把环上的各条不等式相加会得到矛盾。否则每个变量取其最短距离，就是一组可行解。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：添加不等式并返回一组可行解。}
+
+\texttt{add(u,v,w)} 表示 $x_u-x_v\le w$。无解时 \texttt{work()} 返回空值。
+
+\cppfile{code/graph/差分约束.cpp}
+
+\begin{complexity}
+设 $m$ 为约束条数，增加 $n$ 条超级源点边后，最坏耗时 $O(n(n+m))$，空间为 $O(n+m)$。
+\end{complexity}
+
+\begin{warningbox}
+约束方向易写反。下界 $x_u-x_v\ge w$ 应先变形成 $x_v-x_u\le -w$。
+\end{warningbox}
+
+
+\section{最小生成树}
+
+\subsection{Kruskal}
+
+最小生成树在连通无向图中选取总权最小的生成树。Kruskal 按边权从小到大扫描，每次选取能连接两个不同分量的边。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 用并查集维护当前森林。成功合并时记录这条原边，并增加总权。
+    \item 接纳 $n-1$ 条边时已经生成整棵树。边耗尽仍不足 $n-1$ 条时图不连通。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：Kruskal 求总权和所选边编号。}
+
+支持负边和重边。无生成树时返回空值，单点图返回总权为 $0$ 的空树。
+
+\cppfile{code/graph/kruskal.hpp}
+
+\begin{complexity}
+排序耗时 $O(m\log m)$，并查集操作耗时 $O(n+m\alpha(n))$。额外空间为 $O(n+m)$。
+\end{complexity}
+
+\begin{warningbox}
+无向图的原始边表中每条边只出现一次。选边时用是否合并成功判断，自环会被跳过。
+\end{warningbox}
+
+
+\subsection{Prim}
+
+Prim 从给定起点开始，每次用当前已经加入的点到外部点的最轻边扩张，始终维护一棵连通的部分生成树。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 每加入一个点，把它连向未加入点的边压入小根堆。
+    \item 出堆时若目标点已加入就跳过。否则接纳所取边，再继续扩张。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：堆优化 Prim。}
+
+支持从任意顶点开始。返回类型与 Kruskal 相同。
+
+\cppfile{code/graph/Prim.cpp}
+
+\begin{complexity}
+堆实现耗时 $O(n+m\log(2+m))$，额外空间为 $O(n+m)$。稠密图可用扫描版本，耗时 $O(n^2)$。
+\end{complexity}
+
+\begin{warningbox}
+堆中键是连接新点的单条边权。负边也合法，更新规则与累加路径距离的 Dijkstra 不同。
+\end{warningbox}
+
+
+\subsection{次小生成树}
+
+严格次小生成树的总权必须大于最小生成树。先固定一棵最小生成树，考虑加入一条非树边并从形成的环中换掉一条树边。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 设待加入的非树边权为 $w$。为使总权严格增加且增量最小，应删掉两端路径上小于 $w$ 的最大边权。
+    \item 路径最大边权等于 $w$ 时，改用严格小于最大值的次大边权。用倍增维护每段路径的两个不同最大值。
+    \item 严格次优的最小增量可以通过一次这样的换边取得。枚举所有非树边，再从合法候选中取最小总权。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板一：查询带权树路径上最大的两个不同边权。}
+
+\texttt{TreePathMax} 接收一棵带权无向树。查询结果的 \texttt{first} 和 \texttt{second}
+分别为最大、严格次大边权。对应值不存在时，该字段为空值。
+
+\cppfile{code/graph/path_max.hpp}
+
+\textbf{模板二：求严格次小生成树总权。}
+
+输入连通或不连通的无向图，支持平行边。没有严格更重的生成树时返回空值。
+最小和严格次小生成树的总权须能用 \texttt{ll} 表示，中间和及换边增量用 \texttt{lll} 计算。
+
+\cppfile{code/graph/次小生成树.cpp}
+
+\begin{complexity}
+时间为 $O(m\log m+(n+m)\log n)$，额外空间为 $O(m+n\log n)$。
+\end{complexity}
+
+\begin{warningbox}
+若求的是与选定最小生成树边集不同的第二棵树，可允许等权交换。严格次大值必须与最大值不同。
+\end{warningbox}
+
+
+\subsection{最小生成树相关性质}
+
+最小生成树的选边、换边和路径查询可以由割性质与环性质解释。边权有相等值时，要区分至少一棵生成树与所有生成树。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 割性质：跨越任意一个非平凡割的最轻边可以出现在某棵最小生成树中。若它是该割唯一最轻的边，则每棵最小生成树都包含它。
+    \item 环性质：一个环中严格重于其余所有边的边不会出现在最小生成树中。
+    \item 瓶颈性质：最小生成树上 $u,v$ 路径中的最大边权，是原图所有 $u,v$ 路径的最小瓶颈值。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{用法}
+
+查询两个不同点之间的最小瓶颈值时，先用 Kruskal 建树，
+再读取 \texttt{TreePathMax::query(u,v)} 的 \texttt{first}。
+
+\begin{complexity}
+建树后倍增预处理为 $O(n\log n)$，单次瓶颈查询为 $O(\log n)$。
+\end{complexity}
+
+\begin{warningbox}
+最小生成树保证上述瓶颈性质。若题目要求路径边权之和最小，应回到原图做最短路。
+\end{warningbox}
+
+
+\section{图的连通性}
+
+\subsection{Tarjan 强连通分量（SCC）}
+
+强连通分量是有向图中两两互相可达的极大点集。Tarjan 用 DFS 序和一份尚未归属任何分量的栈识别分量边界。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 进入 $u$ 时设 $\mathrm{dfn}[u]=\mathrm{low}[u]$，并压入候选栈。递归返回时用孩子的 $\mathrm{low}$ 更新父节点。
+    \item 处理指向仍在候选栈中的节点 $v$ 的非树边时，用 $\mathrm{dfn}[v]$ 更新 $\mathrm{low}[u]$。
+    \item 若 $\mathrm{low}[u]=\mathrm{dfn}[u]$，从候选栈弹到 $u$，得到一个分量。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：用显式 DFS 栈求 SCC。}
+
+\texttt{bel[u]} 为从 $1$ 开始的分量编号，\texttt{cnt} 是分量数。分量按弹栈顺序编号，缩点后每条跨分量边都从大编号指向小编号。
+
+\cppfile{code/graph/scc.hpp}
+
+\begin{complexity}
+时间为 $O(n+m)$，额外空间为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+调用栈与候选栈有不同职责。已经分配分量的点不能再降低另一个点的 Lowlink。
+\end{warningbox}
+
+
+\subsection{强连通分量缩点}
+
+把每个 SCC 压成一个点，保留分量之间的边。缩点图一定是 DAG，因为不同分量形成有向环时，它们仍可互相到达。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 对原边 $u\to v$，若分量不同就建立 $\mathrm{bel}[u]\to\mathrm{bel}[v]$。
+    \item 按源分量扫描所有成员，用目标分量上的时间戳去掉重复边。
+    \item 若题目允许在分量内自由收集点权，可先按题意合并分量权值，再在 DAG 上做 DP。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：构建去重的无权缩点图。}
+
+先用同一个 \texttt{Graph} 求 SCC，再传入缩点函数。
+
+\cppfile{code/graph/强连通分量缩点.cpp}
+
+\begin{complexity}
+含 SCC 在内的总时间为 $O(n+m)$，额外空间为 $O(n+m)$。
+\end{complexity}
+
+\begin{warningbox}
+本模板保留分量间可达关系。若还需要跨分量边的权值或重数，须按题意合并这些信息。
+\end{warningbox}
+
+
+\subsection{割点}
+
+无向图删去一个点及其相邻边后，如果连通分量数量增加，该点就是割点。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 非根 $u$ 存在 DFS 孩子 $v$ 满足 $\mathrm{low}[v]\ge\mathrm{dfn}[u]$ 时，删掉 $u$ 会使这棵子树与祖先一侧分离。
+    \item DFS 根是割点，当且仅当它有至少两个 DFS 树孩子。
+    \item 割点、桥和点双共用一次无向 Lowlink 遍历。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：同时求割点、桥与点双连通分量。}
+
+输入无自环的无向图，支持平行边和多个连通分量。\texttt{cut[u]} 表示割点。
+
+\cppfile{code/graph/undirected_lowlink.hpp}
+
+\begin{complexity}
+时间和额外空间均为 $O(n+m)$。
+\end{complexity}
+
+\begin{warningbox}
+根的孩子数按 DFS 树边计算，不能用原图中的度数代替。
+\end{warningbox}
+
+
+\subsection{桥}
+
+删去一条无向边后，若连通分量数量增加，这条边是桥。桥只能是 DFS 树边。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 对 DFS 树边 $(u,v)$，$v$ 为孩子，若 $\mathrm{low}[v]>\mathrm{dfn}[u]$，子树没有其他边通向 $u$ 或其祖先。
+    \item 两条平行边可以互为绕行路径，沿一条边进入孩子时，只跳过同一边编号。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{用法}
+
+从 \texttt{UndirectedLowlink} 读 \texttt{bridge[id]}，编号与原图边表一致。
+
+\begin{complexity}
+一次 $O(n+m)$ 的预处理后，查询一条边是否为桥是 $O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+这里是严格大于。$\mathrm{low}[v]=\mathrm{dfn}[u]$ 时仍有另一条路返回 $u$。
+\end{warningbox}
+
+
+\subsection{边双连通分量}
+
+删去所有桥后得到的连通块就是边双连通分量。每个点恰属于一个块，桥连接两个不同的块。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 先用无向 Lowlink 标出所有桥。
+    \item 再次遍历无向图，跳过桥并给每个块编号。缩去块内细节后，桥在各原连通分量中构成一棵树。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：通过屏蔽桥得到点的边双编号。}
+
+读入原图和对应的 Lowlink 结果，返回从 $1$ 开始的分量编号。
+
+\cppfile{code/graph/边双连通分量.cpp}
+
+\begin{complexity}
+时间为 $O(n+m)$，给定 Lowlink 后额外空间为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+桥的标记要对应原边编号。图本身可能不连通，桥组成的缩点图此时是一片森林。
+\end{warningbox}
+
+
+\subsection{点双连通分量}
+
+点双连通分量描述无向图中的块结构。割点可能处于多个块中，普通节点只属于一个块。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 将 DFS 树边以及由后代指向祖先的边放入边栈。
+    \item 孩子 $v$ 返回且 $\mathrm{low}[v]\ge\mathrm{dfn}[u]$ 时，弹出直到 $(u,v)$ 为止的边，用这些边的不同端点构成一个块。
+    \item 单独把孤立点视为一个块，桥对应一个含两个点的块。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{用法}
+
+\texttt{UndirectedLowlink::blocks} 返回每个块的顶点表。需要圆方树时，为每个块建立方点，再向块内每个原顶点连边。
+
+\begin{complexity}
+记录所有块的总时间和空间均为 $O(n+m)$。
+\end{complexity}
+
+\begin{warningbox}
+不同块可能共享割点。用一个整数数组为每个点记录唯一块编号会丢失信息。
+\end{warningbox}
+
+
+\subsection{2-SAT}
+
+2-SAT 的每条限制是两个布尔文字的析取。为每个变量建立真和假两个节点，用蕴含关系把限制转成有向边。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 子句 $a\lor b$ 对应 $\neg a\to b$ 和 $\neg b\to a$。
+    \item 若同一变量的真假两个文字在同一个 SCC，就会相互强制，问题无解。
+    \item 本章 SCC 按弹栈顺序编号，先弹出的是缩点图的汇。对每个变量选择编号更小的文字为真。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：添加子句并恢复一组满足条件的赋值。}
+
+\texttt{addClause(x,a,y,b)} 要求 $x=a$ 或 $y=b$ 至少一个成立。可以重复传入同一个文字来强制赋值。
+
+\cppfile{code/graph/2SAT.cpp}
+
+\begin{complexity}
+若有 $n$ 个变量和 $m$ 条子句，时间和空间均为 $O(n+m)$。
+\end{complexity}
+
+\begin{warningbox}
+改用其他 SCC 实现时，先检查缩点编号方向，再确定取真条件。
+\end{warningbox}
+
+
+\section{图匹配与网络流}
+
+\subsection{二分图最大匹配}
+
+匹配是一组互不共享端点的边。二分图最大匹配要求尽量多地配对左侧和右侧节点，可用增广路或最大流求解。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 增广路从未匹配的左点出发，在未匹配边和已匹配边之间交替，走到未匹配的右点。翻转路径上的匹配状态可多匹配一对。
+    \item 建流图时，从超级源向各左点、从各右点向超级汇连容量为一的边。每条二分图边从左向右连容量为一的边。
+    \item 整数最大流对应一组匹配。记录原边在流图中的编号，就可以读取实际配对。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{用法}
+
+规模较小可用下一节的匈牙利模板。已有流网络或需要与其他容量约束组合时，可用本章的 \texttt{Flow}。
+
+\begin{complexity}
+建网需 $O(n+m)$ 时间及空间，$n$ 为两侧点数之和。使用 Dinic 在这一单位网络上的时间为 $O((n+m)\sqrt n)$。
+\end{complexity}
+
+\begin{warningbox}
+若左右侧都从 1 开始编号，建流图时须为右侧加偏移，使两侧占用不同的顶点。
+\end{warningbox}
+
+
+\subsection{匈牙利算法}
+
+竞赛中常把基于 DFS 寻找增广路的二分图最大匹配算法称为匈牙利算法，也称 Kuhn 算法。固定一个左点后，尝试给它找到一个右点。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 右点未匹配时直接配对。若已匹配，递归尝试让它原来的左点改配其他右点。
+    \item 一次搜索内每个右点至多访问一次。新左点开始搜索时使用新时间戳。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：求无权二分图最大匹配。}
+
+两侧都分别从 $1$ 开始编号。\texttt{work()} 返回匹配数，\texttt{match[v]} 是右点 $v$ 匹配的左点，$0$ 表示未匹配。
+
+\cppfile{code/graph/bipartite_matching.hpp}
+
+\begin{complexity}
+设左、右点数为 $n_L,n_R$。最坏时间为 $O(n_L+n_R+n_Lm)$，空间为 $O(n_L+n_R+m)$。
+\end{complexity}
+
+\begin{warningbox}
+本模板优化配对数量。带权指派可使用 KM、带权匈牙利算法或费用流，须按题目权值模型选择。
+\end{warningbox}
+
+
+\subsection{最大流（Dinic）}
+
+在容量网络中，最大流要求在满足边容量和中间点流量守恒的条件下，尽量多地从源点送到汇点。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 每条输入边配一条初始容量为零的反向边。推过正向边的流可以沿反向边撤回。
+    \item BFS 建立残量图的层次。DFS 只沿距离增加一的边增广，直到当前层次图上无法再增广。
+    \item 当前弧下标记住已经尝试的边。成对存边后，反边编号为 \texttt{id\char94 1}。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：容量型最大流与残量可达集。}
+
+顶点编号从 $1$ 开始，容量非负。使用 \texttt{Flow<ll>} 建网后调用 \texttt{maxFlow(s,t)}。调用会更新残量容量，返回本次新增的流量。
+总流量须落在容量类型的表示范围内。
+
+\cppfile{code/graph/dinic.hpp}
+
+\begin{complexity}
+一般网络时间上界为 $O(n^2m)$，额外空间为 $O(n+m)$。此处 $m$ 是加入的原始边数。
+\end{complexity}
+
+\begin{warningbox}
+建模时反向输入边应独立添加。实现中的 DFS 递归深度可达点数，超深图需注意运行栈。
+\end{warningbox}
+
+
+\subsection{最小割}
+
+源汇割把点分成包含源点的集合和包含汇点的集合。割容量是原网中所有从源侧指向汇侧的边容量之和。最大流量等于最小割容量。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 最大流结束后，从源点仅沿正残量容量的边标记可达区域。
+    \item 可达点作为割的源侧，其余点作为汇侧。原图中从源侧到汇侧的边构成一个最小割。
+    \item 跨割的原边都已饱和。此时割容量等于当前流量。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{用法}
+
+完成 \texttt{maxFlow(s,t)} 后调用 \texttt{cutSide(s)}，再检查原有向边的两个端点。
+
+\begin{complexity}
+最大流完成后，提取割两侧和筛选割边各需 $O(n+m)$ 时间。
+\end{complexity}
+
+\begin{warningbox}
+按原输入边提取割边。残量图中的配对反边用于撤销流量，容量含义与输入边不同。
+\end{warningbox}
+
+
+\subsection{最小费用最大流}
+
+最小费用最大流先取得能送出的最大流量，再让该流量的总费用最小。逐次最短增广路算法每轮从残量图选择一条单位费用最小的增广路径。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 反边单价取原边单价的相反数。使用势能 $\pi$ 后，边的约化费用为 $w+\pi[u]-\pi[v]$。
+    \item 初始用 Bellman-Ford 建立可行势能。此后用 Dijkstra 求约化距离，再把已到达节点的距离加到原势能。
+    \item 按路径瓶颈尽量多推送流量，累计实际单位费用乘增广量，直到流量达到上限或汇点不可达。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：势能加 Dijkstra 的费用流。}
+
+\texttt{work(s,t,limit)} 返回实际流量和总费用，源汇不同，容量和流量上限均非负。
+允许初始负边，要求初始残量网络没有负费用环。检测到负环时返回空值。
+势能、约化距离和费用累加使用 \texttt{lll}，返回的总费用须能用 \texttt{ll} 表示。
+
+\cppfile{code/graph/费用流.cpp}
+
+\begin{complexity}
+初始化最坏耗时 $O(n(n+m))$。设增广次数为 $A$，单轮耗时 $O((n+m)\log(n+m))$，总空间为 $O(n+m)$。整数容量使 $A$ 至多为实际流量。
+\end{complexity}
+
+\begin{warningbox}
+要求恰好送出指定流量时，检查返回的实际流量。
+\end{warningbox}
+
+
+\subsection{最小路径覆盖}
+
+DAG 的最小点不交路径覆盖要求以尽量少的有向路径覆盖每个顶点一次，单个顶点也算一条路径。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 把每点拆成左部出点和右部入点。对每条原边 $u\to v$，连左 $u$ 与右 $v$。
+    \item 一条匹配边对应把一个路径尾与另一个路径头合并。匹配保证每点最多一个前驱和一个后继，DAG 保证不会合成环。
+    \item 最少路径数是 $n$ 减最大匹配数。从没有匹配前驱的点开始沿后继走，可以恢复全部路径。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：恢复 DAG 的最小点不交路径覆盖。}
+
+使用原图的边进行连接。若图有环，返回空值。
+
+\cppfile{code/graph/最小路径覆盖.cpp}
+
+\begin{complexity}
+采用 DFS 匹配，最坏时间为 $O(n+nm)$，额外空间为 $O(n+m)$。
+\end{complexity}
+
+\begin{warningbox}
+本模型要求点不交且沿原边连接。若题目允许路径相交或只要求覆盖可达关系，需要先确认所指的路径覆盖定义。
+\end{warningbox}
+
+
+\section{其他图论}
+
+\subsection{欧拉路径、欧拉回路}
+
+欧拉路径恰好经过每条边一次，顶点可以重复。起点和终点相同的欧拉路径是欧拉回路。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 无向图的有边部分连通时，奇度点数为零可成回路，为二可从任一奇度点出发。
+    \item 有向图的有边部分忽略方向后应连通。回路要求每点出度等于入度。开放路径要求起点多一条出边、终点多一条入边。
+    \item Hierholzer 算法尽量沿未用边前进。卡住时把当前点加入逆序答案，最终翻转。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：求有向图或无向图的欧拉路径。}
+
+支持平行边和自环。不存在时返回空值。无边且有顶点时返回只含顶点 $1$ 的路径。
+没有顶点时返回空值。
+
+\cppfile{code/graph/欧拉路径.cpp}
+
+\begin{complexity}
+每条邻接弧至多被扫描一次，时间和空间均为 $O(n+m)$。
+\end{complexity}
+
+\begin{warningbox}
+只检查度数还不够。结果长度须等于边数加一，以确认走遍了所有边。
+\end{warningbox}
+
+
+\subsection{基环树}
+
+连通无向图的边数等于点数时，恰有一个环。去掉环上的边后，每棵树都挂在一个环点上。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 反复删除度数为一的点。留下的点恰好是环点。
+    \item 按剥叶的逆序处理，每个被删除的点从已确定的邻居继承所属环点，距离加一。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：拆出唯一环和各个挂树。}
+
+要求输入连通的无向图且 $m=n$。\texttt{cycle} 为按点编号列出的环点，\texttt{bel[u]} 是所挂环点，\texttt{dist[u]} 为到环的边数。
+
+\cppfile{code/graph/基环树.cpp}
+
+\begin{complexity}
+剥叶和逆序回填都只需扫描邻接表，时间为 $O(n+m)$，额外空间为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+返回的环点集合按顶点编号排列。若需要环上的行进顺序，应沿环内的边重新遍历。
+\end{warningbox}
+
+
+\subsection{函数图}
+
+函数图中每个点的出度恰为一。反复沿后继前进，最终会进入某个有向环。每个弱连通分量由一个有向环和指向它的若干树组成。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 先用入度为零的队列剥除所有非环点，剩下的点可沿后继逐环编号。
+    \item 按剥除的逆序回填，每个点和后继属于同一个环，入环点也相同，到环的距离加一。
+    \item 若还要查询走很多步后的点，可配合第一章的倍增模板。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：求环编号、入环点、到环距离和环长。}
+
+后继数组从 $1$ 开始，每项都在 $[1,n]$。环长用 \texttt{cycleLen[bel[u]]} 读取。
+
+\cppfile{code/graph/函数图.cpp}
+
+\begin{complexity}
+时间和额外空间均为 $O(n)$。
+\end{complexity}
+
+\begin{warningbox}
+自环是长度为一的有向环。后继为哨兵的模型需要先约定哨兵的后继。
+\end{warningbox}
+
+
+\subsection{图上贪心}
+
+以无向图着色为例，可先反复删除当前度数最小的点，再按删除顺序的逆序填色。每次选取相邻已染色点没有使用的最小颜色。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 用最小堆维护剩余度数。删除顶点时，更新仍在图中的邻居度数，并跳过堆中旧记录。
+    \item 记删除时见到的最大剩余度数为 $d$。逆序染色时每个点至多有 $d$ 个已染色邻居，因此最多使用 $d+1$ 种颜色。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：按最小剩余度生成合法着色。}
+
+输入简单无向图。返回退化度 $d$ 和从 $1$ 开始的颜色编号。
+
+\cppfile{code/graph/图上贪心.cpp}
+
+\begin{complexity}
+堆实现耗时 $O((n+m)\log(n+m))$，空间为 $O(n+m)$。
+\end{complexity}
+
+\begin{warningbox}
+该顺序保证颜色数上界。只有额外结构或证明才能断定得到了最少颜色数。
+\end{warningbox}
+
+
+\subsection{图上状态压缩 DP}
+
+点数较少且后续转移取决于已访问点集时，可把集合压成整数掩码。以下模板求指定起终点之间恰好经过所有点一次的最短路径。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item $f[S][u]$ 表示从起点走过集合 $S$ 并停在 $u$ 的最小代价。初值仅有 $f[\{s\}][s]=0$。
+    \item 沿 $u\to v$ 转移到 $f[S\cup\{v\}][v]$，其中 $v\notin S$。加入一点后掩码变大，所以可按掩码递增扫描。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板：求指定起终点的最短哈密顿路径。}
+
+要求 $1\le n\le20$，边权可以为负。不存在时返回空值，单点图的答案为 $0$。
+
+\cppfile{code/graph/图上状压DP.cpp}
+
+\begin{complexity}
+时间为 $O(2^n(n+m))$，空间为 $O(n2^n)$。稠密图的时间上界为 $O(n^2 2^n)$。
+\end{complexity}
+
+\begin{warningbox}
+状态表在 $n=20$ 时仅距离数组就占约 $160$ MiB。需要回路时，应另检查最后一个点返回起点的边。
+\end{warningbox}
+
+
+\paragraph{参考资料}
+\href{https://oi-wiki.org/graph/mst/}{OI Wiki：最小生成树}、
+\href{https://oi-wiki.org/graph/scc/}{强连通分量}、
+\href{https://oi-wiki.org/graph/cut/}{割点和桥}，
+以及 \href{https://raw.githubusercontent.com/kth-competitive-programming/kactl/main/content/graph/Dinic.h}{KACTL：Dinic}
+和 \href{https://raw.githubusercontent.com/kth-competitive-programming/kactl/main/content/graph/MinCostMaxFlow.h}{最小费用最大流}。

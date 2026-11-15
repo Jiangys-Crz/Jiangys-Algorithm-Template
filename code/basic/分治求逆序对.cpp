@@ -1,13 +1,15 @@
 #include <vector>
 
-long long countInversions(std::vector<int>& a) {
+#include "../types.hpp"
+
+ll countInversions(std::vector<int>& a) {
     std::vector<int> buffer(a.size());
-    auto solve = [&](auto&& self, int l, int r) -> long long {
+    auto solve = [&](auto&& self, int l, int r) -> ll {
         if (r - l <= 1) {
             return 0;
         }
         int mid = l + (r - l) / 2;
-        long long count = self(self, l, mid) + self(self, mid, r);
+        ll count = self(self, l, mid) + self(self, mid, r);
         int i = l, j = mid, k = l;
         while (i < mid && j < r) {
             if (a[i] <= a[j]) {

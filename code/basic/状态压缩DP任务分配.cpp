@@ -3,10 +3,12 @@
 #include <limits>
 #include <vector>
 
-long long minAssignmentCost(const std::vector<std::vector<long long>>& cost) {
+#include "../types.hpp"
+
+ll minAssignmentCost(const std::vector<std::vector<ll>>& cost) {
     const int n = static_cast<int>(cost.size());
     const unsigned states = 1u << n;
-    std::vector<long long> dp(states, std::numeric_limits<long long>::max());
+    std::vector<ll> dp(states, std::numeric_limits<ll>::max());
     dp[0] = 0;
 
     for (unsigned mask = 0; mask + 1 < states; ++mask) {

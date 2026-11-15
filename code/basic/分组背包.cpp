@@ -2,10 +2,12 @@
 #include <utility>
 #include <vector>
 
-long long groupedKnapsack(
+#include "../types.hpp"
+
+ll groupedKnapsack(
     int capacity,
-    const std::vector<std::vector<std::pair<int, long long>>>& groups) {
-    std::vector<long long> dp(capacity + 1);
+    const std::vector<std::vector<std::pair<int, ll>>>& groups) {
+    std::vector<ll> dp(capacity + 1);
     for (const auto& group : groups) {
         if (group.empty()) continue;
         auto next = dp;
