@@ -1,5 +1,8 @@
 \begin{titlepage}
 \thispagestyle{empty}
+% 封面不生成 PDF 页面锚点，否则会与目录页锚点重名
+%（xdvipdfmx 会报 “Object @page.i already defined”）
+\hypersetup{pageanchor=false}
 
 \begin{tikzpicture}[remember picture, overlay]
     % 背景
@@ -45,7 +48,7 @@
 
     \vspace{2.2cm}
 
-    {\large Made by Gaoming\par}
+    {\large Made by Jiangys\par}
 
     \vspace{0.6cm}
 
@@ -59,6 +62,9 @@
     {\normalsize \today\par}
 \end{center}
 
-\vspace*{0.8cm}
+% 这里不能用 \vspace*：带星号的垂直间距不可丢弃，会顶出一张空白页
+\vspace{0.8cm}
 
 \end{titlepage}
+
+\hypersetup{pageanchor=true}

@@ -1,25 +1,32 @@
+% 双面印刷：封面和每一章都要落在右侧（奇数页），
+% 所以保留 twoside + openright（ctexbook 默认值，不要加 oneside/openany）。
+% 中间自动插入的空白页由 preamble 里的 \cleardoublepage 补丁清成纯白页。
 \documentclass[11pt,a4paper]{ctexbook}
 
 \input{preamble}
 
 \begin{document}
 
+% \frontmatter 必须写在封面之前：它内部会调用 \cleardoublepage，
+% 在双面（twoside）模式下会硬塞一张空白页。放前面后封面就是第 i 页。
+\frontmatter
+
 \input{cover}
 
-\frontmatter
 \pagestyle{plain}
 \tableofcontents
 
 \mainmatter
 \pagestyle{fancy}
 
-\input{chapters/math}
-\input{chapters/data_structure}
+\input{chapters/basic}
 \input{chapters/tree}
-\input{chapters/string}
 \input{chapters/graph}
-
+\input{chapters/data_structure}
+\input{chapters/string}
+\input{chapters/math}
 \input{chapters/geometry}
+\input{chapters/stl}
 \input{chapters/zx}
 
 \end{document}

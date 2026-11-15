@@ -1,0 +1,295 @@
+\chapter{基础算法及技巧}
+
+\section{基础算法}
+
+
+\subsection{二分与三分}
+
+\subsubsection{二分查找}
+
+二分查找（Binary Search）利用序列的单调性，
+每次将搜索区间缩小约一半，从而快速确定目标位置。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 适用条件：序列有序或判断条件具有单调性。
+    \item 核心思想：通过中点判断，不断缩小搜索区间。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板一：查找第一个大于等于 $x$ 的位置。}
+
+数组非递减排列，下标从 $1$ 开始，
+若不存在则返回 $n+1$。
+
+\cppfile{code/basic/二分查找1.cpp}
+
+\textbf{模板二：查找最后一个小于等于 $x$ 的位置。}
+
+数组非递减排列，下标从 $1$ 开始，
+若不存在则返回 $0$。
+
+\cppfile{code/basic/二分查找2.cpp}
+
+\begin{complexity}
+时间复杂度：$O(\log n)$，
+空间复杂度：$O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+\begin{itemize}
+    \item 查找第一个满足条件的位置时，中点向下取整。
+    \item 查找最后一个满足条件的位置时，中点向上取整。
+    \item 注意搜索边界及整数溢出。
+\end{itemize}
+\end{warningbox}
+
+
+\subsubsection{二分答案}
+
+二分答案（Binary Search on Answer）通过判定函数
+$\mathrm{check}(mid)$ 判断当前答案是否可行，
+利用可行性的单调性寻找最优答案。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 核心条件：答案的可行性具有单调性。
+    \item 核心步骤：确定答案范围、编写判定函数、二分答案。
+    \item $\mathrm{check}(mid)$ 返回 \texttt{true}
+    表示当前答案可行。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板一：寻找最小可行答案。}
+
+\begin{itemize}
+    \item 判定条件：$\mathrm{check}(mid)=\mathrm{true}$
+    表示当前答案已经满足要求。
+    \item 单调性：若 $mid$ 可行，则所有更大的答案均可行。
+    \item 目标：寻找第一个返回 \texttt{true} 的位置。
+\end{itemize}
+
+\cppfile{code/basic/二分答案1.cpp}
+
+\textbf{模板二：寻找最大可行答案。}
+
+\begin{itemize}
+    \item 判定条件：$\mathrm{check}(mid)=\mathrm{true}$
+    表示当前答案能够满足要求。
+    \item 单调性：若 $mid$ 可行，则所有更小的答案均可行。
+    \item 目标：寻找最后一个返回 \texttt{true} 的位置。
+\end{itemize}
+
+\cppfile{code/basic/二分答案2.cpp}
+
+\begin{complexity}
+设答案范围大小为 $V$，单次判定复杂度为 $O(T)$。
+
+时间复杂度：$O(T\log V)$，
+空间复杂度取决于判定函数。
+\end{complexity}
+
+\begin{warningbox}
+\begin{itemize}
+    \item 最小可行答案要求初始右边界可行。
+    \item 最大可行答案要求初始左边界可行。
+    \item 判定函数必须具有单调性。
+    \item 当更新方式为 $l=mid$ 时，中点向上取整。
+\end{itemize}
+\end{warningbox}
+
+
+\subsubsection{浮点二分}
+
+浮点二分（Floating-Point Binary Search）是在实数区间上
+利用单调性寻找边界的算法，通常通过精度阈值
+$\varepsilon$ 控制搜索过程。
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 适用条件：实数区间上的判定条件具有单调性。
+    \item 核心思想：每次将搜索区间缩小一半。
+    \item 终止条件：$r-l\leq\varepsilon$。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板一：寻找最小可行实数答案。}
+
+\begin{itemize}
+    \item 判定条件：$\mathrm{check}(mid)=\mathrm{true}$
+    表示当前答案可行。
+    \item 单调性：若 $mid$ 可行，则所有更大的答案均可行。
+    \item 目标：寻找可行区间的左边界。
+\end{itemize}
+
+\cppfile{code/basic/浮点二分1.cpp}
+
+\textbf{模板二：寻找最大可行实数答案。}
+
+\begin{itemize}
+    \item 判定条件：$\mathrm{check}(mid)=\mathrm{true}$
+    表示当前答案可行。
+    \item 单调性：若 $mid$ 可行，则所有更小的答案均可行。
+    \item 目标：寻找可行区间的右边界。
+\end{itemize}
+
+\cppfile{code/basic/浮点二分2.cpp}
+
+\begin{complexity}
+设初始区间长度为 $V$，
+单次判定复杂度为 $O(T)$。
+
+时间复杂度：
+$O\left(T\log\frac{V}{\varepsilon}\right)$，
+其中 $V>\varepsilon$，假设每次迭代均能缩小区间。
+
+额外空间复杂度：$O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+\begin{itemize}
+    \item 使用 \texttt{while(r - l > eps)} 控制精度。
+    \item 浮点二分直接使用 $mid$ 更新边界。
+    \item 注意浮点精度导致的中点停滞，
+    必要时判断 $mid=l$ 或 $mid=r$ 并退出循环。
+\end{itemize}
+\end{warningbox}
+
+
+\subsubsection{三分搜索}
+
+三分搜索（Ternary Search）适用于单峰或单谷函数，
+通过比较两个三等分点的函数值，不断缩小极值所在区间。
+
+\[
+mid_1=l+\frac{r-l}{3},\qquad
+mid_2=r-\frac{r-l}{3}
+\]
+
+\begin{algorithmnote}
+\begin{itemize}
+    \item 单峰函数：先递增后递减，寻找最大值。
+    \item 单谷函数：先递减后递增，寻找最小值。
+    \item 核心思想：比较 $f(mid_1)$ 和 $f(mid_2)$，
+    每次将搜索区间缩小至原来的 $\frac{2}{3}$。
+\end{itemize}
+\end{algorithmnote}
+
+\textbf{模板一：寻找严格单峰函数的最大值。}
+
+\begin{itemize}
+    \item 若 $f(mid_1)<f(mid_2)$，令 $l=mid_1$。
+    \item 否则令 $r=mid_2$。
+\end{itemize}
+
+\cppfile{code/basic/三分搜索1.cpp}
+
+\textbf{模板二：寻找严格单谷函数的最小值。}
+
+\begin{itemize}
+    \item 若 $f(mid_1)>f(mid_2)$，令 $l=mid_1$。
+    \item 否则令 $r=mid_2$。
+\end{itemize}
+
+\cppfile{code/basic/三分搜索2.cpp}
+
+其中 $\mathrm{calc}(x)$ 为目标函数，
+三分得到的是极值点位置，
+函数极值需要通过 $\mathrm{calc}(ans)$ 计算。
+
+\begin{complexity}
+设初始区间长度为 $V$，
+单次函数计算复杂度为 $O(T)$。
+
+时间复杂度：
+$O\left(T\log_{\frac{3}{2}}\frac{V}{\varepsilon}\right)$，
+其中 $V>\varepsilon$，假设浮点运算能持续缩小区间。
+
+额外空间复杂度：$O(1)$。
+\end{complexity}
+
+\begin{warningbox}
+\begin{itemize}
+    \item 必须满足单峰性或单谷性，
+    上述模板按严格单峰或单谷设计。
+    \item 注意最大值与最小值的比较方向。
+    \item 浮点三分需合理设置 $\varepsilon$，
+    并防止浮点精度导致循环停滞。
+    \item 整数三分通常需要枚举最终剩余的候选值。
+\end{itemize}
+\end{warningbox}
+
+
+\subsection{前缀和、后缀和、二维前缀和}
+
+\subsection{差分、二维差分}
+
+\subsection{离散化}
+
+\subsection{双指针、滑动窗口}
+
+\subsection{倍增}
+
+\subsection{贪心算法}
+
+\subsection{分治算法}
+
+
+\section{搜索算法}
+
+\subsection{深度优先搜索 (DFS)}
+
+\subsection{广度优先搜索 (BFS)}
+
+\subsection{折半搜索}
+
+
+\section{动态规划}
+
+\subsection{线性DP}
+
+\subsection{最长公共子序列 (LCS)}
+
+\subsection{最长上升子序列 (LIS)}
+
+\subsection{最长公共子串}
+
+\subsection{最大子段和}
+
+\subsection{01背包}
+
+\subsection{完全背包}
+
+\subsection{多重背包}
+
+\subsection{分组背包}
+
+\subsection{区间DP}
+
+\subsection{状态压缩DP}
+
+\subsection{数位DP}
+
+\subsection{计数DP}
+
+\subsection{概率DP、期望DP}
+
+\subsection{博弈DP}
+
+\section{位运算技巧}
+
+\subsection{位运算基础}
+
+\subsection{lowbit}
+
+\subsection{子集枚举}
+
+\subsection{二进制状态压缩}
+
+\subsection{SOS DP}
+
+\subsection{异或性质}
+
+\subsection{位运算贪心}
+
+\subsection{XOR 线性基}

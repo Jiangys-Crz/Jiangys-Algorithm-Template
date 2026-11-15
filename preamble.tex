@@ -27,9 +27,35 @@
 \tcbuselibrary{listings,breakable,skins,theorems}
 
 % ---------- Fonts ----------
-\IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}}{\setmainfont{Noto Serif}}
-\IfFontExistsTF{SimSun}{\setCJKmainfont{SimSun}}{\setCJKmainfont{Noto Sans CJK SC}}
-\IfFontExistsTF{Consolas}{\setmonofont{Consolas}}{\setmonofont{DejaVu Sans Mono}}
+% 按平台选择字体。这里用“字体文件是否存在”来判断平台，而不是 \IfFontExistsTF：
+% 后者在字体确实缺失时会让 XeTeX 把字体名当文件名去找，触发 mktextfm 报错。
+% macOS
+\IfFileExists{/System/Library/Fonts/Supplemental/Songti.ttc}{%
+    \setmainfont{Times New Roman}
+    \setCJKmainfont{Songti SC}[AutoFakeBold=2]
+    \setCJKfamilyfont{zhsong}{Songti SC}[AutoFakeBold=2]
+    \setCJKsansfont{PingFang SC}[AutoFakeBold=2]
+    \setCJKfamilyfont{zhhei}{PingFang SC}[AutoFakeBold=2]
+    \setmonofont{Menlo}
+}{%
+    % Windows
+    \IfFileExists{C:/Windows/Fonts/simsun.ttc}{%
+        \setmainfont{Times New Roman}
+        \setCJKmainfont{SimSun}[AutoFakeBold=2]
+        \setCJKfamilyfont{zhsong}{SimSun}[AutoFakeBold=2]
+        \setCJKsansfont{SimHei}[AutoFakeBold=2]
+        \setCJKfamilyfont{zhhei}{SimHei}[AutoFakeBold=2]
+        \setmonofont{Consolas}
+    }{%
+        % Linux / 其它
+        \setmainfont{Noto Serif}
+        \setCJKmainfont{Noto Serif CJK SC}[AutoFakeBold=2]
+        \setCJKfamilyfont{zhsong}{Noto Serif CJK SC}[AutoFakeBold=2]
+        \setCJKsansfont{Noto Sans CJK SC}[AutoFakeBold=2]
+        \setCJKfamilyfont{zhhei}{Noto Sans CJK SC}[AutoFakeBold=2]
+        \setmonofont{DejaVu Sans Mono}
+    }%
+}
 
 % ---------- Color palette ----------
 \definecolor{MainBlue}{RGB}{28, 87, 166}
@@ -66,6 +92,15 @@
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0pt}
 
+% 双面排版时，\cleardoublepage 为了保证下一章落在右页会自动插入空白页。
+% 默认这些空白页也带页眉页码，打印出来很显眼；这里把它们清成纯白页。
+\makeatletter
+\let\jiangys@cleardoublepage\cleardoublepage
+\renewcommand{\cleardoublepage}{%
+    \clearpage{\pagestyle{empty}\jiangys@cleardoublepage}%
+}
+\makeatother
+
 % ---------- Chapter / section style ----------
 \ctexset{
     chapter = {
@@ -87,8 +122,19 @@
         aftername = \quad,
         beforeskip = 1.2em,
         afterskip = 0.5em
+    },
+    subsubsection = {
+        format = \heiti\bfseries\large,
+        aftername = \quad,
+        beforeskip = 1em,
+        afterskip = 0.4em
     }
 }
+
+% book 类默认 secnumdepth=2、tocdepth=2，四级标题（subsubsection）既不编号也不进目录。
+% 这里都放到 3，让它带编号（形如 1.1.1.1）并出现在目录中。
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
 
 % 保持小节编号仍然是 4.1、4.1.1，而不是 四.1
 \renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}

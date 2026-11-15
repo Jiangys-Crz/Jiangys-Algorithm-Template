@@ -1,79 +1,51 @@
-\contentsline {chapter}{\numberline {第一章\hspace {.3em}}数学}{1}{chapter.1}%
-\contentsline {section}{\numberline {1.1}MInt}{1}{section.1.1}%
-\contentsline {subsection}{\numberline {1.1.1}MInt (取模类新)}{1}{subsection.1.1.1}%
-\contentsline {subsection}{\numberline {1.1.2}MInt (取模类旧)}{7}{subsection.1.1.2}%
-\contentsline {subsection}{\numberline {1.1.3}MInt (避免除以零)}{9}{subsection.1.1.3}%
-\contentsline {section}{\numberline {1.2}Comb (组合数)}{12}{section.1.2}%
-\contentsline {subsection}{\numberline {1.2.1}预处理}{12}{subsection.1.2.1}%
-\contentsline {subsection}{\numberline {1.2.2}不预处理}{13}{subsection.1.2.2}%
-\contentsline {section}{\numberline {1.3}欧拉函数}{14}{section.1.3}%
-\contentsline {subsection}{\numberline {1.3.1}单个欧拉函数}{14}{subsection.1.3.1}%
-\contentsline {subsection}{\numberline {1.3.2}线性求}{14}{subsection.1.3.2}%
-\contentsline {section}{\numberline {1.4}Exgcd (扩展欧几里得定理)}{15}{section.1.4}%
-\contentsline {section}{\numberline {1.5}乘法逆元}{15}{section.1.5}%
-\contentsline {subsection}{\numberline {1.5.1}快速幂求逆元}{16}{subsection.1.5.1}%
-\contentsline {subsection}{\numberline {1.5.2}扩展欧几里得算法求逆元}{16}{subsection.1.5.2}%
-\contentsline {subsection}{\numberline {1.5.3}欧拉定理求逆元}{16}{subsection.1.5.3}%
-\contentsline {subsection}{\numberline {1.5.4}线性求逆元}{16}{subsection.1.5.4}%
-\contentsline {section}{\numberline {1.6}MR与Pollard-Rho}{17}{section.1.6}%
-\contentsline {subsection}{\numberline {1.6.1}MR-素数测试}{17}{subsection.1.6.1}%
-\contentsline {subsection}{\numberline {1.6.2}Pollard-Rho分解}{18}{subsection.1.6.2}%
-\contentsline {section}{\numberline {1.7}中国剩余定理 (CRT)}{19}{section.1.7}%
-\contentsline {section}{\numberline {1.8}扩展中国剩余定理 (EXCRT)}{19}{section.1.8}%
-\contentsline {section}{\numberline {1.9}BSGS算法}{20}{section.1.9}%
-\contentsline {section}{\numberline {1.10}扩展BSGS算法}{21}{section.1.10}%
-\contentsline {section}{\numberline {1.11}莫比乌斯反演}{22}{section.1.11}%
-\contentsline {section}{\numberline {1.12}杜教筛}{22}{section.1.12}%
-\contentsline {section}{\numberline {1.13}筛法}{24}{section.1.13}%
-\contentsline {subsection}{\numberline {1.13.1}欧拉筛}{24}{subsection.1.13.1}%
-\contentsline {subsection}{\numberline {1.13.2}约数个数}{24}{subsection.1.13.2}%
-\contentsline {subsection}{\numberline {1.13.3}约数之和}{25}{subsection.1.13.3}%
-\contentsline {section}{\numberline {1.14}矩阵相关}{26}{section.1.14}%
-\contentsline {section}{\numberline {1.15}多项式}{27}{section.1.15}%
-\contentsline {section}{\numberline {1.16}线性基}{32}{section.1.16}%
-\contentsline {chapter}{\numberline {第二章\hspace {.3em}}数据结构}{35}{chapter.2}%
-\contentsline {section}{\numberline {2.1}线段树}{35}{section.2.1}%
-\contentsline {section}{\numberline {2.2}树状数组}{38}{section.2.2}%
-\contentsline {section}{\numberline {2.3}普通平衡二叉树 (Splay)}{39}{section.2.3}%
-\contentsline {section}{\numberline {2.4}主席树 (可持久化线段树)}{42}{section.2.4}%
-\contentsline {section}{\numberline {2.5}并查集 (DSU)}{43}{section.2.5}%
-\contentsline {section}{\numberline {2.6}RMQ (静态区间最值)}{44}{section.2.6}%
-\contentsline {section}{\numberline {2.7}动态树 (LCT)}{45}{section.2.7}%
-\contentsline {section}{\numberline {2.8}无旋平衡树 (FHQ Treap)}{48}{section.2.8}%
-\contentsline {chapter}{\numberline {第三章\hspace {.3em}}树}{53}{chapter.3}%
-\contentsline {section}{\numberline {3.1}树链剖分+线段树维护}{53}{section.3.1}%
-\contentsline {section}{\numberline {3.2}倍增LCA+换根dp}{55}{section.3.2}%
-\contentsline {section}{\numberline {3.3}树上路径交}{57}{section.3.3}%
-\contentsline {section}{\numberline {3.4}树论大封装 (重心、中心、直径)}{58}{section.3.4}%
-\contentsline {section}{\numberline {3.5}树哈希 (判断同构树)}{60}{section.3.5}%
-\contentsline {chapter}{\numberline {第四章\hspace {.3em}}字符串}{63}{chapter.4}%
-\contentsline {section}{\numberline {4.1}字符串双哈希}{63}{section.4.1}%
-\contentsline {section}{\numberline {4.2}马拉车}{64}{section.4.2}%
-\contentsline {section}{\numberline {4.3}Z函数}{64}{section.4.3}%
-\contentsline {section}{\numberline {4.4}KMP}{65}{section.4.4}%
-\contentsline {section}{\numberline {4.5}字典树}{65}{section.4.5}%
-\contentsline {section}{\numberline {4.6}AC自动机}{67}{section.4.6}%
-\contentsline {chapter}{\numberline {第五章\hspace {.3em}}图论}{69}{chapter.5}%
-\contentsline {section}{\numberline {5.1}强连通分量缩点 (SCC)}{69}{section.5.1}%
-\contentsline {section}{\numberline {5.2}割边与割边缩点 (EDCC)}{70}{section.5.2}%
-\contentsline {section}{\numberline {5.3}最小生成树 (Kruskal + DSU)}{72}{section.5.3}%
-\contentsline {section}{\numberline {5.4}最大流 (Dinic)}{73}{section.5.4}%
-\contentsline {chapter}{\numberline {第六章\hspace {.3em}}计算几何}{75}{chapter.6}%
-\contentsline {section}{\numberline {6.1}几何大封装}{75}{section.6.1}%
-\contentsline {section}{\numberline {6.2}三角剖分}{82}{section.6.2}%
-\contentsline {section}{\numberline {6.3}凸包}{83}{section.6.3}%
-\contentsline {subsection}{\numberline {6.3.1}二维凸包}{83}{subsection.6.3.1}%
-\contentsline {subsection}{\numberline {6.3.2}三维凸包}{84}{subsection.6.3.2}%
-\contentsline {section}{\numberline {6.4}最小圆覆盖}{88}{section.6.4}%
-\contentsline {section}{\numberline {6.5}最小矩形覆盖}{91}{section.6.5}%
-\contentsline {section}{\numberline {6.6}旋转卡壳}{92}{section.6.6}%
-\contentsline {section}{\numberline {6.7}半平面交}{93}{section.6.7}%
-\contentsline {chapter}{\numberline {第七章\hspace {.3em}}杂项}{95}{chapter.7}%
-\contentsline {section}{\numberline {7.1}重载int128输出}{95}{section.7.1}%
-\contentsline {section}{\numberline {7.2}模拟退火}{95}{section.7.2}%
-\contentsline {section}{\numberline {7.3}随机化}{96}{section.7.3}%
-\contentsline {section}{\numberline {7.4}连续按位异或和}{97}{section.7.4}%
-\contentsline {section}{\numberline {7.5}排列中 $\rm {mex}$ 与 $\min $ 的转化}{97}{section.7.5}%
-\contentsline {section}{\numberline {7.6}曼哈顿距离和切比雪夫距离}{97}{section.7.6}%
-\contentsline {section}{\numberline {7.7}线下赛运行脚本 (run.sh)}{97}{section.7.7}%
-\contentsline {section}{\numberline {7.8}线下赛无限对拍脚本 (stress.sh)}{98}{section.7.8}%
+\contentsline {chapter}{\numberline {第一章\hspace {.3em}}基础算法及技巧}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}基础算法}{1}{section.1.1}%
+\contentsline {subsection}{\numberline {1.1.1}二分与三分}{1}{subsection.1.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.1.1}二分查找}{1}{subsubsection.1.1.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.1.2}二分答案}{2}{subsubsection.1.1.1.2}%
+\contentsline {subsubsection}{\numberline {1.1.1.3}浮点二分}{3}{subsubsection.1.1.1.3}%
+\contentsline {subsubsection}{\numberline {1.1.1.4}三分搜索}{4}{subsubsection.1.1.1.4}%
+\contentsline {subsection}{\numberline {1.1.2}前缀和、后缀和、二维前缀和}{7}{subsection.1.1.2}%
+\contentsline {subsection}{\numberline {1.1.3}差分、二维差分}{7}{subsection.1.1.3}%
+\contentsline {subsection}{\numberline {1.1.4}离散化}{7}{subsection.1.1.4}%
+\contentsline {subsection}{\numberline {1.1.5}双指针、滑动窗口}{7}{subsection.1.1.5}%
+\contentsline {subsection}{\numberline {1.1.6}倍增}{7}{subsection.1.1.6}%
+\contentsline {subsection}{\numberline {1.1.7}贪心算法}{7}{subsection.1.1.7}%
+\contentsline {subsection}{\numberline {1.1.8}分治算法}{7}{subsection.1.1.8}%
+\contentsline {section}{\numberline {1.2}搜索算法}{7}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}深度优先搜索 (DFS)}{7}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {1.2.2}广度优先搜索 (BFS)}{7}{subsection.1.2.2}%
+\contentsline {subsection}{\numberline {1.2.3}折半搜索}{7}{subsection.1.2.3}%
+\contentsline {section}{\numberline {1.3}动态规划}{7}{section.1.3}%
+\contentsline {subsection}{\numberline {1.3.1}线性DP}{7}{subsection.1.3.1}%
+\contentsline {subsection}{\numberline {1.3.2}最长公共子序列 (LCS)}{7}{subsection.1.3.2}%
+\contentsline {subsection}{\numberline {1.3.3}最长上升子序列 (LIS)}{7}{subsection.1.3.3}%
+\contentsline {subsection}{\numberline {1.3.4}最长公共子串}{7}{subsection.1.3.4}%
+\contentsline {subsection}{\numberline {1.3.5}最大子段和}{7}{subsection.1.3.5}%
+\contentsline {subsection}{\numberline {1.3.6}01背包}{7}{subsection.1.3.6}%
+\contentsline {subsection}{\numberline {1.3.7}完全背包}{7}{subsection.1.3.7}%
+\contentsline {subsection}{\numberline {1.3.8}多重背包}{7}{subsection.1.3.8}%
+\contentsline {subsection}{\numberline {1.3.9}分组背包}{7}{subsection.1.3.9}%
+\contentsline {subsection}{\numberline {1.3.10}区间DP}{7}{subsection.1.3.10}%
+\contentsline {subsection}{\numberline {1.3.11}状态压缩DP}{7}{subsection.1.3.11}%
+\contentsline {subsection}{\numberline {1.3.12}数位DP}{7}{subsection.1.3.12}%
+\contentsline {subsection}{\numberline {1.3.13}计数DP}{7}{subsection.1.3.13}%
+\contentsline {subsection}{\numberline {1.3.14}概率DP、期望DP}{7}{subsection.1.3.14}%
+\contentsline {subsection}{\numberline {1.3.15}博弈DP}{7}{subsection.1.3.15}%
+\contentsline {section}{\numberline {1.4}位运算技巧}{7}{section.1.4}%
+\contentsline {subsection}{\numberline {1.4.1}位运算基础}{7}{subsection.1.4.1}%
+\contentsline {subsection}{\numberline {1.4.2}lowbit}{7}{subsection.1.4.2}%
+\contentsline {subsection}{\numberline {1.4.3}子集枚举}{7}{subsection.1.4.3}%
+\contentsline {subsection}{\numberline {1.4.4}二进制状态压缩}{7}{subsection.1.4.4}%
+\contentsline {subsection}{\numberline {1.4.5}SOS DP}{7}{subsection.1.4.5}%
+\contentsline {subsection}{\numberline {1.4.6}异或性质}{7}{subsection.1.4.6}%
+\contentsline {subsection}{\numberline {1.4.7}位运算贪心}{7}{subsection.1.4.7}%
+\contentsline {subsection}{\numberline {1.4.8}XOR 线性基}{7}{subsection.1.4.8}%
+\contentsline {chapter}{\numberline {第二章\hspace {.3em}}树}{9}{chapter.2}%
+\contentsline {chapter}{\numberline {第三章\hspace {.3em}}图论}{11}{chapter.3}%
+\contentsline {chapter}{\numberline {第四章\hspace {.3em}}数据结构}{13}{chapter.4}%
+\contentsline {chapter}{\numberline {第五章\hspace {.3em}}字符串}{15}{chapter.5}%
+\contentsline {chapter}{\numberline {第六章\hspace {.3em}}数学}{17}{chapter.6}%
+\contentsline {chapter}{\numberline {第七章\hspace {.3em}}计算几何}{19}{chapter.7}%
+\contentsline {chapter}{\numberline {第八章\hspace {.3em}}STL常见函数}{21}{chapter.8}%
+\contentsline {chapter}{\numberline {第九章\hspace {.3em}}杂项}{23}{chapter.9}%
