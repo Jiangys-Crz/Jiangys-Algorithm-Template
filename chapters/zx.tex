@@ -43,9 +43,8 @@
 
 \paragraph{最大子段和}
 
-输入是一个非空数组。暴力解枚举每段区间，复杂度为 $O(n^2)$。
-待测解扫描前缀和，减去此前的最小前缀，复杂度为 $O(n)$。
-同一份文件编译两次，定义 \texttt{BRUTE} 时选择暴力解。
+输入为非空数组。暴力解枚举区间，耗时 $O(n^2)$。待测解维护最小前缀和，耗时 $O(n)$。
+编译时定义 \texttt{BRUTE} 以选用暴力解。
 
 \cppfile{code/zx/max_subarray.cpp}
 
@@ -53,7 +52,7 @@
 
 \subsection{Linux 循环对拍脚本}
 
-以下命令从源码根目录编译最大子段和的对拍程序。
+在源码根目录编译并运行对拍程序。
 
 \begin{lstlisting}[language=bash,numbers=none]
 g++ -std=c++17 -O2 code/zx/gen.cpp -o gen
@@ -87,7 +86,7 @@ bash code/zx/stress.sh ./gen ./brute ./sol 1000
 \cppfile{code/zx/random_cases.hpp}
 
 \paragraph{复杂度}
-生成长度为 $n$ 的数组、排列或 $n$ 个节点的树，期望时间和额外空间均为 $O(n)$。
+生成 $n$ 项数组、排列或 $n$ 节点树的期望时间为 $O(n)$，空间为 $O(n)$。
 
 数组和排列允许为空，整数区间要求 $l\le r$，树至少有一个点。
 此方法生成不同带标号树的概率可能不同，可另测链和星形树。

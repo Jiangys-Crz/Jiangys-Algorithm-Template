@@ -33,7 +33,7 @@ void exampleVector() {
 \paragraph{复杂度}
 下标访问为 $O(1)$，尾部插入均摊 $O(1)$，中间插入或删除最坏为 $O(n)$。
 
-预留容量后仍不能访问未构造的元素。扩容会使原有指针、引用和迭代器失效。
+扩容会使原有指针、引用和迭代器失效。
 
 \subsection{\texttt{array}}
 
@@ -167,7 +167,7 @@ void exampleDeque() {
 \paragraph{复杂度}
 随机访问和端点插入、删除均为 $O(1)$，中间插入或删除最坏为 $O(n)$。
 
-端点插入也会影响迭代器。对容器进行结构修改后，应重新取得所需迭代器。
+两端插入会使迭代器失效，原有元素的引用保持有效。
 
 \subsection{\texttt{priority\_queue}}
 
@@ -177,8 +177,6 @@ void exampleDeque() {
     \item \texttt{top} 读堆顶，\texttt{push}/\texttt{emplace} 入堆，\texttt{pop} 删除堆顶。
     \item 可传 \texttt{std::greater<>} 建小根堆，需包含 \texttt{<functional>}。用二元组时会逐字段比较。
 \end{itemize}
-
-按距离、再按点编号取最小状态。
 
 \begin{cppcode}
 #include <functional>
@@ -285,7 +283,7 @@ void exampleOrderedMap() {
 \paragraph{复杂度}
 增删查平均 $O(1)$，不利碰撞时单次可达 $O(n)$，重哈希也需要重新组织已有元素。
 
-容器遍历没有键顺序保证。重哈希后旧迭代器会失效，混合哈希也不能提供最坏复杂度保证。
+遍历次序未指定。重哈希使迭代器失效，但元素引用仍有效。
 
 \subsection{\texttt{unordered\_set}}
 
@@ -380,14 +378,12 @@ void examplePairAndTuple() {
 
 \subsection{\texttt{sort}}
 
-对区间原地排序。默认从小到大，传入比较器可以改变顺序或实现多字段排序。
+对区间排序，默认升序。
 
 \begin{itemize}
     \item 需要降序时，可使用 \texttt{std::greater<>}。
-    \item 比较器返回第一个参数是否排在第二个参数前。相等元素的相对顺序没有保证。
+    \item 比较器返回第一个参数是否排在第二个参数前。等价元素的相对顺序未指定。
 \end{itemize}
-
-以下示例依次按升序和降序排列同一数组。
 
 \begin{cppcode}
 #include <algorithm>
@@ -643,14 +639,7 @@ void exampleMinAndMaxElement() {
 
 \subsection{\texttt{reverse}}
 
-将区间中的元素顺序翻转。头文件为 \texttt{<algorithm>}，可用于字符串、数组和动态数组。
-
-\begin{itemize}
-    \item 区间第一项与最后一项交换，然后从两端向中间收缩。
-    \item 子区间翻转只修改给定范围，空区间与单元素区间保持原状。
-\end{itemize}
-
-翻转下标 1 到 3，末尾迭代器指向下标 4。
+从两端向中间交换，翻转给定区间内的元素。
 
 \begin{cppcode}
 #include <algorithm>
@@ -792,14 +781,12 @@ void exampleFind() {
 
 \subsection{\texttt{fill}}
 
-\texttt{fill} 将一个区间的每个已有元素赋成指定值。头文件为 \texttt{<algorithm>}。
+\texttt{fill} 将区间内的现有元素赋为同一值。头文件为 \texttt{<algorithm>}。
 
 \begin{itemize}
     \item 可给 64 位整数赋任意合法值，不依赖该值的字节表示。
     \item 二维容器可按行填充。若是固定长度的 array，也可以用其成员函数。
 \end{itemize}
-
-仅初始化从下标一开始的有效位置。
 
 \begin{cppcode}
 #include <algorithm>
@@ -816,8 +803,6 @@ void exampleFill() {
 
 \paragraph{复杂度}
 对区间的 $n$ 个元素赋值 $n$ 次。
-
-它只修改现有元素，不改变容器长度。
 
 \subsection{\texttt{swap}}
 
