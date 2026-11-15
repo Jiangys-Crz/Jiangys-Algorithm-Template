@@ -300,7 +300,8 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
 
 \subsection{中国剩余定理（CRT）}
 
-对一组同余式 $x\equiv r_i\pmod{m_i}$，若模数两两互质，则在模 $M=\prod_i m_i$ 的意义下存在唯一解。
+若同余式 $x\equiv r_i\pmod{m_i}$ 的各模数两两互质，则解在模 $M=\prod_i m_i$ 下唯一。
+模数为 $1$ 的约束可略去。
 
 \begin{itemize}
     \item 令 $M_i=M/m_i$，再求 $t_i=M_i^{-1}\bmod m_i$。于是 $M_it_i$ 在第 $i$ 条式子中等于一，在其他式子中等于零。
@@ -315,9 +316,8 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
 \cppfile{code/math/crt.hpp}
 
 \paragraph{复杂度}
-设有 $k$ 条同余式。需要 $k$ 次扩展欧几里得和若干模乘，按安全模乘估计为 $O(k\log(M+1))$。额外空间为 $O(1)$。
-
-两两互质是这个构造的条件。合并模数必须可用有符号 64 位整数表示。
+设有 $k$ 条同余式。时间为 $O(k\log(M+1))$，递归栈占 $O(\log(M+1))$ 空间。
+实现要求合并模数可用 \texttt{ll} 表示。
 
 \subsection{扩展中国剩余定理}
 
@@ -332,18 +332,13 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
 调用前一节的 \texttt{exCRT}。返回状态区分与当前同余式矛盾和合并模数超出范围。
 
 \paragraph{复杂度}
-每次合并使用一次扩展欧几里得和一次模乘，耗时为 $O(\log(\max(m,n)+1))$。
-
-先检查差值能否被 GCD 整除，再消去公因子。直接相乘可能在最终模数合法时产生中间溢出。
+设 $U=\max(m,n)$，一次合并耗时 $O(\log(U+1))$，递归栈占 $O(\log(U+1))$ 空间。
 
 \subsection{Lucas 定理}
 
-当模数为质数 $p$ 而 $n,k$ 很大时，将二者写成 $p$ 进制。组合数 $\binom nk$ 模 $p$ 等于对应各位小组合数的乘积。
-
-\begin{itemize}
-    \item 令 $n_i,k_i$ 为同一位上的数字，答案是 $\prod_i\binom{n_i}{k_i}\bmod p$。
-    \item 任一位 $k_i>n_i$，该因子为零。其余各位的组合数可用预处理表查询。
-\end{itemize}
+设 $p$ 为质数，$n_i$ 与 $k_i$ 为 $n,k$ 在 $p$ 进制下第 $i$ 位的数字。
+Lucas 定理给出 $\binom nk\equiv\prod_i\binom{n_i}{k_i}\pmod p$。
+若某位 $k_i>n_i$，相应因子为零。
 
 用 \texttt{Comb<MInt<p>>} 预处理到 $p-1$，再调用 \texttt{lucas(n,k,comb)}。
 适合模数较小而参数较大的情况。
@@ -352,8 +347,6 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
 
 \paragraph{复杂度}
 阶乘预处理耗时 $O(p+\log p)$、空间为 $O(p)$，单次查询处理 $O(\log_p(n+1)+1)$ 位。
-
-普通 Lucas 定理要求质数模。模数很大时，也要先评估阶乘表的空间开销。
 
 \section{组合数学}
 
@@ -466,8 +459,6 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
 
 \paragraph{复杂度}
 错排递推耗时 $O(n+1)$，额外空间为 $O(1)$。
-
-空排列符合所有位置限制，因此错排数的零号项是一个方案。
 
 \subsection{卡特兰数}
 
@@ -645,15 +636,13 @@ $\lfloor n/i\rfloor$ 只取少量不同的值，可以按连续的等商区间�
     \item 求第 $k$ 项时，从第 $d-1$ 项开始跳 $k-d+1$ 步。若该项已给出，直接返回。
 \end{itemize}
 
-初值数组按 $f_0,f_1,\ldots$ 给出，两数组等长且非空。
+初值数组按 $f_0,\ldots,f_{d-1}$ 排列，系数数组按 $c_0,\ldots,c_{d-1}$ 排列，且 $d\ge 1$。
 可用 \texttt{MInt} 实现取模递推。
 
 \cppfile{code/math/线性递推.hpp}
 
 \paragraph{复杂度}
-递推阶数为 $d$ 时，耗时 $O(d^3\log(k+1))$，空间为 $O(d^2)$。
-
-递推系数的次序应与状态向量一致。数列从零编号，已给定的初值直接返回。
+若 $k<d$，时间和额外空间均为 $O(1)$。否则时间为 $O(d^3\log(k-d+2))$，额外空间为 $O(d^2)$。
 
 \subsection{FFT、NTT}
 

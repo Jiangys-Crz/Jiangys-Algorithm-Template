@@ -48,10 +48,7 @@ $\mathrm{check}(mid)$ 返回 \texttt{true} 表示 $mid$ 可行。
 \cppfile{code/basic/二分答案2.cpp}
 
 \paragraph{复杂度}
-设答案范围大小为 $V$，单次判定复杂度为 $O(T)$。
-
-时间复杂度为 $O(T\log V)$，
-空间复杂度取决于判定函数。
+设区间含 $V$ 个候选值，单次判定耗时 $O(T)$。总时间为 $O(1+T\log V)$，判定函数之外仅用常数空间。
 
 输入为满足 $l\le r$ 的闭区间 $[l,r]$。求最小可行值时，初始右端点必须可行。
 求最大可行值时，初始左端点必须可行。区间宽度以 \texttt{ull} 表示，取半宽后再转为
@@ -59,11 +56,8 @@ $\mathrm{check}(mid)$ 返回 \texttt{true} 表示 $mid$ 可行。
 
 \subsubsection{浮点二分}
 
-浮点二分（Floating-Point Binary Search）是在实数区间上
-利用单调性寻找边界的算法，通常通过精度阈值
-$\varepsilon$ 控制搜索过程。
-
-每步将区间缩小一半。区间宽度达到给定容差，或者因舍入使中点与端点重合时，迭代终止。
+浮点二分（Floating-Point Binary Search）利用判定的单调性将区间反复缩半。
+区间宽度不超过容差 $\varepsilon$，或中点因舍入与端点重合时终止。
 
 \paragraph{寻找最小可行实数答案}
 
@@ -655,17 +649,11 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
 \paragraph{复杂度}
 时间复杂度为 $O((n+1)(V+1))$，额外空间复杂度为 $O(V+1)$。
 
-\begin{itemize}
-    \item 容量从大到小枚举。正序会读到当前轮刚更新的状态，同一件物品可能被重复选取。
-    \item 若要求恰好装满，只有 $dp_0$ 初始为 $0$，其余容量均初始化为不可达，
-    只从可达状态转移。
-\end{itemize}
+若要求恰好装满，初始化 $dp_0=0$，其余状态均标为不可达，仅从可达状态转移。
 
 \subsection{完全背包}
 
 \subsubsection{每种物品可以选任意次}
-
-在完全背包中，每种物品可以重复选取。容量上限限制了每种正重量物品的可选数量。
 
 \begin{itemize}
     \item $dp_{i,c}$ 表示只使用前 $i$ 种物品且重量不超过 $c$ 的最大价值，
@@ -685,10 +673,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
 有 $n$ 种物品时，时间复杂度为 $O((n+1)(V+1))$，
 额外空间复杂度为 $O(V+1)$。
 
-\begin{itemize}
-    \item 容量从小到大枚举才允许同种物品多次转移。
-    \item 若题目允许零重量且存在正价值物品，最优值无上界。
-\end{itemize}
+若可重复选取零重量且价值为正的物品，则最优值无上界。
 
 \subsection{多重背包}
 
@@ -715,10 +700,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
 时间复杂度为 $O\bigl(n+(V+1)(K+1)\bigr)$，
 额外空间复杂度为 $O(V+1)$。
 
-\begin{itemize}
-    \item 最后一组包含剩余数量，拆出的各组数量之和必须等于 $c_i$。
-    \item 每个拆分组是一个 01 背包物品，容量仍需倒序更新。
-\end{itemize}
+拆分后的每组作为一个 01 背包物品，容量倒序更新。
 
 \subsection{分组背包}
 
@@ -743,10 +725,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
 时间复杂度为 $O\bigl(G+(V+1)(M+1)\bigr)$，
 额外空间复杂度为 $O(V+1)$。
 
-\begin{itemize}
-    \item 同一组的所有物品都从上一层转移，否则可能同时选到组内的多件物品。
-    \item 若每组恰选一件，下一层应初始化为不可达，只保留选择某件物品的转移。
-\end{itemize}
+若每组恰选一件，下一层初始化为不可达，仅保留选取当前组一件物品的转移。
 
 \subsection{区间DP}
 

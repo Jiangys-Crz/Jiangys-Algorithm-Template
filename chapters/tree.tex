@@ -9,13 +9,12 @@
 
 \subsection{树的 DFS、BFS}
 
-深度优先搜索（DFS）沿一条分支深入，回退后再访问其他分支。
-广度优先搜索（BFS）按到起点的距离分层访问。在无向树中，
-每个节点到起点只有一条简单路径，遍历时跳过父节点即可。
+深度优先搜索（DFS）沿分支深入，广度优先搜索（BFS）按距起点的边数分层访问。
+树上两点间只有一条简单路径，遍历时跳过父节点即可。
 
 \begin{itemize}
     \item DFS 用栈保存待访问点，按邻接表的逆序入栈可保持原来的访问顺序。
-    \item BFS 用队列依次访问节点，编号进入队列的顺序也是距离非递减的顺序。
+    \item BFS 的入队顺序按到起点的距离非递减。
 \end{itemize}
 
 \paragraph{迭代 DFS 与有根树预处理}
@@ -34,8 +33,6 @@
 
 \paragraph{复杂度}
 DFS 和 BFS 均耗时 $O(n)$，额外空间均为 $O(n)$。
-
-跳过父节点依赖输入是一棵树。用于有环图时，应另设访问标记。
 
 \subsection{树的前序、中序、后序遍历}
 
@@ -62,13 +59,12 @@ DFS 和 BFS 均耗时 $O(n)$，额外空间均为 $O(n)$。
 
 \subsection{子树大小、节点深度}
 
-设 $\operatorname{fa}(u)$ 是父节点。深度是从根到 $u$ 的边数，
-子树大小是 $u$ 和其所有后代的节点总数。
+深度为根到 $u$ 的边数，子树大小为 $u$ 及其后代的节点数。
 
 \begin{itemize}
     \item 从根向下，令 $\mathrm{dep}[v]=\mathrm{dep}[u]+1$，其中 $v$ 是 $u$ 的孩子。
     \item 从下往上，令 $\mathrm{siz}[u]=1+\sum_{v\text{ 是 }u\text{ 的孩子}}\mathrm{siz}[v]$。
-    \item \texttt{Tree::work} 入栈时确定深度，再沿 DFS 序从后往前把大小累加给父节点。
+    \item \texttt{Tree::work} 入栈时确定深度，随后按逆 DFS 序累加子树大小。
 \end{itemize}
 
 调用 \texttt{tr.work(root)} 后读取 \texttt{tr.siz[u]} 和 \texttt{tr.dep[u]}。
@@ -76,7 +72,7 @@ DFS 和 BFS 均耗时 $O(n)$，额外空间均为 $O(n)$。
 \paragraph{复杂度}
 预处理耗时 $O(n)$，单次读取为 $O(1)$，两个数组共占 $O(n)$ 空间。
 
-更换根会改变父子关系。复用同一棵树时，需要为新根重新执行预处理。
+根改变后须重新预处理。
 
 \subsection{DFS 序、欧拉序}
 

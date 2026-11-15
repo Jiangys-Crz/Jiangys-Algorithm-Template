@@ -37,14 +37,12 @@ void exampleVector() {
 
 \subsection{\texttt{array}}
 
-\texttt{array<T,N>} 保存编译期确定数量的连续元素。适合四向移动、固定维数状态等场景。头文件为 \texttt{<array>}。
+\texttt{array<T,N>} 保存 $N$ 个连续元素，长度在编译期固定。头文件为 \texttt{<array>}。
 
 \begin{itemize}
     \item 支持下标、\texttt{at()}、迭代器和 \texttt{fill()}，也可交给通用算法。
-    \item 使用 \texttt{\{\}} 值初始化能将整数成员置零。长度由类型决定，不能动态增减。
+    \item 使用 \texttt{\{\}} 初始化时，整数元素置零。
 \end{itemize}
-
-固定长度的方向表与已初始化的状态数组。
 
 \begin{cppcode}
 #include <array>
@@ -93,8 +91,6 @@ void exampleArray() {
     \item \texttt{push}/\texttt{emplace} 加入栈顶，\texttt{top} 读栈顶，\texttt{pop} 删除。
     \item 括号匹配和单调栈的完整实例见第四章。
 \end{itemize}
-
-取值后再弹出。
 
 \begin{cppcode}
 #include <stack>
@@ -274,7 +270,7 @@ void exampleOrderedMap() {
 \texttt{unordered\_map} 适合频次统计和状态缓存，头文件为 \texttt{<unordered\_map>}。
 
 \begin{itemize}
-    \item \texttt{find} 查找且不插入，\texttt{operator[]} 在键缺失时添加默认值。
+    \item \texttt{find} 仅查找。\texttt{operator[]} 在键缺失时插入该键，并对映射值进行值初始化。
     \item 预计键数量时可调用 \texttt{reserve(n)}，减少反复重哈希。
     \item 整数键可先混合位分布，再交给哈希表。模板对同一进程维持固定偏移。
 \end{itemize}
@@ -635,8 +631,6 @@ void exampleAccumulate() {
     \item 空区间返回尾后迭代器。下标需要由随机访问迭代器做差取得。
 \end{itemize}
 
-同时取得最小值的位置与最大值。
-
 \begin{cppcode}
 #include <algorithm>
 #include <vector>
@@ -656,8 +650,6 @@ void exampleMinAndMaxElement() {
 
 \paragraph{复杂度}
 一次查询在非空区间执行 $n-1$ 次比较。
-
-区间非空时，返回值指向相应的极值。保存该迭代器后，涉及容器结构的修改可能使其失效。
 
 \subsection{\texttt{reverse}}
 
@@ -683,8 +675,6 @@ void exampleReverse() {
 
 \paragraph{复杂度}
 要求双向迭代器，执行 $\lfloor n/2\rfloor$ 次交换。
-
-标准算法操作的是迭代器半开区间。若题目给的是闭区间，右端要转换成尾后位置。
 
 \subsection{\texttt{rotate}}
 
@@ -930,11 +920,10 @@ void exampleLambda() {
 结构化绑定从 C++17 起可用，用一组名称拆开 pair、tuple、数组，以及符合规则的聚合成员。
 
 \begin{itemize}
-    \item \texttt{auto [x,y]} 复制对象后再绑定，\texttt{auto\& [x,y]} 引用原对象，\texttt{const auto\&} 适合只读遍历。
+    \item 对左值，\texttt{auto [x,y]} 先复制对象，\texttt{auto\& [x,y]} 绑定原对象。
+    只读绑定可用 \texttt{const auto\& [x,y]}。
     \item map 条目的第一个字段是常量键，第二个字段可在可变引用绑定下修改。
 \end{itemize}
-
-修改有序映射的值，再拆开一个状态三元组。
 
 \begin{cppcode}
 #include <map>
@@ -954,7 +943,7 @@ void exampleStructuredBinding() {
 \paragraph{复杂度}
 引用绑定不复制整个对象。按值绑定的额外代价取决于对象复制。
 
-变量数量必须与解包成员数相同。需要修改原容器元素时，应使用引用绑定。
+绑定名的数量须与可分解成员数相同。
 
 \subsection{\texttt{mt19937}}
 

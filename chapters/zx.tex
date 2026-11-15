@@ -67,9 +67,10 @@ bash code/zx/stress.sh ./gen ./brute ./sol 1000
 \end{lstlisting}
 
 脚本使用 Bash、GNU \texttt{timeout} 和 GNU \texttt{diff}。
-默认 1000 轮，填 $0$ 持续运行，按 \texttt{Ctrl+C} 停止。
-\texttt{TIME\_LIMIT} 可覆盖每个程序的两秒限时。
-失败时打印种子，保留输入、两份输出和错误日志。
+默认对拍 $1000$ 轮，轮数为 $0$ 时持续运行。
+
+\texttt{TIME\_LIMIT} 可覆盖每个程序默认的两秒时限。
+失败时打印种子，并保留输入、输出及错误日志。
 
 \cppfile[language=bash]{code/zx/stress.sh}
 
