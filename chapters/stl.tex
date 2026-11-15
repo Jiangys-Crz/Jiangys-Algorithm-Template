@@ -300,8 +300,6 @@ void exampleOrderedMap() {
     \item 在 C++17 中，可以将查找结果与结束迭代器比较来判断存在性。
 \end{itemize}
 
-用插入返回值同时完成去重和记录。
-
 \begin{cppcode}
 #include <unordered_set>
 
@@ -318,8 +316,6 @@ void exampleUnorderedSet() {
 
 \paragraph{复杂度}
 查找和插入平均 $O(1)$，单次最坏为 $O(n)$。
-
-如果还需要小于某个值的边界、前驱或有序输出，应选择相应的有序结构。
 
 \subsection{\texttt{bitset}}
 
@@ -482,14 +478,12 @@ void exampleUpperBound() {
 
 \subsection{\texttt{binary\_search}}
 
-只判断有序区间里是否包含与目标等价的元素，返回布尔值。需要下标时可直接用二分边界函数。
+返回有序区间中是否存在与目标等价的元素。
 
 \begin{itemize}
     \item 自定义比较时，等价指两个方向比较都为假。
     \item 同一比较器应同时用于排序和查询。
 \end{itemize}
-
-在降序数组中查找元素，同样传入降序比较器。
 
 \begin{cppcode}
 #include <algorithm>
@@ -508,15 +502,14 @@ void exampleBinarySearch() {
 \paragraph{复杂度}
 随机访问区间查询耗时为 $O(\log(n+1))$。
 
-若题目还需要统计次数、首末位置或插入点，用相应的二分边界更直接。
-
 \subsection{\texttt{nth\_element}}
 
-只把指定位置放到完整排序后应有的位置，并把较小和较大的元素分到两侧。两侧内部的先后次序无须排序。
+\texttt{nth\_element} 将完整排序后位于 $p$ 的元素置于位置 $p$。
+对任意 $i<p\le j$，比较器对 $(a_j,a_i)$ 返回假。两个区间内部的次序未指定。
 
 \begin{itemize}
     \item 求第 $k$ 小时，传入起点偏移 $k-1$ 的迭代器。
-    \item 若只想取前 $k$ 小的一组元素，可用偏移 $k$ 作为分割点，并取它之前的区间。$k=n$ 时直接取全部。
+    \item 取最小的 $k$ 项时，以偏移 $k$ 为分界并取其左侧。$k=n$ 时取全部元素。
 \end{itemize}
 
 \paragraph{查询第 $k$ 小并检查越界}
@@ -527,8 +520,6 @@ void exampleBinarySearch() {
 
 \paragraph{复杂度}
 通常的无执行策略重载平均为 $O(n)$ 次操作。模板额外保存一份数组。
-
-\texttt{nth\_element} 仅保证划分关系，封装通过传值在副本上执行该操作。
 
 \subsection{\texttt{unique}}
 

@@ -149,8 +149,6 @@ mid_2=r-\frac{r-l}{3}
 前缀和 $P_i$ 为序列前 $i$ 项之和。令 $P_0=0$，递推 $P_i=P_{i-1}+a_i$。
 闭区间 $[l,r]$ 的和为 $P_r-P_{l-1}$。
 
-\paragraph{查询一维区间和}
-
 输入向量从下标 $0$ 开始存储。查询采用 $1\le l\le r\le n$ 的闭区间。
 
 \cppfile{code/basic/前缀和.cpp}
@@ -164,8 +162,6 @@ mid_2=r-\frac{r-l}{3}
 
 后缀和 $S_i$ 为第 $i$ 项至末项之和。令 $S_{n+1}=0$，按下标递减的顺序计算 $S_i=a_i+S_{i+1}$。
 闭区间 $[l,r]$ 的和为 $S_l-S_{r+1}$。
-
-\paragraph{使用后缀和查询区间}
 
 输入为普通 C++ 向量，查询下标从 $1$ 开始。
 
@@ -187,8 +183,6 @@ mid_2=r-\frac{r-l}{3}
         P_{x_2,y_2}-P_{x_1-1,y_2}-P_{x_2,y_1-1}+P_{x_1-1,y_1-1}.
     \]
 \end{itemize}
-
-\paragraph{查询闭矩形的元素和}
 
 输入为各行等长的矩阵，查询的行号和列号都从 $1$ 开始，
 且两个端点位于矩阵内。
@@ -218,8 +212,6 @@ mid_2=r-\frac{r-l}{3}
     \item 从左向右恢复 $a_i=\sum_{j=1}^i D_j$。
 \end{itemize}
 
-\paragraph{批量区间加法}
-
 原序列和还原结果保存在普通向量中，更新下标从 $1$ 开始。
 
 \cppfile{code/basic/差分.cpp}
@@ -244,8 +236,6 @@ mid_2=r-\frac{r-l}{3}
     \item 用同一个更新函数把原矩阵的每个单点加到初始为零的差分表。
     \item 先求差分的行前缀和，再累加上一行已恢复的值，等价于取二维前缀和。
 \end{itemize}
-
-\paragraph{批量子矩形加法}
 
 输入和输出为各行等长的普通矩阵。
 更新的行列下标均从 $1$ 开始，只访问原矩阵内的有效矩形。
@@ -274,8 +264,6 @@ mid_2=r-\frac{r-l}{3}
     \item 用编号减 $1$ 访问值表，可以取回对应原值。
 \end{itemize}
 
-\paragraph{一维值域离散化}
-
 设值表有 $m$ 个不同值，编号范围为 $[1,m]$。
 若值 $x$ 没有收集进值表，查询返回 $0$。
 
@@ -303,8 +291,6 @@ mid_2=r-\frac{r-l}{3}
     \item 两指针相遇时已经找不到两个不同位置。
 \end{itemize}
 
-\paragraph{有序序列两数和}
-
 输入非递减排列。找到时返回一对从 $0$ 开始的下标，
 无解时返回 $(-1,-1)$。
 
@@ -328,8 +314,6 @@ mid_2=r-\frac{r-l}{3}
     \item 对每个右端点，尽量保留仍使窗口和不超过上限的最小左端点。
     \item 每个元素至多进出窗口各一次。
 \end{itemize}
-
-\paragraph{和不超过上限的最长连续子数组}
 
 输入为非负整数序列。若无可行的非空区间，返回长度 $0$。
 
@@ -356,8 +340,6 @@ mid_2=r-\frac{r-l}{3}
     即 $\mathrm{up}_{k,v}=\mathrm{up}_{k-1,\mathrm{up}_{k-1,v}}$。
     \item 将步数写成二进制，对每一位为 $1$ 的位置执行对应跳转。
 \end{itemize}
-
-\paragraph{查询前进若干步的节点}
 
 输入 \texttt{next} 为从 $0$ 开始的后继表，每个后继均在节点编号范围内。
 步数使用无符号 $64$ 位整数，步数为 $0$ 时返回起点。
@@ -386,8 +368,6 @@ mid_2=r-\frac{r-l}{3}
     \item 将同一个交换论证用于剩余区间，即可得到最优选取数量。
 \end{itemize}
 
-\paragraph{选择最多互不重叠的区间}
-
 输入为若干半开区间 $[l,r)$，且 $l<r$。
 两个相邻区间可以在同一坐标结束和开始。
 
@@ -414,8 +394,6 @@ mid_2=r-\frac{r-l}{3}
     \item 归并时，如果当前右半元素小于当前左半元素，它与左半剩余的所有元素都组成逆序对。
     \item 最终答案为左半、右半和跨越两半的逆序对数之和。
 \end{itemize}
-
-\paragraph{统计逆序对}
 
 输入为可修改的整数向量，返回逆序对数，并将原向量按非递减顺序排列。
 
@@ -445,8 +423,6 @@ mid_2=r-\frac{r-l}{3}
     \item 无向图中，若要遍历所有连通分量，对每个尚未访问的顶点发起搜索，并共用访问标记。
 \end{itemize}
 
-\paragraph{获取从给定起点出发的首次访问顺序}
-
 图使用邻接表，顶点编号从 $0$ 开始，起点与所有邻点编号均有效。
 有向图按边方向遍历。无向边应加入两端的邻接表。
 
@@ -475,8 +451,6 @@ mid_2=r-\frac{r-l}{3}
     \item 若要还原路径，可在写入距离的同时记录 $u$ 的前驱为 $v$。
 \end{itemize}
 
-\paragraph{求单源最短距离}
-
 输入邻接表，顶点编号从 $0$ 开始，起点有效。
 返回到各顶点的最短边数，不可达的顶点对应 $-1$。
 
@@ -495,8 +469,7 @@ mid_2=r-\frac{r-l}{3}
 
 \subsubsection{统计目标和的子集}
 
-折半搜索（Meet-in-the-Middle）把一次大规模枚举拆成两次规模较小的枚举，
-再高效匹配左右结果。求子集和时，一个完整子集可以唯一地拆成左右两半的子集。
+折半搜索（Meet-in-the-Middle）分别枚举两半的状态，再匹配结果。原子集在两半中的交集唯一确定其拆分。
 
 \begin{itemize}
     \item 将下标分成大小接近的两半，分别枚举各半的所有子集和。
@@ -504,10 +477,7 @@ mid_2=r-\frac{r-l}{3}
     \item 右半相同的和可能来自不同子集，匹配数由二分得到的等值区间长度给出。
 \end{itemize}
 
-\paragraph{统计和恰等于目标的子集数}
-
-支持负数与重复值。子集按下标区分，空集的和为 $0$。
-通常用于 $n$ 在 $40$ 左右的情况，具体上限由内存和时间限制决定。
+支持负数与重复值。子集按下标区分，计入空集。
 
 \cppfile{code/basic/折半搜索.cpp}
 
@@ -516,10 +486,7 @@ mid_2=r-\frac{r-l}{3}
 枚举耗时 $O(2^k)$，排序与匹配耗时 $O(k2^k)$，
 保存两组子集和需要 $O(2^k)$ 空间。
 
-\begin{itemize}
-    \item 每半的子集和都从空集 $0$ 开始，重复的和应保留。
-    \item 子集计数和中间求和需使用足够宽的整数类型，并按内存限制估算 $2^k$ 的规模。
-\end{itemize}
+中间和与最终计数须在所用整数类型的表示范围内。
 
 \section{动态规划}
 
@@ -540,8 +507,6 @@ mid_2=r-\frac{r-l}{3}
 dp_0=0,\qquad dp_1=\max(0,a_1),\qquad
 dp_i=\max(dp_{i-1},dp_{i-2}+a_i)\quad(i\ge 2).
 \]
-
-\paragraph{求不选相邻元素的最大和}
 
 允许不选任何元素，空数组返回 $0$。
 转移计算结果须能用 \texttt{ll} 表示。
@@ -569,8 +534,6 @@ dp_i=\max(dp_{i-1},dp_{i-2}+a_i)\quad(i\ge 2).
     \item 若 $A_i=B_j$，则 $dp_{i,j}=dp_{i-1,j-1}+1$。
     否则 $dp_{i,j}=\max(dp_{i-1,j},dp_{i,j-1})$。
 \end{itemize}
-
-\paragraph{求两个字符串的 LCS 长度}
 
 使用较短字符串作为列，按字节比较。每次覆盖单元格前保存旧值，
 供下一列计算左上角的状态。
@@ -601,8 +564,6 @@ dp_i=\max(dp_{i-1},dp_{i-2}+a_i)\quad(i\ge 2).
     若所有已有结尾都小于 $x$，则追加 $x$。
 \end{itemize}
 
-\paragraph{求严格最长上升子序列的长度}
-
 最终的 \texttt{tails.size()} 即为答案，空数组返回 $0$。
 
 \cppfile{code/basic/最长上升子序列.cpp}
@@ -627,8 +588,6 @@ dp_i=\max(dp_{i-1},dp_{i-2}+a_i)\quad(i\ge 2).
     \item 若 $A_i=B_j$，则 $dp_{i,j}=dp_{i-1,j-1}+1$，否则置为 $0$。
     答案为所有状态的最大值。
 \end{itemize}
-
-\paragraph{求最长公共子串的长度}
 
 使用较短字符串作为列，按字节比较。每行从右到左更新，
 使 \texttt{dp[j - 1]} 在转移时仍是上一行的值。
@@ -659,8 +618,6 @@ dp_i=\max(dp_{i-1},dp_{i-2}+a_i)\quad(i\ge 2).
 dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
 \]
 
-\paragraph{求非空最大子段和}
-
 输入至少包含一个元素，答案须能用 \texttt{ll} 表示。
 只保留当前结尾的最优值和全局答案。
 
@@ -689,8 +646,6 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     当 $c<w_i$ 时沿用 $dp_{i-1,c}$。
     \item 压缩成一维后，从大到小枚举容量，使 $dp_{c-w_i}$ 仍来自上一轮。
 \end{itemize}
-
-\paragraph{求不超过容量上限的最大价值}
 
 每件物品用 \texttt{(weight, value)} 表示，重量为正整数、价值非负。
 容量满足 $0\le V<2^{31}-1$，最大价值须能用 \texttt{ll} 表示。
@@ -721,8 +676,6 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \item 压缩成一维后，从小到大枚举容量，以便读到当前轮的 $dp_{c-w_i}$。
 \end{itemize}
 
-\paragraph{求物品不限次数时的最大价值}
-
 每种物品用 \texttt{(weight, value)} 表示，重量为正整数、价值非负。
 容量满足 $0\le V<2^{31}-1$，最大价值须能用 \texttt{ll} 表示。
 
@@ -752,8 +705,6 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     例如 $13=1+2+4+6$。
 \end{itemize}
 
-\paragraph{二进制拆分后求最大价值}
-
 每种物品给定正整数重量、非负价值和非负整数数量。
 容量满足 $0\le V<2^{31}-1$，最大价值须能用 \texttt{ll} 表示。
 
@@ -781,8 +732,6 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \item 枚举组内物品 $(w,v)$，当 $c\ge w$ 时，用上一层的
     $dp_{c-w}+v$ 更新下一层的 $c$。整组处理完成后再替换上一层。
 \end{itemize}
-
-\paragraph{每组最多选一件时求最大价值}
 
 组可以为空，物品重量为正整数、价值非负。
 容量满足 $0\le V<2^{31}-1$，最大价值须能用 \texttt{ll} 表示。
@@ -819,8 +768,6 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \]
 \end{itemize}
 
-\paragraph{求将一排石子合为一堆的最小代价}
-
 传入从 $0$ 开始编号的非负石子重量。空数组返回 $0$。
 总重量以及 $(n-1)$ 倍的总重量应在 \texttt{ll} 范围内。
 
@@ -853,8 +800,6 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \item 添加新元素后掩码增大，按掩码递增顺序枚举即可保证状态已算出。
 \end{itemize}
 
-\paragraph{求一对一任务分配的最小总代价}
-
 代价矩阵为 $n\times n$，$0\le n\le20$，
 每个代价的绝对值不超过 $10^9$，所有分配均允许。空矩阵返回 $0$。
 
@@ -886,8 +831,6 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \item 填完全部数位得到一种方案。仅记录前缀已经小于上界的状态。
 \end{itemize}
 
-\paragraph{统计相邻数位均不同的非负整数}
-
 传入 \texttt{ll} 型上界。数字 $0$ 计为一种方案，
 前导零不参与相邻数字的比较。
 
@@ -918,8 +861,6 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \item 按行从左到右更新时，\texttt{ways[col]} 保存上方的旧值，
     \texttt{ways[col - 1]} 已更新为当前行左邻格的计数。
 \end{itemize}
-
-\paragraph{求带障碍网格的单调路径数}
 
 传入矩形网格，\texttt{\#} 表示障碍，其他字符表示可通行。
 返回从左上角到右下角的路径数对 $10^9+7$ 取模的结果。
@@ -954,8 +895,6 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     仍来自上一次试验。
 \end{itemize}
 
-\paragraph{计算独立试验恰好成功 $k$ 次的概率}
-
 各次成功概率在 $[0,1]$ 内。若 $k<0$ 或 $k>n$，返回 $0$。
 
 \cppfile{code/basic/概率DP独立试验.cpp}
@@ -987,8 +926,6 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \item 用 $E_n=E_{n+1}=0$ 初始化，按位置从大到小计算。
 \end{itemize}
 
-\paragraph{从位置 $0$ 求向右到达终点的期望步数}
-
 数组每项保存移动一格、两格的非负概率，二者的和不超过 $1$。
 若以正概率进入无法前进的状态，结果为正无穷。
 
@@ -1015,8 +952,6 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     无合法操作的状态也是必败态。
     \item 取石子时，每步取走正数个石子，按剩余石子数从小到大计算。
 \end{itemize}
-
-\paragraph{判断单堆取石子游戏的先手能否获胜}
 
 传入非负的石子数 $n$ 和允许取走的正整数个数。
 
@@ -1046,8 +981,6 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \item 单个状态至多有 $m$ 种取法，因此 $g(x)\le m$。
     用当前石子数作为标记，记录本轮出现的 SG 值。
 \end{itemize}
-
-\paragraph{预处理相同取法下每种堆大小的 SG 值}
 
 传入最大堆大小 $n\ge0$ 和 $m$ 种正整数取法。
 返回大小为 $n+1$ 的数组，第 $x$ 项为堆大小 $x$ 时的 SG 值。
@@ -1079,8 +1012,6 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \item 与掩码的按位补码做按位与可清除该位。
 \end{itemize}
 
-\paragraph{读取、置位、清位和翻转}
-
 输入为 64 位无符号整数，位编号满足 $0\leq bit<64$。修改函数返回新的整数。
 
 \cppfile{code/basic/位运算基础.cpp}
@@ -1107,8 +1038,6 @@ $\operatorname{lowbit}(x)$ 保留 $x$ 从低到高遇到的第一个 $1$，
     $x\mathbin{\&}(x-1)$ 相同。
 \end{itemize}
 
-\paragraph{求最低置位的掩码，并统计置位数}
-
 \texttt{lowbit(0)} 和 \texttt{countSetBits(0)} 均返回 $0$。
 
 \cppfile{code/basic/lowbit.cpp}
@@ -1131,8 +1060,6 @@ $\operatorname{lowbit}(x)$ 保留 $x$ 从低到高遇到的第一个 $1$，
     \item 减一将 $s$ 的最低置位清零，同时把更低的位全部置为 $1$。
     \item 与 $m$ 取按位与，丢弃 $m$ 中不存在的位，即得到下一个子掩码。
 \end{itemize}
-
-\paragraph{按掩码数值递减枚举，包含空集}
 
 传入回调 \texttt{visit} 处理每个子掩码。若 $m=0$，回调只接收一次 $0$。
 
@@ -1157,8 +1084,6 @@ $\operatorname{lowbit}(x)$ 保留 $x$ 从低到高遇到的第一个 $1$，
     \item $A$ 包含 $B$ 的充要条件为 $(A\mathbin{\&}B)=B$。
     两集合不相交的充要条件为 $(A\mathbin{\&}B)=0$。
 \end{itemize}
-
-\paragraph{构造集合掩码，判断包含与不相交}
 
 元素编号为 $0$ 到 $63$，同一元素的重复出现对应同一位。
 
@@ -1192,8 +1117,6 @@ $F[m]=\sum_{s\subseteq m}a[s]$，其中 $s\subseteq m$ 表示 $s$ 为 $m$ 的子
     将置位后的状态加到 $F[m]$。
 \end{itemize}
 
-\paragraph{给每个掩码计算子掩码权值和}
-
 输入长度为 $2^n$，且 $n$ 小于 \texttt{size\_t} 的位宽。
 所有中间的加和都应在 \texttt{ll} 表示范围内。
 
@@ -1221,8 +1144,6 @@ $F[m]=\sum_{s\subseteq m}a[s]$，其中 $s\subseteq m$ 表示 $s$ 为 $m$ 的子
     则全序列的异或值就是该元素。
 \end{itemize}
 
-\paragraph{预处理静态序列，多次查询区间异或}
-
 数组下标从 $0$ 开始，查询满足 $0\leq l\leq r\leq n$。
 空区间的异或值为 $0$。
 
@@ -1247,8 +1168,6 @@ $F[m]=\sum_{s\subseteq m}a[s]$，其中 $s\subseteq m$ 表示 $s$ 为 $m$ 的子
     \item 若满足条件的元素至少有两个，可保留当前尝试置为 $1$ 的位。
     否则跳过这一位，并继续试探低位。
 \end{itemize}
-
-\paragraph{求两个不同下标的元素按位与的最大值}
 
 元素不足两个时返回 \texttt{std::nullopt}。
 相同数值可按不同下标配对。
@@ -1275,8 +1194,6 @@ $F[m]=\sum_{s\subseteq m}a[s]$，其中 $s\subseteq m$ 表示 $s$ 为 $m$ 的子
     \item 求最大值时从高位向低位尝试异或各主元，
     若结果变大则接受。后续低位主元无法改变已确定的高位。
 \end{itemize}
-
-\paragraph{插入、判定可表示性、求最大子集异或值}
 
 \texttt{insert} 在秩增加时返回 \texttt{true}。允许空子集，
 因此空基的最大异或值为 $0$，且 $0$ 总能表示。

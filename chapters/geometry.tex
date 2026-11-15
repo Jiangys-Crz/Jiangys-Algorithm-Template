@@ -11,8 +11,6 @@
 由 $a$ 指向 $b$ 的位移向量为 $b-a$。向量加减与数乘按分量执行。
 点按 $(x,y)$ 的字典序比较，两个坐标均相等时判定为同一点。
 
-\paragraph{可复用的点、向量与双端点直线类型}
-
 整数坐标可用 \texttt{Point<ll>}，实数坐标用 \texttt{RealPoint}。
 
 \cppfile{code/geometry/point.hpp}
@@ -68,14 +66,8 @@
 
 \subsection{点到直线距离}
 
-点 $p$ 到经过 $a,b$ 的直线的距离，等于由 $b-a,p-a$ 张成的平行四边形面积除以底边长度。
-
-\begin{itemize}
-    \item 公式为 $|(b-a)\times(p-a)|/|b-a|$。先把方向单位化也可得到相同结果。
-    \item 两端点重合时，无法确定一条直线。
-\end{itemize}
-
-\paragraph{点到直线距离与直线相交}
+点 $p$ 到由 $a,b$ 确定的直线的距离为 $|(b-a)\times(p-a)|/|b-a|$。
+分子为平行四边形面积，分母为底边长度。
 
 \texttt{pointLineDistance(p,l)} 可接收整数或实数坐标。退化直线返回空值。
 
@@ -95,8 +87,6 @@
     \item 叉积为零时还需判断点是否落在端点之间。若四次叉积均为零，可直接求共线点序区间的交集。
     \item 线段只有一个点时，也可以使用相同的边界判定。
 \end{itemize}
-
-\paragraph{区分无交、内部交叉、单点接触和重叠}
 
 整数版用精确叉积。单点接触和重叠返回相交区间的端点。
 内部交点可用直线相交模板求出。
@@ -135,8 +125,6 @@ $t=((b-a)\times v)/(u\times v)$。
     \item 零向量没有极角，模板约定它排在非零向量之前。
 \end{itemize}
 
-\paragraph{从正横轴开始的整数极角比较器}
-
 以点 $o$ 为极点时，比较位移向量 $a-o$ 与 $b-o$。
 
 \cppfile{code/geometry/polar_order.hpp}
@@ -150,23 +138,15 @@ $t=((b-a)\times v)/(u\times v)$。
 
 \subsection{多边形面积}
 
-按边界顺序给出顶点的简单多边形，可以把每条边对有向面积的贡献相加。逆时针顺序为正，顺时针顺序为负。
-
-\begin{itemize}
-    \item 边界可为凸多边形或凹多边形。凹处的三角形允许负贡献，累加后会抵消多算的部分。
-    \item 函数返回两倍有向面积。实际面积为 $\lvert S_2\rvert/2$。
-\end{itemize}
-
-\paragraph{两倍有向面积及点在多边形内判定}
-
-\texttt{signedArea2(p)} 接收顺序顶点，默认不额外重复首点。整数坐标可避免过早除以二。
+\texttt{signedArea2(p)} 接收按边界排列的顶点，返回两倍有向面积 $S_2$。
+简单多边形的面积为 $\lvert S_2\rvert/2$，逆时针排列时 $S_2>0$，顺时针排列时 $S_2<0$。
 
 \cppfile{code/geometry/polygon.hpp}
 
 \paragraph{复杂度}
 扫描时间为 $O(n)$，额外空间为 $O(1)$。
 
-面积累加值可能比单次叉积大。自交边界得到的是代数面积，填充面积要按题意计算。
+自交边界的计算结果为代数面积。
 
 \subsection{鞋带公式}
 
@@ -182,8 +162,6 @@ $t=((b-a)\times v)/(u\times v)$。
 
 \paragraph{复杂度}
 耗时 $O(n)$，额外空间为 $O(1)$。
-
-无序点不能直接代入公式。若题目给的是散点凸包面积，应先求凸包。
 
 \subsection{点在多边形内判定}
 
@@ -213,8 +191,6 @@ $t=((b-a)\times v)/(u\times v)$。
     \item 扫描时遇到非左转就弹栈。两种模板都去重，并删除同一直边中间的共线点。
 \end{itemize}
 
-\paragraph{Andrew 与 Graham 凸包}
-
 两者均返回逆时针顶点序列，首点不重复。非空共线点集仅保留相异的端点。
 
 \cppfile{code/geometry/convex_hull.hpp}
@@ -233,8 +209,6 @@ $t=((b-a)\times v)/(u\times v)$。
     \item 当下一点的面积更大时推进对侧指针。下一条凸包边可以从这个位置继续扫描。
     \item 当两个连续对侧点面积相同，支持线包含一条边，需要检查两端。
 \end{itemize}
-
-\paragraph{在线性扫描中求凸包最远点对}
 
 传入逆时针、去重且去掉直边中间点的凸包。可以直接使用 Andrew 或 Graham 的输出。
 
@@ -273,8 +247,6 @@ $t=((b-a)\times v)/(u\times v)$。
     \item 条带中每一半内的点间距至少为分治子结果。由平面上的间距限制，每个点只需与常数个候选比较。
 \end{itemize}
 
-\paragraph{分治求最近点对及距离平方}
-
 点数不足两个时返回空值。重复点可以形成距离为零的点对。
 
 \cppfile{code/geometry/closest_pair.hpp}
@@ -293,8 +265,6 @@ $t=((b-a)\times v)/(u\times v)$。
     \item 离散化的是区间端点，线段树的叶子对应两个相邻端点之间的实际区间。
     \item 节点覆盖次数大于零时，整个区间都被覆盖。否则叶子长度为零，内部节点用两个孩子的覆盖长度之和。
 \end{itemize}
-
-\paragraph{增删区间并维护当前总覆盖长度}
 
 输入至少两个严格递增的端点。\texttt{modify(l,r,delta)} 更新端点编号间的半开区间。
 删除时应对应此前加入且仍活跃的同一区间。
@@ -316,8 +286,6 @@ $m$ 个端点占 $O(m)$ 空间，单次区间操作为 $O(\log m)$，读取总�
     \item 零宽或零高矩形没有面积，可以跳过。
 \end{itemize}
 
-\paragraph{轴对齐矩形的面积并}
-
 允许对角点以任意顺序给出。使用 \texttt{Rectangle<ll>} 或 \texttt{Rectangle<lll>} 时，面积及中间结果须能用该类型表示。
 
 \cppfile{code/geometry/rectangle_union.hpp}
@@ -329,15 +297,8 @@ $m$ 个端点占 $O(m)$ 空间，单次区间操作为 $O(\log m)$，读取总�
 
 \subsection{圆与直线相交}
 
-把圆心投影到直线上，垂足到圆心的距离决定交点个数。若有两个交点，它们以垂足为中点，沿直线方向对称。
-
-\begin{itemize}
-    \item 设半径为 $r$，垂距为 $d$，比较 $d$ 与 $r$ 可区分无交、相切和两交点。
-    \item 有两个交点时，到垂足的偏移长度为 $\sqrt{(r-d)(r+d)}$。
-    \item 方向单位化后，沿该方向加减偏移即可得到实数交点。
-\end{itemize}
-
-\paragraph{统一的圆、圆与直线、圆与圆相交接口}
+设半径为 $r$，圆心到直线的距离为 $d$。$d>r$、$d=r$、$d<r$ 分别对应无交、相切和两个交点。
+两个交点位于垂足两侧，沿直线方向偏移 $\sqrt{(r-d)(r+d)}$。
 
 半径非负，直线用两个实数端点。
 结果为 \texttt{one} 或 \texttt{two} 时，数组依次给出有效交点。
@@ -377,8 +338,6 @@ $m$ 个端点占 $O(m)$ 空间，单次区间操作为 $O(\log m)$，读取总�
     \item 两个边界点用直径圆，三个非共线边界点用外接圆。共线时用最远的两个点。
 \end{itemize}
 
-\paragraph{随机增量求最小覆盖圆}
-
 \texttt{minEnclosingCircle} 返回圆心、半径，空输入返回空值。
 可传入随机种子重现点序。最后按输出圆心重新计算覆盖所需半径。
 
@@ -399,8 +358,6 @@ $m$ 个端点占 $O(m)$ 空间，单次区间操作为 $O(\log m)$，读取总�
     \item 排序需要严格弱序。可用精确坐标或预先算好的排序键，容差留到分类和查询阶段。
     \item 开根前若理论值应非负，可对舍入产生的微小负值作截断。应先独立排除确实无交等情况。
 \end{itemize}
-
-\paragraph{整数符号和可调容差的实数比较}
 
 \texttt{sgn} 精确取符号，\texttt{sign} 按给定阈值判断是否近零，
 \texttt{dcmp} 同时接收绝对容差与相对容差。

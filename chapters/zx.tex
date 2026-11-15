@@ -4,7 +4,7 @@
 
 \subsection{结构体内重载比较、加法与输出}
 
-以比赛记录为例，分数更高者优先，同分时罚时更短者优先。
+记录按分数降序、罚时升序确定优先级。
 
 \begin{itemize}
     \item 二元成员运算符的左操作数为 \texttt{*this}。以 \texttt{const} 限定成员函数后可比较常量对象。
@@ -14,9 +14,8 @@
 
 \cppfile{code/zx/operator_overload.hpp}
 
-\texttt{std::sort} 默认按 \texttt{<} 从排名较低到较高排序。
-\texttt{std::priority\_queue<Score>} 的堆顶是排名最高的记录。
-使用 \texttt{std::greater<Score>} 可反转上述排序或堆的比较方向。
+\texttt{std::sort} 默认按优先级递增排序。\texttt{std::priority\_queue<Score>} 的堆顶保存优先级最高的记录。
+\texttt{std::greater<Score>} 可反转比较方向。
 
 \paragraph{复杂度}
 每次比较或加法为 $O(1)$。
@@ -46,7 +45,7 @@
     \item 两个解读取同一份输入，采用相同的输出格式。
 \end{itemize}
 
-\paragraph{示例}
+\paragraph{最大子段和}
 
 输入是一个非空数组。暴力解枚举每段区间，复杂度为 $O(n^2)$。
 待测解扫描前缀和，减去此前的最小前缀，复杂度为 $O(n)$。
@@ -58,7 +57,7 @@
 
 \subsection{Linux 循环对拍脚本}
 
-以下命令在模板册源码的根目录执行。用于其他问题时，三个可执行文件分别由该问题的生成器、暴力解和待测解构建。
+以下命令从源码根目录编译最大子段和的对拍程序。
 
 \begin{lstlisting}[language=bash,numbers=none]
 g++ -std=c++17 -O2 code/zx/gen.cpp -o gen
@@ -81,8 +80,7 @@ bash code/zx/stress.sh ./gen ./brute ./sol 1000
 
 \subsection{整数、排列和树}
 
-实现包含 \texttt{RandomEngine}。在同一实现环境下，固定种子可重现生成的数据。
-\texttt{rng.next(l,r)} 在闭区间 $[l,r]$ 中均匀取整数。
+\texttt{rng.next(l,r)} 在 $[l,r]$ 中均匀取整数。同一实现环境下，固定种子可重现数据。
 
 \begin{itemize}
     \item 数组逐项取样，允许重复。排列先填 $1$ 到 $n$，再打乱顺序。

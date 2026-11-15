@@ -91,8 +91,6 @@
     \item 整数和模整数的单位元是一。矩阵可显式传入单位矩阵。
 \end{itemize}
 
-\paragraph{复用整数、模整数和矩阵的二进制幂}
-
 \texttt{power(a,b)} 的指数为非负整数。
 第三个参数可指定单位元，或指定从左侧累乘的初始结果。
 
@@ -153,8 +151,6 @@
     \item 筛完后从二开始收集未被标记的整数。
 \end{itemize}
 
-\paragraph{枚举不超过上界的全部质数}
-
 输入 $n\ge0$，输出升序质数列表。
 
 \cppfile{code/math/eratosthenes.cpp}
@@ -173,8 +169,6 @@
     \item 若 $p=\mathrm{lp}[i]$，则 $p$ 已整除 $i$。处理这次转移后结束内层循环。
     \item 在整除和互质两种分支分别转移 $\varphi$ 和 $\mu$。
 \end{itemize}
-
-\paragraph{一次筛出质数、最小质因子、欧拉函数和莫比乌斯函数}
 
 \texttt{LinearSieve(n)} 预处理到 $n$。筛内分解可调用 \texttt{factor(x)}。
 
@@ -195,8 +189,6 @@
     \item 大量查询的数都在筛表范围内时，优先沿最小质因子分解。
 \end{itemize}
 
-\paragraph{试除分解与单点欧拉函数}
-
 \texttt{factorize(n)} 接收正整数，返回升序的质因子及其指数。一的分解为空。
 
 \cppfile{code/math/factorization.hpp}
@@ -214,8 +206,6 @@
     \item 分别保存较小因子和与之配对的较大因子。
     \item 平方根恰为整数时只存一次。最后逆序接上较大因子列表，得到升序结果。
 \end{itemize}
-
-\paragraph{升序列出正整数的全部正约数}
 
 输入 $n\ge1$，对 $1$ 返回仅含 $1$ 的列表。
 
@@ -253,8 +243,6 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
     \item C++ 的负数取余可能为负。要得到 $[0,m)$ 内的代表元，用 \texttt{safeMod(x,m)}。
     \item 模除法需要乘法逆元。只有除数与模数互质时才能使用。
 \end{itemize}
-
-\paragraph{固定模数的 C++17 模整数}
 
 例如声明 \texttt{using Z = MInt<998244353>;}。
 加减乘支持任意大于一的 32 位模数，\texttt{inv()} 和除法要求模数为质数且除数非零。
@@ -357,8 +345,6 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
     \item 任一位 $k_i>n_i$，该因子为零。其余各位的组合数可用预处理表查询。
 \end{itemize}
 
-\paragraph{质数模下的大组合数}
-
 用 \texttt{Comb<MInt<p>>} 预处理到 $p-1$，再调用 \texttt{lucas(n,k,comb)}。
 适合模数较小而参数较大的情况。
 
@@ -398,8 +384,6 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
     \item 预处理上界已知时一次建表。后续发现需要更大范围，可以显式扩展。
 \end{itemize}
 
-\paragraph{复用阶乘表的排列、组合查询}
-
 构造 \texttt{Comb<Z> comb(N)}，其中 $N$ 小于 $Z$ 对应的质数模。
 调用 \texttt{init(M)} 可扩展到更大的合法上界。
 
@@ -417,8 +401,6 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
     \item 统计 $1$ 到 $n$ 中能被某个 $d_i$ 整除的数时，交集对应所选除数的最小公倍数。超过 $n$ 的交集可以剪枝。
     \item 模板从某条件的倍数中减去还满足后续条件的部分。这样按最后一个满足的条件分组，累加过程保持非负。
 \end{itemize}
-
-\paragraph{统计至少满足一个整除条件的数}
 
 所有除数为正，可以重复。传入 $n=0$ 时返回 $0$。
 
@@ -438,8 +420,6 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
     \item 两个同余前缀相减，得到一个非空连续子数组，其和是数组长度的倍数。
 \end{itemize}
 
-\paragraph{找和为数组长度倍数的连续子数组}
-
 支持负数，返回 $0$ 起始的半开区间。空输入返回空区间。
 
 \cppfile{code/math/鸽巢原理.cpp}
@@ -458,8 +438,6 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
     \item 增加上界 $x_i\le c$ 时，用容斥排除超界变量。若指定 $j$ 个变量超界，就预先让它们各取 $c+1$。
     \item 再乘选择这些变量的 $\binom kj$，按 $j$ 的奇偶加减。
 \end{itemize}
-
-\paragraph{统计所有变量都有相同上界的解数}
 
 总和、变量个数和上界均非负。$k=0$ 时只有总和为零有一种方案。
 组合数表应覆盖 $k$ 和所有实际查询的上标。
@@ -518,8 +496,6 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
     \item 障碍状态按首次命中的障碍计数。每条被减掉的非法路径只归入一个障碍。
 \end{itemize}
 
-\paragraph{稀疏障碍下的单调格路计数}
-
 障碍坐标可重复，必须位于网格内。预处理组合数上界至少为 $n+m-2$。
 
 \cppfile{code/math/组合计数.hpp}
@@ -541,8 +517,6 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
     \item 元素类型可用整数、浮点数或本章的 \texttt{MInt}。
 \end{itemize}
 
-\paragraph{矩形矩阵、单位矩阵和方阵快速幂}
-
 构造 \texttt{Matrix<T>(n,m)} 后，以 \texttt{a[i][j]} 访问元素。元素的默认构造值应为加法零元。
 
 \cppfile{code/math/matrix.hpp}
@@ -550,23 +524,14 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
 \paragraph{复杂度}
 普通乘法耗时 $O(nkm)$，结果占 $O(nm)$ 空间。
 
-矩阵乘法通常不交换。表示状态转移时，先确定列向量或行向量约定。
-
 \subsection{矩阵快速幂}
 
-同一转移矩阵连续应用多次时，可以对矩阵做二进制快速幂。矩阵乘法有结合律，单位矩阵是乘法单位元。
-
-\begin{itemize}
-    \item 初始结果为 $I$。每次根据指数最低位决定乘当前矩阵，然后平方。
-    \item 若 $v_{t+1}=Av_t$，则 $v_t=A^t v_0$。只需求一次方幂，再与初状态相乘。
-\end{itemize}
-
-调用 \texttt{matrixPower(a,k)}，要求 $a$ 为方阵，$k$ 为非负整数。模板复用本章的 \texttt{power}。
+若 $v_{t+1}=Av_t$，则 $v_t=A^t v_0$。\texttt{matrixPower(a,k)} 以二进制快速幂求方阵的非负整数次幂。
 
 \paragraph{复杂度}
 $d$ 阶方阵取幂耗时 $O(d^2+d^3\log(k+1))$，额外空间为 $O(d^2)$。
 
-零次幂返回同阶单位矩阵。若答案要求取模，应让矩阵元素本身使用模整数类型。
+零次幂返回同阶单位矩阵。模意义下的矩阵幂可用模整数作为元素类型。
 
 \subsection{高斯消元}
 
@@ -606,9 +571,9 @@ $d$ 阶方阵取幂耗时 $O(d^2+d^3\log(k+1))$，额外空间为 $O(d^2)$。
 
 \paragraph{复杂度}
 设机器字宽为 $w$，按字实现位集时，消元耗时
-$O(nM+n\min(n,M)\lceil(M+1)/w\rceil)$。
+$O((n+1)M+n\min(n,M)\lceil(M+1)/w\rceil+n)$。
 
-有自由变量时可能有多组解。若一致，方案数是 $2^{M-mathrm{rank}}$，计数前要检查数值范围。
+方程组相容且系数矩阵的秩为 $r$ 时，共有 $2^{M-r}$ 组解。
 
 \subsection{线性基}
 
@@ -641,8 +606,6 @@ $O(nM+n\min(n,M)\lceil(M+1)/w\rceil)$。
     \item 将两个取整商都不变的位置合为一段，用莫比乌斯前缀和计算整段贡献。
 \end{itemize}
 
-\paragraph{预处理后多次查询矩形范围内的互质有序对数}
-
 先线性筛再构造 \texttt{MobiusPrefix}。查询 $1\le x\le n$、$1\le y\le m$，
 筛表只需覆盖 $\min(n,m)$。
 
@@ -663,8 +626,6 @@ $\lfloor n/i\rfloor$ 只取少量不同的值，可以按连续的等商区间�
     \item 处理 $[l,r]$ 后前进到 $r+1$。多个取整商一起出现时，取它们各自右端的最小值。
 \end{itemize}
 
-\paragraph{遍历所有连续的等商闭区间}
-
 回调依次收到 $l,r,q$。例如要计算 $\sum_{i=1}^n\lfloor n/i\rfloor$，每段累加 $(r-l+1)q$。
 
 \cppfile{code/math/quotient_blocks.hpp}
@@ -683,8 +644,6 @@ $\lfloor n/i\rfloor$ 只取少量不同的值，可以按连续的等商区间�
     \item 下方各行把前一项向后移动一格。初始列向量从最新已知项向前排列。
     \item 求第 $k$ 项时，从第 $d-1$ 项开始跳 $k-d+1$ 步。若该项已给出，直接返回。
 \end{itemize}
-
-\paragraph{使用矩阵幂求线性递推的第 $k$ 项}
 
 初值数组按 $f_0,f_1,\ldots$ 给出，两数组等长且非空。
 可用 \texttt{MInt} 实现取模递推。
@@ -741,8 +700,6 @@ FFT 在系数大或长度长时可能产生取整误差。NTT 的单模结果只
     \item 查询点恰为某个已知横坐标时，可以直接取对应样值。
 \end{itemize}
 
-\paragraph{连续横坐标上的质数模插值}
-
 输入非空的 $y_0,\ldots,y_n$，模数为质数且 $n<p$。
 组合数表预处理到 $n$，查询点用同一模整数类型传入。
 
@@ -763,8 +720,6 @@ FFT 在系数大或长度长时可能产生取整误差。NTT 的单模结果只
     \item 按逆拓扑序求 SG，终止节点的值为零。组合独立游戏时，每步只在一个子游戏内走。
 \end{itemize}
 
-\paragraph{恢复 Nim 的制胜一步，并求 DAG 上各点 SG}
-
 \texttt{nimMove} 返回堆的下标和取完后的大小，必败时返回空值。
 \texttt{dagGrundy} 接收从 $0$ 编号的邻接表与合法拓扑序。
 
@@ -784,8 +739,6 @@ Nim 扫描为 $O(n)$。给定拓扑序后，时间戳 mex 求全部 SG 需 $O(n+
     \item 期望可直接相加，无需各项独立。若每次等概率抽一种物品，还缺 $k$ 种时，抽到一个新种类的概率为 $k/n$。
     \item 收集齐 $n$ 种的期望抽数为各阶段几何等待时间之和，即 $\sum_{k=1}^n n/k$。
 \end{itemize}
-
-\paragraph{独立事件并集概率与等概率集齐期望}
 
 概率参数位于 $[0,1]$。抽样有放回，且每次对 $n$ 种物品等概率选择。
 
