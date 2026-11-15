@@ -1,9 +1,10 @@
-#pragma once
-
 #include <algorithm>
 #include <numeric>
 #include <string_view>
 #include <vector>
+
+#ifndef XCPC_STRING_SUFFIX_ARRAY_HPP
+#define XCPC_STRING_SUFFIX_ARRAY_HPP
 
 struct SuffixArray {
     std::vector<int> sa, rk, height;
@@ -61,3 +62,5 @@ struct SuffixArray {
         }
     }
 };
+
+#endif

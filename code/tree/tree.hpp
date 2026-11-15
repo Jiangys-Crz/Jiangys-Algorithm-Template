@@ -1,7 +1,8 @@
-#pragma once
-
 #include <utility>
 #include <vector>
+
+#ifndef XCPC_TREE_TREE_HPP
+#define XCPC_TREE_TREE_HPP
 
 struct Tree {
     int n, root = 0;
@@ -51,3 +52,5 @@ struct Tree {
         return l <= dfn[v] && dfn[v] <= r;
     }
 };
+
+#endif

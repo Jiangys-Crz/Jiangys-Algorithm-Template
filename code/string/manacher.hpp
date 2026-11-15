@@ -1,9 +1,10 @@
-#pragma once
-
 #include <algorithm>
 #include <string_view>
 #include <utility>
 #include <vector>
+
+#ifndef XCPC_STRING_MANACHER_HPP
+#define XCPC_STRING_MANACHER_HPP
 
 struct Manacher {
     std::vector<int> odd, even;
@@ -51,3 +52,5 @@ struct Manacher {
         return {l, r};
     }
 };
+
+#endif

@@ -1,7 +1,7 @@
 #include <cstddef>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 // values has length 2^n. All intermediate sums fit in ll.
 std::vector<ll> sumOverSubsets(std::vector<ll> values, int n) {

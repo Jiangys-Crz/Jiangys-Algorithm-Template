@@ -1,6 +1,6 @@
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 std::vector<int> eratosthenes(int n) {
     std::vector<bool> st(n + 1);

@@ -4,7 +4,7 @@
 #include <tuple>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 std::vector<ll> mergeSorted(
     const std::vector<std::vector<ll>>& a) {

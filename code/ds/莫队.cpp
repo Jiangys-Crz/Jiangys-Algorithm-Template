@@ -3,7 +3,7 @@
 #include <utility>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 std::vector<int> moDistinct(
     const std::vector<ll>& a,

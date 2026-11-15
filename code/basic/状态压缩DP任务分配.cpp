@@ -3,7 +3,7 @@
 #include <limits>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 ll minAssignmentCost(const std::vector<std::vector<ll>>& cost) {
     const int n = static_cast<int>(cost.size());

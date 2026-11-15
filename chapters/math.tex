@@ -1,7 +1,7 @@
 \chapter{数学}
 
 \texttt{ll} 为有符号 64 位整数，\texttt{ull} 为无符号 64 位整数。
-整数别名统一放在 \texttt{code/types.hpp}。
+各实现包含其使用的整数类型别名。
 除非模板明确检查溢出，输入及整型中间结果须落在对应类型的表示范围内。
 模数取正，矩阵和序列默认从 $0$ 开始编号。
 
@@ -9,322 +9,238 @@
 
 \subsection{最大公约数（GCD）}
 
-最大公约数是两个整数的最大公共正约数，常用于约分、判断互质和合并周期。只要至少一个参数非零，结果就是正数。
+若 $a,b$ 至少一个非零，其最大公约数是同时整除二者的最大正整数。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 对非负数有 $\gcd(a,0)=a$。模板约定 $\gcd(0,0)=0$。
     \item $\gcd(a,b)=1$ 表示两数互质。计算多个数的 GCD 时，可以逐个并入当前答案。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板一：整数类型别名。}
+\paragraph{整数类型别名}
 
 \texttt{lll} 和 \texttt{ulll} 在支持 \texttt{\_\_int128} 的编译器上可用。
 
 \cppfile{code/types.hpp}
 
-\textbf{模板二：GCD、带溢出检查的 LCM 和扩展欧几里得。}
+\paragraph{GCD、带溢出检查的 LCM 和扩展欧几里得}
 
 普通 \texttt{gcd(a,b)} 接收非负 64 位整数。
 
 \cppfile{code/math/euclid.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 辗转相除耗时为 $O(\log(\min(a,b)+1)+1)$，额外空间为 $O(1)$。
-\end{complexity}
 
-\begin{warningbox}
 负数先转换为非负幅值。有符号最小值的绝对值可能超出原类型的表示范围。
-\end{warningbox}
-
 
 \subsection{最小公倍数（LCM）}
 
 正整数的最小公倍数为 $\operatorname{lcm}(a,b)=\frac{a}{\gcd(a,b)}b$。
 当任一输入为零时，模板约定结果为零。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 先除 GCD，再乘另一个因子，可以避免不必要的中间乘积。
     \item 乘法前用类型最大值除以另一个因子，检查最终结果能否表示。
 \end{itemize}
-\end{algorithmnote}
-
-\textbf{用法}
 
 调用 \texttt{lcmChecked(a,b)}，返回无符号结果。结果超过 \texttt{ull} 范围时返回空值。
 
-\begin{complexity}
+\paragraph{复杂度}
 耗时主要来自 GCD，乘法检查为 $O(1)$。
-\end{complexity}
 
-\begin{warningbox}
-在容斥中经常只关心 LCM 是否超过题目的上界。可以用题目上界替换类型最大值做乘法检查。
-\end{warningbox}
-
+在容斥只需判定最小公倍数是否超过给定上界时，可将乘法溢出检查中的类型上限替换为该上界。
 
 \subsection{欧几里得算法}
 
 任意公约数同时整除 $a,b$ 当且仅当它同时整除 $b,a\bmod b$。
 因此可以反复用余数替换较大的参数。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 在 $b>0$ 时将 $(a,b)$ 更新为 $(b,a\bmod b)$。
     \item 余数为零时结束。最后一个非零除数是最大公约数。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{用法}
+辗转相除的迭代实现见本节前列的 \texttt{gcd}。
 
-本节复用 \texttt{euclid.hpp} 中的 \texttt{gcd}。
-
-\begin{complexity}
+\paragraph{复杂度}
 较小参数每两步至少减半，耗时 $O(\log(\min(a,b)+1)+1)$。
-\end{complexity}
-
-\begin{warningbox}
-取余之前检查除数是否为零。交换参数不会改变答案。
-\end{warningbox}
-
 
 \subsection{扩展欧几里得算法}
 
 扩展欧几里得在求 $d=\gcd(a,b)$ 的同时，求出使 $ax+by=d$ 成立的一对 Bézout 系数。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 递归得到 $bx'+(a\bmod b)y'=d$ 后，展开余数。可取 $x=y'$、$y=x'-\lfloor a/b\rfloor y'$。
     \item 当 $b=0$ 时，以 $x=1,y=0$ 结束递归。
     \item 线性方程 $ax+by=c$ 可解的条件是 $d\mid c$，其中 $d>0$。
 \end{itemize}
-\end{algorithmnote}
-
-\textbf{用法}
 
 \texttt{exgcd(a,b,x,y)} 传入非负 \texttt{ll}，返回 GCD，并通过引用写回两系数。
 
-\begin{complexity}
+\paragraph{复杂度}
 时间和递归栈大小为 $O(\log(\min(a,b)+1)+1)$。
-\end{complexity}
 
-\begin{warningbox}
 计算逆元或特解时，系数常为负数。若还要乘以方程右端，需要重新检查数值范围。
-\end{warningbox}
-
 
 \subsection{快速幂}
 
 将指数展开成二进制，每处理一位就决定是否乘当前底数，并将底数平方。只要求乘法满足结合律并有单位元。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 指数最低位为 $1$ 时乘入当前幂，随后右移指数。
     \item 整数和模整数的单位元是一。矩阵可显式传入单位矩阵。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：复用整数、模整数和矩阵的二进制幂。}
+\paragraph{复用整数、模整数和矩阵的二进制幂}
 
 \texttt{power(a,b)} 的指数为非负整数。
 第三个参数可指定单位元，或指定从左侧累乘的初始结果。
 
 \cppfile{code/math/power.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 执行 $O(\log(b+1))$ 次乘法，额外空间取决于元素类型。
-\end{complexity}
 
-\begin{warningbox}
-零次幂直接返回初始结果。对普通整数求幂前，先检查乘积能否表示。
-\end{warningbox}
-
+指数为零时返回初始结果。普通整数运算的中间乘积须在类型表示范围内。
 
 \subsection{快速乘}
 
 当两个 64 位数的乘积无法直接表示时，可以用倍增加法计算模乘。模加通过比较与模数的距离来避免溢出。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 保持 $a,b$ 在 $[0,m)$。若 $a\ge m-b$，结果可写成 $a-(m-b)$，否则直接相加。
     \item 把乘数按二进制拆开，依次把当前被乘数翻倍，并按位将它加到答案。
     \item 模数不超过 $2^{32}$ 时，两因子规约后的乘积可直接用 64 位无符号整数表示。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：安全模加、模乘、模幂与通用逆元。}
+\paragraph{安全模加、模乘、模幂与通用逆元}
 
 \texttt{mulMod} 和 \texttt{powMod} 支持正 \texttt{ull} 模数。
 直接调用 \texttt{addMod} 时，两个加数须先规约。
 
 \cppfile{code/math/mod_arithmetic.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 安全模加为 $O(1)$。大模数的倍增模乘最多处理 $O(\log m)$ 位，额外空间为 $O(1)$。
-\end{complexity}
-
-\begin{warningbox}
-模数必须非零。模数可能接近整数上界时，直接写两个余数之和再取模会先发生溢出。
-\end{warningbox}
-
 
 \subsection{质数判断}
 
 试除法利用合数至少有一个不大于平方根的质因子。判断单个很大的整数时，可以用 Miller--Rabin 的强伪素数检验。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 试除循环使用 $p\le n/p$，避免计算 $p^2$ 时溢出。
     \item 对奇数 $n$ 将 $n-1$ 分解为 $2^s d$，其中 $d$ 为奇数。计算 $a^d\bmod n$，再沿平方链检查是否满足强伪素数条件。
     \item 模板采用 Jim Sinclair 的七个确定性底数，适用范围覆盖 64 位无符号整数。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：平方根试除和 64 位确定性 Miller--Rabin。}
+\paragraph{平方根试除和 64 位确定性 Miller--Rabin}
 
 两个函数均把 $0,1$ 判为非质数。大整数版本复用安全模乘。
 
 \cppfile{code/math/miller_rabin.cpp}
 
-\begin{complexity}
-试除法最坏耗时 $O(\sqrt n)$。Miller--Rabin 使用常数个底数，大模数下按倍增模乘估计为 $O(\log^2 n)$。
-\end{complexity}
+\paragraph{复杂度}
+试除法最坏耗时 $O(\sqrt n)$。Miller--Rabin 取常数个底数，采用倍增模乘时耗时 $O(\log^2 n)$。
 
-\begin{warningbox}
 不同底数集合的正确数值范围可能不同。固定底数要先按待测数取模，再进行检验。
-\end{warningbox}
-
 
 \subsection{埃氏筛}
 
 埃拉托斯特尼筛先从小到大找出尚未标记的质数，再用该质数标记所有还未覆盖的倍数。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 用质数 $p$ 筛时，从 $p^2$ 开始。更小的倍数含有更小的质因子，已经被处理。
     \item 筛完后从二开始收集未被标记的整数。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：枚举不超过上界的全部质数。}
+\paragraph{枚举不超过上界的全部质数}
 
 输入 $n\ge0$，输出升序质数列表。
 
 \cppfile{code/math/eratosthenes.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 时间为 $O(n\log\log n)$，空间为 $O(n)$。
-\end{complexity}
 
-\begin{warningbox}
 计算起始倍数时用更宽类型。零和一无需标记，但扫描结果时必须跳过。
-\end{warningbox}
-
 
 \subsection{线性筛}
 
 线性筛让每个合数只由其最小质因子生成一次。生成合数时还能同步计算一些积性函数。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 当 $\mathrm{lp}[i]=0$ 时，$i$ 是质数。枚举 $p$ 生成 $ip$，写入 $\mathrm{lp}[ip]=p$。
     \item 若 $p=\mathrm{lp}[i]$，则 $p$ 已整除 $i$。处理这次转移后结束内层循环。
     \item 在整除和互质两种分支分别转移 $\varphi$ 和 $\mu$。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：一次筛出质数、最小质因子、欧拉函数和莫比乌斯函数。}
+\paragraph{一次筛出质数、最小质因子、欧拉函数和莫比乌斯函数}
 
 \texttt{LinearSieve(n)} 预处理到 $n$。筛内分解可调用 \texttt{factor(x)}。
 
 \cppfile{code/math/linear_sieve.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 预处理时间与空间均为 $O(n)$。分解一个已筛过的数只需枚举它的质因子。
-\end{complexity}
 
-\begin{warningbox}
 整除分支需要立即退出。继续枚举会破坏每个合数只被生成一次的性质。
-\end{warningbox}
-
 
 \subsection{质因数分解}
 
 质因数分解把正整数写成若干质数幂的乘积。处理单个数时可边试除边缩小剩余部分。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 从小到大试除。发现一个因子后连续除尽，并记录指数。
     \item 当试除因子超过当前剩余数的平方根时，若剩余数大于一，就把它作为最后一个质因子。
     \item 大量查询的数都在筛表范围内时，优先沿最小质因子分解。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：试除分解与单点欧拉函数。}
+\paragraph{试除分解与单点欧拉函数}
 
 \texttt{factorize(n)} 接收正整数，返回升序的质因子及其指数。一的分解为空。
 
 \cppfile{code/math/factorization.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 试除最坏时间为 $O(\sqrt n)$。线性筛预处理后，分解耗时为 $O(\log n+1)$。
-\end{complexity}
 
-\begin{warningbox}
 适合试除的上界取决于时限。对很大的 64 位半素数，仅靠平方根试除可能过慢。
-\end{warningbox}
-
 
 \subsection{约数枚举}
 
 若 $d$ 是正整数 $n$ 的约数，则 $n/d$ 也是约数。利用它们成对出现的性质，可以只枚举到平方根。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 分别保存较小因子和与之配对的较大因子。
     \item 平方根恰为整数时只存一次。最后逆序接上较大因子列表，得到升序结果。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：升序列出正整数的全部正约数。}
+\paragraph{升序列出正整数的全部正约数}
 
 输入 $n\ge1$，对 $1$ 返回仅含 $1$ 的列表。
 
 \cppfile{code/math/约数枚举.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 扫描耗时 $O(\sqrt n)$，结果和暂存空间均为 $O(\tau(n))$。
-\end{complexity}
 
-\begin{warningbox}
 若已有质因数分解，可以枚举每个质因子的选用指数，避免扫描大量非约数。
-\end{warningbox}
-
 
 \subsection{欧拉函数}
 
 $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varphi(1)=1$。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 由所有不同质因子得到 $\varphi(n)=n\prod_{p\mid n}(1-1/p)$。
     \item 在线性筛中，若 $p\mid i$，则 $\varphi(ip)=p\varphi(i)$。若 $p\nmid i$，则 $\varphi(ip)=(p-1)\varphi(i)$。
 \end{itemize}
-\end{algorithmnote}
-
-\textbf{用法}
 
 单次计算调用 \texttt{eulerPhi(n)}，成批查询读取 \texttt{LinearSieve::phi}。
 
-\begin{complexity}
+\paragraph{复杂度}
 试除版最坏耗时 $O(\sqrt n)$。线性筛预处理为 $O(n)$，之后单次读取为 $O(1)$。
-\end{complexity}
 
-\begin{warningbox}
 乘积公式中每个不同的质数只处理一次，与该质数在分解中的指数无关。
-\end{warningbox}
-
 
 \section{模运算与同余}
 
@@ -332,180 +248,126 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
 
 若 $m$ 整除 $a-b$，则 $a\equiv b\pmod m$。同余可在加、减、乘中传递，也可以在计算过程中不断规约以控制数值大小。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item $a+b$、$a-b$、$ab$ 可先规约两个操作数再计算。
     \item C++ 的负数取余可能为负。要得到 $[0,m)$ 内的代表元，用 \texttt{safeMod(x,m)}。
     \item 模除法需要乘法逆元。只有除数与模数互质时才能使用。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：固定模数的 C++17 模整数。}
+\paragraph{固定模数的 C++17 模整数}
 
 例如声明 \texttt{using Z = MInt<998244353>;}。
 加减乘支持任意大于一的 32 位模数，\texttt{inv()} 和除法要求模数为质数且除数非零。
 
 \cppfile{code/math/modint.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 加、减、乘各为 $O(1)$。费马逆元及一次除法需要 $O(\log m)$ 时间。
-\end{complexity}
 
-\begin{warningbox}
 输入构造函数接收有符号整数。更大的无符号输入应先在自己的类型中按模数规约。
-\end{warningbox}
-
 
 \subsection{乘法逆元}
 
 若 $ax\equiv1\pmod m$，则 $x$ 是 $a$ 模 $m$ 的逆元。它存在的充要条件是 $\gcd(a,m)=1$。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 扩展欧几里得求出 $ax+my=1$，再将 $x$ 规约到 $[0,m)$。
     \item 质数模数可以用费马小定理快速幂求逆。一般模数可直接用扩展欧几里得。
 \end{itemize}
-\end{algorithmnote}
-
-\textbf{用法}
 
 调用 \texttt{invMod(a,m)}，其中 $m>1$。不可逆时返回空值。质数模的 \texttt{MInt} 则提供 \texttt{inv()}。
 
-\begin{complexity}
+\paragraph{复杂度}
 扩展欧几里得求逆耗时 $O(\log m)$，空间为 $O(\log m)$ 的递归栈。
-\end{complexity}
-
-\begin{warningbox}
-零或者与模数有公共因子的非零数都可能不可逆。先检查存在性再做除法。
-\end{warningbox}
-
 
 \subsection{费马小定理}
 
 若 $p$ 是质数，则 $a^p\equiv a\pmod p$。当 $a$ 与 $p$ 互质时，可以进一步得到 $a^{p-1}\equiv1\pmod p$。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 求逆元时把 $a^{p-2}$ 作为 $a^{-1}$。
     \item 底数非零模 $p$ 时，可以按 $p-1$ 规约很大的指数。
 \end{itemize}
-\end{algorithmnote}
-
-\textbf{用法}
 
 先将底数规约成非零余数，再调用 \texttt{powMod(a,p-2,p)}。也可使用 \texttt{MInt<p>::inv()}。
 
-\begin{complexity}
+\paragraph{复杂度}
 需要 $O(\log p)$ 次模乘，实际耗时取决于模乘实现。
-\end{complexity}
-
-\begin{warningbox}
-底数是质数模数的倍数时，不能使用可逆底数的指数周期。
-\end{warningbox}
-
 
 \subsection{欧拉定理}
 
 若 $\gcd(a,m)=1$，则 $a^{\varphi(m)}\equiv1\pmod m$。它将质数模下的指数周期推广到一般模数。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 先求 $\varphi(m)$，再按该值规约指数。它是一个周期，实际的最小乘法阶可能更短。
     \item 互质时也有 $a^{-1}\equiv a^{\varphi(m)-1}\pmod m$。单点求逆通常直接使用扩展欧几里得。
 \end{itemize}
-\end{algorithmnote}
-
-\textbf{用法}
 
 先用 \texttt{eulerPhi(m)} 或筛表求欧拉函数，再调用 \texttt{powMod}。这里取 $m>1$。
 
-\begin{complexity}
+\paragraph{复杂度}
 试除求 $\varphi$ 最坏为 $O(\sqrt m)$，快速幂另需 $O(\log m)$ 次模乘。
-\end{complexity}
 
-\begin{warningbox}
 底数与模数不互质时，直接按欧拉函数规约指数可能改变答案。
-\end{warningbox}
-
 
 \subsection{中国剩余定理（CRT）}
 
 对一组同余式 $x\equiv r_i\pmod{m_i}$，若模数两两互质，则在模 $M=\prod_i m_i$ 的意义下存在唯一解。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 令 $M_i=M/m_i$，再求 $t_i=M_i^{-1}\bmod m_i$。于是 $M_it_i$ 在第 $i$ 条式子中等于一，在其他式子中等于零。
     \item 将 $r_iM_it_i$ 对 $M$ 求和，得到标准余数。每个乘法都可以按模计算。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：CRT 与逐条合并的扩展 CRT。}
+\paragraph{CRT 与逐条合并的扩展 CRT}
 
 传入 \texttt{\{余数,模数\}}，余数可以为负。
 成功返回标准余数及总模数。模数过大、普通 CRT 遇到非互质模数、扩展 CRT 无解分别返回状态。
 
 \cppfile{code/math/crt.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 设有 $k$ 条同余式。需要 $k$ 次扩展欧几里得和若干模乘，按安全模乘估计为 $O(k\log(M+1))$。额外空间为 $O(1)$。
-\end{complexity}
 
-\begin{warningbox}
 两两互质是这个构造的条件。合并模数必须可用有符号 64 位整数表示。
-\end{warningbox}
-
 
 \subsection{扩展中国剩余定理}
 
 模数不互质时，可以每次合并两条同余式。记已有解为 $x\equiv a\pmod m$，下一条为 $x\equiv b\pmod n$。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 写成 $x=a+mk$，则需要解 $mk\equiv b-a\pmod n$。可解当且仅当 $\gcd(m,n)\mid(b-a)$。
     \item 扩展欧几里得得到系数 $p$，使 $mp+nq=d$。可取 $k\equiv p(b-a)/d\pmod{n/d}$。
     \item 规约 $k$ 后，新余数是 $a+mk$，新模数为 $m(n/d)$。
 \end{itemize}
-\end{algorithmnote}
-
-\textbf{用法}
 
 调用前一节的 \texttt{exCRT}。返回状态区分与当前同余式矛盾和合并模数超出范围。
 
-\begin{complexity}
+\paragraph{复杂度}
 每次合并使用一次扩展欧几里得和一次模乘，耗时为 $O(\log(\max(m,n)+1))$。
-\end{complexity}
 
-\begin{warningbox}
 先检查差值能否被 GCD 整除，再消去公因子。直接相乘可能在最终模数合法时产生中间溢出。
-\end{warningbox}
-
 
 \subsection{Lucas 定理}
 
 当模数为质数 $p$ 而 $n,k$ 很大时，将二者写成 $p$ 进制。组合数 $\binom nk$ 模 $p$ 等于对应各位小组合数的乘积。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 令 $n_i,k_i$ 为同一位上的数字，答案是 $\prod_i\binom{n_i}{k_i}\bmod p$。
     \item 任一位 $k_i>n_i$，该因子为零。其余各位的组合数可用预处理表查询。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：质数模下的大组合数。}
+\paragraph{质数模下的大组合数}
 
 用 \texttt{Comb<MInt<p>>} 预处理到 $p-1$，再调用 \texttt{lucas(n,k,comb)}。
 适合模数较小而参数较大的情况。
 
 \cppfile{code/math/lucas.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 阶乘预处理耗时 $O(p+\log p)$、空间为 $O(p)$，单次查询处理 $O(\log_p(n+1)+1)$ 位。
-\end{complexity}
 
-\begin{warningbox}
 普通 Lucas 定理要求质数模。模数很大时，也要先评估阶乘表的空间开销。
-\end{warningbox}
-
 
 \section{组合数学}
 
@@ -513,213 +375,159 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
 
 从 $n$ 个不同元素中选 $k$ 个。区分选择顺序得到排列 $A(n,k)$，只看选了哪些元素得到组合数 $\binom nk$。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item $A(n,k)=n(n-1)\cdots(n-k+1)$，也就是 $n!/(n-k)!$。
     \item 每个无序集合能排列成 $k!$ 种顺序，因此 $\binom nk=A(n,k)/k!$。
     \item 选零个元素有一种方法。$k<0$ 或 $k>n$ 时组合数通常记作零。
 \end{itemize}
-\end{algorithmnote}
-
-\textbf{用法}
 
 本章的 \texttt{Comb} 分别用 \texttt{A(n,k)} 和 \texttt{C(n,k)} 查询模质数的排列数与组合数。
 
-\begin{complexity}
+\paragraph{复杂度}
 阶乘表预处理后，两种查询均为 $O(1)$。
-\end{complexity}
 
-\begin{warningbox}
 同一个元素是否可重复选择、相同元素是否区分下标，要根据题意确定。
-\end{warningbox}
-
 
 \subsection{组合数预处理}
 
 固定质数模且所有上标都小于模数时，可以预处理阶乘和阶乘逆元。用一次快速幂求最大阶乘的逆元，再向前递推。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item $\mathrm{fac}[i]=i\,\mathrm{fac}[i-1]$，$\mathrm{invfac}[i-1]=i\,\mathrm{invfac}[i]$。
     \item 查询用 $\mathrm{fac}[n]\mathrm{invfac}[k]\mathrm{invfac}[n-k]$。
     \item 预处理上界已知时一次建表。后续发现需要更大范围，可以显式扩展。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：复用阶乘表的排列、组合查询。}
+\paragraph{复用阶乘表的排列、组合查询}
 
 构造 \texttt{Comb<Z> comb(N)}，其中 $N$ 小于 $Z$ 对应的质数模。
 调用 \texttt{init(M)} 可扩展到更大的合法上界。
 
 \cppfile{code/math/comb.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 一次建到 $N$ 耗时 $O(N+\log p)$，空间为 $O(N)$，查询为 $O(1)$。
-\end{complexity}
-
-\begin{warningbox}
-上标达到模数后，阶乘含模数这一因子。此时不能用同一套阶乘逆元公式。
-\end{warningbox}
-
 
 \subsection{容斥原理}
 
 多个条件可能同时满足，简单逐项加会重复计数。容斥按交集涉及的条件数交替加减，使每个满足至少一个条件的对象恰好出现一次。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 单个条件的大小相加，两个条件的交集相减，三个条件的交集再相加。
     \item 统计 $1$ 到 $n$ 中能被某个 $d_i$ 整除的数时，交集对应所选除数的最小公倍数。超过 $n$ 的交集可以剪枝。
     \item 模板从某条件的倍数中减去还满足后续条件的部分。这样按最后一个满足的条件分组，累加过程保持非负。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：统计至少满足一个整除条件的数。}
+\paragraph{统计至少满足一个整除条件的数}
 
 所有除数为正，可以重复。传入 $n=0$ 时返回 $0$。
 
 \cppfile{code/math/容斥.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 设有 $k$ 个条件，最坏访问 $O(2^k)$ 个子集，每次扩展计算一个 GCD。额外递归空间为 $O(k)$。
-\end{complexity}
 
-\begin{warningbox}
-交集通常应该取 LCM。若先乘再检查是否超上界，可能已经溢出。
-\end{warningbox}
-
+合并最小公倍数前以除法判定乘积是否超过上界。
 
 \subsection{鸽巢原理}
 
 把多于 $k$ 个对象放进 $k$ 类，至少一类有两个对象。将数值压成余数或其他少量状态，可以用它证明碰撞一定存在。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 长度为 $n$ 的数组有 $n+1$ 个前缀和。它们模 $n$ 只有 $n$ 种余数，因此至少两个前缀同余。
     \item 两个同余前缀相减，得到一个非空连续子数组，其和是数组长度的倍数。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：找和为数组长度倍数的连续子数组。}
+\paragraph{找和为数组长度倍数的连续子数组}
 
 支持负数，返回 $0$ 起始的半开区间。空输入返回空区间。
 
 \cppfile{code/math/鸽巢原理.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 扫描时间和记录余数的空间均为 $O(n)$。
-\end{complexity}
 
-\begin{warningbox}
 长度不为空时把空前缀也计入。只维护前缀余数，可避免累加原始整数时溢出。
-\end{warningbox}
-
 
 \subsection{插板法}
 
 求 $x_1+\cdots+x_k=n$ 的非负整数解，可以把 $n$ 个球和 $k-1$ 块板排成一列。无上界时有 $\binom{n+k-1}{k-1}$ 种。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 有统一下界时，先从每个变量中扣除该下界，再对剩余总数应用插板法。
     \item 增加上界 $x_i\le c$ 时，用容斥排除超界变量。若指定 $j$ 个变量超界，就预先让它们各取 $c+1$。
     \item 再乘选择这些变量的 $\binom kj$，按 $j$ 的奇偶加减。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：统计所有变量都有相同上界的解数。}
+\paragraph{统计所有变量都有相同上界的解数}
 
 总和、变量个数和上界均非负。$k=0$ 时只有总和为零有一种方案。
 组合数表应覆盖 $k$ 和所有实际查询的上标。
 
 \cppfile{code/math/插板法.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 预处理后枚举 $O(\min(k,\lfloor n/(c+1)\rfloor)+1)$ 项，额外空间为 $O(1)$。
-\end{complexity}
 
-\begin{warningbox}
 区分球是否无区别、盒子是否编号，以及是否允许盒子为空。改变这些条件会改变方案数。
-\end{warningbox}
-
 
 \subsection{错排问题}
 
 错排要求排列中每个数都不位于原先的位置。固定第一个元素移动到的位置，可按这两个元素是否互换分类。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 若它们正好互换，剩下 $n-2$ 个元素需错排。否则可以把这一步归约为 $n-1$ 个元素的错排。
     \item 因此 $D_n=(n-1)(D_{n-1}+D_{n-2})$，初值为 $D_0=1,D_1=0$。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：错排数和卡特兰数。}
+\paragraph{错排数和卡特兰数}
 
 \texttt{derangement<Z>(n)} 只保留最近两个状态，$n$ 为非负整数。
 
 \cppfile{code/math/经典计数.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 错排递推耗时 $O(n+1)$，额外空间为 $O(1)$。
-\end{complexity}
 
-\begin{warningbox}
 空排列符合所有位置限制，因此错排数的零号项是一个方案。
-\end{warningbox}
-
 
 \subsection{卡特兰数}
 
 卡特兰数常用于合法括号序列、栈出栈序列和有序树计数。以括号为例，任意前缀的左括号数都不能少于右括号数。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 所有含 $n$ 对括号的排列有 $\binom{2n}{n}$ 种。
     \item 反射法把首次越界的非法路径双射到 $\binom{2n}{n-1}$ 种路径，因此合法数为两者之差。
     \item 在整数上，这个差也等于 $\binom{2n}{n}/(n+1)$。
 \end{itemize}
-\end{algorithmnote}
-
-\textbf{用法}
 
 调用 \texttt{catalan(n,comb)}，组合数表应预处理到 $2n$。
 
-\begin{complexity}
+\paragraph{复杂度}
 阶乘表准备好后查询为 $O(1)$。
-\end{complexity}
 
-\begin{warningbox}
 整数除法公式移到模运算时要检查分母可逆。当前组合数模板仍要求阶乘上界小于模数。
-\end{warningbox}
-
 
 \subsection{组合计数}
 
 先把没有额外限制的方案数转成组合数，再按障碍、首次触发事件或最后一步做分类，常能避开按全部状态枚举。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 从 $(1,1)$ 到 $(x,y)$，只向右或向下，方案数是 $\binom{x+y-2}{x-1}$。
     \item 按坐标排序处理障碍与终点。某点的初始方案数减去先经过已处理障碍再到它的路径数。
     \item 障碍状态按首次命中的障碍计数。每条被减掉的非法路径只归入一个障碍。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：稀疏障碍下的单调格路计数。}
+\paragraph{稀疏障碍下的单调格路计数}
 
 障碍坐标可重复，必须位于网格内。预处理组合数上界至少为 $n+m-2$。
 
 \cppfile{code/math/组合计数.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 有 $b$ 个障碍时，预处理组合数之后耗时 $O((b+1)^2)$，额外空间为 $O(b+1)$。
-\end{complexity}
 
-\begin{warningbox}
 终点是障碍时答案为零。若格子数本身不大，也可用第一章的按格计数 DP。
-\end{warningbox}
-
 
 \section{线性代数}
 
@@ -727,135 +535,99 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
 
 若 $A$ 为 $n\times k$ 矩阵，$B$ 为 $k\times m$ 矩阵，结果 $C=AB$ 的元素为 $C_{ij}=\sum_t A_{it}B_{tj}$。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 矩阵乘法要求左矩阵的列数等于右矩阵的行数。
     \item 模板按行、共同维度、列的顺序扫描，让最内层连续访问右矩阵的一行。
     \item 元素类型可用整数、浮点数或本章的 \texttt{MInt}。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：矩形矩阵、单位矩阵和方阵快速幂。}
+\paragraph{矩形矩阵、单位矩阵和方阵快速幂}
 
 构造 \texttt{Matrix<T>(n,m)} 后，以 \texttt{a[i][j]} 访问元素。元素的默认构造值应为加法零元。
 
 \cppfile{code/math/matrix.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 普通乘法耗时 $O(nkm)$，结果占 $O(nm)$ 空间。
-\end{complexity}
 
-\begin{warningbox}
 矩阵乘法通常不交换。表示状态转移时，先确定列向量或行向量约定。
-\end{warningbox}
-
 
 \subsection{矩阵快速幂}
 
 同一转移矩阵连续应用多次时，可以对矩阵做二进制快速幂。矩阵乘法有结合律，单位矩阵是乘法单位元。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 初始结果为 $I$。每次根据指数最低位决定乘当前矩阵，然后平方。
     \item 若 $v_{t+1}=Av_t$，则 $v_t=A^t v_0$。只需求一次方幂，再与初状态相乘。
 \end{itemize}
-\end{algorithmnote}
-
-\textbf{用法}
 
 调用 \texttt{matrixPower(a,k)}，要求 $a$ 为方阵，$k$ 为非负整数。模板复用本章的 \texttt{power}。
 
-\begin{complexity}
-$d$ 阶方阵取幂耗时 $O(d^3\log(k+1))$，额外空间为 $O(d^2)$。
-\end{complexity}
+\paragraph{复杂度}
+$d$ 阶方阵取幂耗时 $O(d^2+d^3\log(k+1))$，额外空间为 $O(d^2)$。
 
-\begin{warningbox}
 零次幂返回同阶单位矩阵。若答案要求取模，应让矩阵元素本身使用模整数类型。
-\end{warningbox}
-
 
 \subsection{高斯消元}
 
 对增广矩阵做初等行变换，可以逐列确定主元并消去其他行的对应系数。主元数给出系数矩阵的秩。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 实数系统中从当前列选择绝对值最大的可用主元，以减轻小主元造成的数值误差。
     \item 主元行归一化后消去其他行。同一列没有可用主元时，该变量可视为自由变量。
     \item 系数全零而右端非零表示矛盾。否则把自由变量设为零即可得到一组解。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：实数 Gauss--Jordan 和二元域消元。}
+\paragraph{实数 Gauss--Jordan 和二元域消元}
 
 实数版 \texttt{gauss(a,m,eps)} 接收 $m$ 个未知量，每行最后一项为右端。
 返回秩、解的类型和一组解。
 
 \cppfile{code/math/gauss.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 对 $n$ 条方程与 $m$ 个未知量，最坏耗时 $O(n(m+1)\min(n,m)+n+m)$，增广矩阵占 $O(n(m+1))$ 空间。
-\end{complexity}
 
-\begin{warningbox}
 绝对误差阈值应结合输入尺度设置。实数消元的近零判断不适用于要求精确模值的方程。
-\end{warningbox}
-
 
 \subsection{异或高斯消元}
 
 在 $\mathrm{GF}(2)$ 中，系数和未知量只有零、一。加法和减法都等于异或，
 消元时直接把两行按位异或。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 找到本列为一的行作为主元，交换到当前行。
     \item 把所有同列为一的其余行异或上主元行。用位集可以一次更新多个系数。
     \item 消元结束后检查零系数行的右端。自由变量取零时，主元列变量为对应行的右端。
 \end{itemize}
-\end{algorithmnote}
-
-\textbf{用法}
 
 调用 \texttt{xorGauss<M>(a)}。位 $0$ 到 $M-1$ 存系数，第 $M$ 位存右端。
 返回的位集使用相同的变量编号。
 
-\begin{complexity}
+\paragraph{复杂度}
 设机器字宽为 $w$，按字实现位集时，消元耗时
 $O(nM+n\min(n,M)\lceil(M+1)/w\rceil)$。
-\end{complexity}
 
-\begin{warningbox}
 有自由变量时可能有多组解。若一致，方案数是 $2^{M-mathrm{rank}}$，计数前要检查数值范围。
-\end{warningbox}
-
 
 \subsection{线性基}
 
 在 $\mathrm{GF}(2)$ 上，一组无符号整数可以视为二进制向量。线性基保留一组独立向量，
 张成的全部异或值与原集合相同。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 插入时从最高置位开始消元。第一个缺少主元的位置可保存当前向量。
     \item 若向量最终消为零，则它已经可由现有基向量表示。基的秩为 $r$ 时，共有 $2^r$ 个不同异或值。
     \item 求最大异或值时从高位到低位尝试主元，结果变大就接受。
 \end{itemize}
-\end{algorithmnote}
-
-\textbf{用法}
 
 复用第一章的 \texttt{XorBasis}，分别用 \texttt{insert}、\texttt{contains} 和 \texttt{maximum}
 插入、判定可表示性和查询最大值。
 
-\begin{complexity}
+\paragraph{复杂度}
 位宽为 $B$ 时，每次操作耗时 $O(B)$，空间为 $O(B)$。
-\end{complexity}
 
-\begin{warningbox}
 空子集产生零。若题目要求非空，零可由非空子集得到当且仅当存在非平凡的线性相关关系。
-\end{warningbox}
-
 
 \section{数学进阶}
 
@@ -863,208 +635,166 @@ $O(nM+n\min(n,M)\lceil(M+1)/w\rceil)$。
 
 莫比乌斯函数满足 $\mu(1)=1$。含平方质因子的数取零，其余取 $(-1)^k$，其中 $k$ 是不同质因子个数。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item $\sum_{d\mid n}\mu(d)=[n=1]$。若 $F(n)=\sum_{d\mid n}f(d)$，则 $f(n)=\sum_{d\mid n}\mu(d)F(n/d)$。
     \item 互质有序对计数可写成 $\sum_d\mu(d)\lfloor n/d\rfloor\lfloor m/d\rfloor$。
     \item 将两个取整商都不变的位置合为一段，用莫比乌斯前缀和计算整段贡献。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：预处理后多次查询矩形范围内的互质有序对数。}
+\paragraph{预处理后多次查询矩形范围内的互质有序对数}
 
 先线性筛再构造 \texttt{MobiusPrefix}。查询 $1\le x\le n$、$1\le y\le m$，
 筛表只需覆盖 $\min(n,m)$。
 
 \cppfile{code/math/mobius.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 筛表和前缀和为线性预处理。单次查询耗时 $O(\sqrt n+\sqrt m)$，额外空间为 $O(1)$。
-\end{complexity}
 
-\begin{warningbox}
 这里统计有序对。若只求同一范围内的无序对，应另处理对角线。
-\end{warningbox}
-
 
 \subsection{数论分块}
 
 $\lfloor n/i\rfloor$ 只取少量不同的值，可以按连续的等商区间遍历。
 当每段贡献能用公式或前缀和取得时，就不必逐个扫描下标。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 当前左端为 $l$ 时，令 $q=\lfloor n/l\rfloor$。最右端为 $r=\lfloor n/q\rfloor$。
     \item 处理 $[l,r]$ 后前进到 $r+1$。多个取整商一起出现时，取它们各自右端的最小值。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：遍历所有连续的等商闭区间。}
+\paragraph{遍历所有连续的等商闭区间}
 
 回调依次收到 $l,r,q$。例如要计算 $\sum_{i=1}^n\lfloor n/i\rfloor$，每段累加 $(r-l+1)q$。
 
 \cppfile{code/math/quotient_blocks.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 共有 $O(\sqrt n)$ 个区间。不计回调工作，额外空间为 $O(1)$。
-\end{complexity}
 
-\begin{warningbox}
 只在左端不超过上界时计算商。若上界比原数小，还需把每段右端截到上界。
-\end{warningbox}
-
 
 \subsection{线性递推}
 
 常系数线性递推可把最近若干项放入状态向量，使每一步都乘同一个转移矩阵。用快速幂可跳过大量中间项。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 若 $f_i=c_0f_{i-1}+\cdots+c_{d-1}f_{i-d}$，用系数作为矩阵首行。
     \item 下方各行把前一项向后移动一格。初始列向量从最新已知项向前排列。
     \item 求第 $k$ 项时，从第 $d-1$ 项开始跳 $k-d+1$ 步。若该项已给出，直接返回。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：使用矩阵幂求线性递推的第 $k$ 项。}
+\paragraph{使用矩阵幂求线性递推的第 $k$ 项}
 
 初值数组按 $f_0,f_1,\ldots$ 给出，两数组等长且非空。
 可用 \texttt{MInt} 实现取模递推。
 
 \cppfile{code/math/线性递推.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 递推阶数为 $d$ 时，耗时 $O(d^3\log(k+1))$，空间为 $O(d^2)$。
-\end{complexity}
 
-\begin{warningbox}
-递推数组的先后顺序要和状态向量一致。项编号从零开始，别把第一个初值多转移一步。
-\end{warningbox}
-
+递推系数的次序应与状态向量一致。数列从零编号，已给定的初值直接返回。
 
 \subsection{FFT、NTT}
 
 多项式乘法的系数是离散卷积。FFT 在复数域将卷积转为点乘，NTT 在满足单位根条件的有限域做同样的变换。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 将长度补成不小于 $n+m-1$ 的二次幂。先按位反转，再按蝶形长度逐层合并。
     \item 两个序列各变换一次，逐点相乘后再做逆变换。逆变换使用逆单位根，并除以总长度。
     \item 模数 $998244353=119\cdot 2^{23}+1$，可以用原根 $3$ 构造所需的单位根。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{公共模板：二进制位反转重排。}
+\paragraph{二进制位反转重排}
 
 FFT 和 NTT 共用该重排函数。输入长度须为正的二次幂。
 
 \cppfile{code/math/bit_reverse.hpp}
 
-\textbf{模板一：复数 FFT，求整数系数卷积。}
+\paragraph{复数 FFT，求整数系数卷积}
 
 调用 \texttt{convolutionFFT}。允许负系数，对逆变换实部取整，适用于浮点误差可控的规模。
 
 \cppfile{code/math/fft.cpp}
 
-\textbf{模板二：质数模 NTT。}
+\paragraph{质数模 NTT}
 
 \texttt{NTT::convolution} 精确返回模 $998244353$ 的系数。
 输入元素为 \texttt{NTT::Z}，补齐长度至多为 $2^{23}$。
 
 \cppfile{code/math/ntt.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 补齐长度为 $L$ 时，两种卷积均为 $O(L\log L)$ 时间、$O(L)$ 空间。空序列直接返回空结果。
-\end{complexity}
 
-\begin{warningbox}
 FFT 在系数大或长度长时可能产生取整误差。NTT 的单模结果只给出模意义下的卷积。
-\end{warningbox}
-
 
 \subsection{拉格朗日插值}
 
 次数不超过 $n$ 的多项式由 $n+1$ 个不同的采样点唯一确定。
 采样横坐标是 $0,1,\ldots,n$ 时，可以用前缀积与后缀积优化求值。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 第 $i$ 项的分子为 $\prod_{j\ne i}(x-j)$，用前缀乘积和后缀乘积相乘得到。
     \item 分母为 $i!(n-i)!(-1)^{n-i}$，由逆阶乘与符号直接处理。
     \item 查询点恰为某个已知横坐标时，可以直接取对应样值。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：连续横坐标上的质数模插值。}
+\paragraph{连续横坐标上的质数模插值}
 
 输入非空的 $y_0,\ldots,y_n$，模数为质数且 $n<p$。
 组合数表预处理到 $n$，查询点用同一模整数类型传入。
 
 \cppfile{code/math/拉格朗日插值.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 阶乘表已准备好时，单次求值时间和额外空间均为 $O(n+1)$。
-\end{complexity}
 
-\begin{warningbox}
 采样点在模意义下必须互不相同。若采样位置不连续，分母要按实际坐标另算。
-\end{warningbox}
-
 
 \subsection{博弈论（Nim、SG 函数）}
 
 在正常规则下，无法行动的一方输。Nim 每步选择一堆取走至少一个物品，多个独立博弈的胜负可由 SG 值的异或决定。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 各堆大小的异或为零时，Nim 当前为必败态。否则可把某堆改成它与总异或值的异或，使总异或归零。
     \item 对一般无环无偏博弈，$\mathrm{SG}(u)$ 是所有后继 SG 值中没有出现的最小非负整数（mex）。
     \item 按逆拓扑序求 SG，终止节点的值为零。组合独立游戏时，每步只在一个子游戏内走。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：恢复 Nim 的制胜一步，并求 DAG 上各点 SG。}
+\paragraph{恢复 Nim 的制胜一步，并求 DAG 上各点 SG}
 
 \texttt{nimMove} 返回堆的下标和取完后的大小，必败时返回空值。
 \texttt{dagGrundy} 接收从 $0$ 编号的邻接表与合法拓扑序。
 
 \cppfile{code/math/博弈论.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 Nim 扫描为 $O(n)$。给定拓扑序后，时间戳 mex 求全部 SG 需 $O(n+m)$ 时间，额外空间为 $O(n+\Delta)$，其中 $\Delta$ 是最大出度。
-\end{complexity}
 
-\begin{warningbox}
 正常规则与最后一步反而输的反常规则结论不同。有环游戏也需要额外定义平局等状态。
-\end{warningbox}
-
 
 \subsection{概率与数学期望}
 
 概率刻画事件发生的可能性。离散随机变量的期望是 $\mathbb E[X]=\sum_x x\Pr(X=x)$，期望的线性性可用于拆分计数或耗时。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 独立事件中至少一个发生的概率为一减全部不发生的概率。逐项累加时，可在当前概率上加尚未发生的概率乘本次概率。
     \item 期望可直接相加，无需各项独立。若每次等概率抽一种物品，还缺 $k$ 种时，抽到一个新种类的概率为 $k/n$。
     \item 收集齐 $n$ 种的期望抽数为各阶段几何等待时间之和，即 $\sum_{k=1}^n n/k$。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：独立事件并集概率与等概率集齐期望。}
+\paragraph{独立事件并集概率与等概率集齐期望}
 
 概率参数位于 $[0,1]$。抽样有放回，且每次对 $n$ 种物品等概率选择。
 
 \cppfile{code/math/概率期望.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 按事件或种类各扫描一次，耗时 $O(n+1)$，额外空间为 $O(1)$。
-\end{complexity}
 
-\begin{warningbox}
 相乘求联合概率依赖独立性。若概率随当前状态变化，可结合第一章的概率 DP 或期望 DP。
-\end{warningbox}
-
 
 \paragraph{参考资料}
 \href{https://oi-wiki.org/math/number-theory/crt/}{OI Wiki：中国剩余定理}、

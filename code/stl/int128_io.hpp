@@ -1,11 +1,17 @@
-#pragma once
-
 #include <algorithm>
 #include <optional>
 #include <string>
 #include <string_view>
 
-#include "../types.hpp"
+using uint = unsigned int;
+
+#if defined(__SIZEOF_INT128__)
+__extension__ using lll = __int128;
+__extension__ using ulll = unsigned __int128;
+#endif
+
+#ifndef XCPC_STL_INT128_IO_HPP
+#define XCPC_STL_INT128_IO_HPP
 
 #if defined(__SIZEOF_INT128__)
 inline std::string toString(lll x) {
@@ -40,4 +46,6 @@ inline std::optional<lll> parseInt128(std::string_view s) {
     if (val == limit) return -static_cast<lll>(limit - 1) - 1;
     return neg ? -static_cast<lll>(val) : static_cast<lll>(val);
 }
+#endif
+
 #endif

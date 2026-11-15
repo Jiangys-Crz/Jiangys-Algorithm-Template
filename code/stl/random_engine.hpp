@@ -1,9 +1,11 @@
-#pragma once
-
 #include <algorithm>
 #include <random>
 
-#include "../types.hpp"
+using uint = unsigned int;
+using ll = long long;
+
+#ifndef XCPC_STL_RANDOM_ENGINE_HPP
+#define XCPC_STL_RANDOM_ENGINE_HPP
 
 struct RandomEngine {
     std::mt19937 rng;
@@ -19,3 +21,5 @@ struct RandomEngine {
         std::shuffle(first, last, rng);
     }
 };
+
+#endif

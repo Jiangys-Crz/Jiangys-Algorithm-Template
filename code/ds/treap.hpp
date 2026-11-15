@@ -1,12 +1,13 @@
-#pragma once
-
 #include <array>
 #include <cstdint>
 #include <optional>
 #include <random>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
+
+#ifndef XCPC_DS_TREAP_HPP
+#define XCPC_DS_TREAP_HPP
 
 class Treap {
 public:
@@ -113,3 +114,5 @@ private:
         return u;
     }
 };
+
+#endif

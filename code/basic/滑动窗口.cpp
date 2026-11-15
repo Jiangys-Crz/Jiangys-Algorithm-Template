@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 int longestWindowAtMost(const std::vector<int>& a, ll limit) {
     int n = static_cast<int>(a.size());

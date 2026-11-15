@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 struct BoundedItem {
     int weight;

@@ -1,9 +1,10 @@
-#pragma once
-
 #include <utility>
 #include <vector>
 
-#include "euclid.hpp"
+using ull = unsigned long long;
+
+#ifndef XCPC_MATH_FACTORIZATION_HPP
+#define XCPC_MATH_FACTORIZATION_HPP
 
 inline std::vector<std::pair<ull, int>> factorize(ull n) {
     std::vector<std::pair<ull, int>> res;
@@ -25,3 +26,5 @@ inline ull eulerPhi(ull n) {
     for (auto [p, e] : factorize(n)) res -= res / p;
     return res;
 }
+
+#endif

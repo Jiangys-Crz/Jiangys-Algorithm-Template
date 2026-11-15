@@ -1,6 +1,6 @@
 #include <vector>
 
-#include "euclid.hpp"
+using ull = unsigned long long;
 
 std::vector<ull> divisors(ull n) {
     std::vector<ull> small, large;

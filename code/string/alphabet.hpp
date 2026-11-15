@@ -1,4 +1,5 @@
-#pragma once
+#ifndef XCPC_STRING_ALPHABET_HPP
+#define XCPC_STRING_ALPHABET_HPP
 
 struct LowercaseAlphabet {
     static constexpr int size = 26;
@@ -19,3 +20,5 @@ struct AlnumAlphabet {
         return -1;
     }
 };
+
+#endif

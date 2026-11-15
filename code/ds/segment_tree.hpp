@@ -1,6 +1,7 @@
-#pragma once
-
 #include <vector>
+
+#ifndef XCPC_DS_SEGMENT_TREE_HPP
+#define XCPC_DS_SEGMENT_TREE_HPP
 
 template<class Info>
 struct SegmentTree {
@@ -35,3 +36,5 @@ private:
         tr[u] = tr[u * 2] + tr[u * 2 + 1];
     }
 };
+
+#endif

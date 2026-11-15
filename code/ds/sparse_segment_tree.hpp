@@ -1,9 +1,11 @@
-#pragma once
-
 #include <optional>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
+using ull = unsigned long long;
+
+#ifndef XCPC_DS_SPARSE_SEGMENT_TREE_HPP
+#define XCPC_DS_SPARSE_SEGMENT_TREE_HPP
 
 class SparseSumTree {
 public:
@@ -96,3 +98,5 @@ private:
         return x;
     }
 };
+
+#endif

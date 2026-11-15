@@ -2,7 +2,7 @@
 #include <optional>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 struct PersistentKth {
     struct Node {

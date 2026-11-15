@@ -1,14 +1,15 @@
-#pragma once
-
 #include <cstddef>
 #include <functional>
 #include <optional>
 #include <utility>
-
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 
-#include "../types.hpp"
+using ll = long long;
+using ull = unsigned long long;
+
+#ifndef XCPC_STL_PBDS_ORDERED_TREE_HPP
+#define XCPC_STL_PBDS_ORDERED_TREE_HPP
 
 template<class Key>
 using OrderedTree = __gnu_pbds::tree<
@@ -42,3 +43,5 @@ private:
     OrderedTree<std::pair<ll, ull>> tr;
     ull idx = 0;
 };
+
+#endif

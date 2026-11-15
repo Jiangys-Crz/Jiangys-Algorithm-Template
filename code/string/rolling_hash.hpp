@@ -1,9 +1,10 @@
-#pragma once
-
 #include <cstddef>
 #include <cstdint>
 #include <string_view>
 #include <vector>
+
+#ifndef XCPC_STRING_ROLLING_HASH_HPP
+#define XCPC_STRING_ROLLING_HASH_HPP
 
 template<std::uint32_t Mod = 1000000007, std::uint32_t Base = 911382323>
 class RollingHash {
@@ -39,3 +40,5 @@ private:
         return static_cast<std::uint32_t>(c) + 1;
     }
 };
+
+#endif

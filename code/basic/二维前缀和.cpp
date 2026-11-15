@@ -1,6 +1,6 @@
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 std::vector<std::vector<ll>> prefixSums2D(
     const std::vector<std::vector<int>>& a) {

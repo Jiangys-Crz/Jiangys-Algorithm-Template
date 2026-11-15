@@ -1,8 +1,9 @@
-#pragma once
-
 #include <cassert>
 #include <utility>
 #include <vector>
+
+#ifndef XCPC_MATH_BIT_REVERSE_HPP
+#define XCPC_MATH_BIT_REVERSE_HPP
 
 template<class T>
 void bitReverse(std::vector<T>& a) {
@@ -18,3 +19,5 @@ void bitReverse(std::vector<T>& a) {
         if (i < j) std::swap(a[i], a[j]);
     }
 }
+
+#endif

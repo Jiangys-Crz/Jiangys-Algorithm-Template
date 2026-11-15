@@ -1,6 +1,6 @@
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 ll countInversions(std::vector<int>& a) {
     std::vector<int> buffer(a.size());

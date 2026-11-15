@@ -1,8 +1,9 @@
-#pragma once
-
 #include <numeric>
 #include <utility>
 #include <vector>
+
+#ifndef XCPC_GRAPH_GRAPH_DSU_HPP
+#define XCPC_GRAPH_GRAPH_DSU_HPP
 
 struct GraphDSU {
     std::vector<int> fa, siz;
@@ -29,3 +30,5 @@ struct GraphDSU {
         return true;
     }
 };
+
+#endif

@@ -1,10 +1,11 @@
-#pragma once
-
 #include <algorithm>
 #include <tuple>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
+
+#ifndef XCPC_STL_RECORD_SORT_HPP
+#define XCPC_STL_RECORD_SORT_HPP
 
 struct Record {
     int id;
@@ -17,3 +18,5 @@ inline void sortRecords(std::vector<Record>& a) {
         return std::tie(x.penalty, x.id) < std::tie(y.penalty, y.id);
     });
 }
+
+#endif

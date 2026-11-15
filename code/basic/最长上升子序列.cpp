@@ -2,7 +2,7 @@
 #include <cstddef>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 std::size_t lisLength(const std::vector<ll>& a) {
     std::vector<ll> tails;

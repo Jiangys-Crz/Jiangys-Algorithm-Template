@@ -1,4 +1,5 @@
-#include "../types.hpp"
+using ll = long long;
+using ull = unsigned long long;
 
 template<class Check>
 ll maxFeasible(ll l, ll r, Check check) {

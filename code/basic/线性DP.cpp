@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 ll maxNonAdjacentSum(const std::vector<ll>& a) {
     ll twoBack = 0, oneBack = 0;

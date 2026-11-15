@@ -1,6 +1,7 @@
-#pragma once
-
 #include <vector>
+
+#ifndef XCPC_DS_LAZY_SEGMENT_TREE_HPP
+#define XCPC_DS_LAZY_SEGMENT_TREE_HPP
 
 template<class Info, class Tag>
 struct LazySegmentTree {
@@ -72,3 +73,5 @@ private:
                query(u * 2 + 1, mid + 1, r, ql, qr);
     }
 };
+
+#endif

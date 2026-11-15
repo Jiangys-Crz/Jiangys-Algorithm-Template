@@ -1,9 +1,10 @@
-#pragma once
-
 #include <chrono>
 #include <cstddef>
 
-#include "../types.hpp"
+using ull = unsigned long long;
+
+#ifndef XCPC_STL_SPLITMIX_HASH_HPP
+#define XCPC_STL_SPLITMIX_HASH_HPP
 
 struct SplitMix64Hash {
     static ull mix(ull x) {
@@ -19,3 +20,5 @@ struct SplitMix64Hash {
         return static_cast<std::size_t>(mix(x + seed));
     }
 };
+
+#endif

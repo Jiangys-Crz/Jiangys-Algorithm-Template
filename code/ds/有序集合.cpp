@@ -2,7 +2,7 @@
 #include <optional>
 #include <set>
 
-#include "../types.hpp"
+using ll = long long;
 
 struct OrderedMultiset {
     std::multiset<ll> s;

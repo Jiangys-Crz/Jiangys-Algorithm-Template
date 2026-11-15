@@ -1,8 +1,9 @@
-#pragma once
-
 #include <cassert>
 #include <cstddef>
 #include <vector>
+
+#ifndef XCPC_DS_FENWICK_HPP
+#define XCPC_DS_FENWICK_HPP
 
 template<class T>
 struct Fenwick {
@@ -38,3 +39,5 @@ struct Fenwick {
         return x + 1;
     }
 };
+
+#endif

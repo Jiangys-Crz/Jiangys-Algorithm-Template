@@ -2,7 +2,7 @@
 #include <utility>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 ll groupedKnapsack(
     int capacity,

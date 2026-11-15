@@ -1,8 +1,11 @@
-#pragma once
-
 #include <algorithm>
+#include <limits>
+#include <vector>
 
-#include "graph.hpp"
+using ll = long long;
+
+#ifndef XCPC_GRAPH_DINIC_HPP
+#define XCPC_GRAPH_DINIC_HPP
 
 template<class T = ll>
 struct Flow {
@@ -79,3 +82,5 @@ private:
         return 0;
     }
 };
+
+#endif

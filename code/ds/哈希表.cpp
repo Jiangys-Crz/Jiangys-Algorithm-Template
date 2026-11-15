@@ -2,7 +2,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 ll countTargetSum(const std::vector<ll>& a, ll target) {
     std::unordered_map<ll, ll> cnt;

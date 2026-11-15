@@ -1,11 +1,16 @@
-#pragma once
-
 #include <functional>
 #include <optional>
 #include <queue>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
+
+#if defined(__SIZEOF_INT128__)
+__extension__ using lll = __int128;
+#endif
+
+#ifndef XCPC_DS_TOP_K_HPP
+#define XCPC_DS_TOP_K_HPP
 
 template<class Better>
 class TopK {
@@ -44,3 +49,5 @@ private:
 
 using KLargest = TopK<std::greater<ll>>;
 using KSmallest = TopK<std::less<ll>>;
+
+#endif

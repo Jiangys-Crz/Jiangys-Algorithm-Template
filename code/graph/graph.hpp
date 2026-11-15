@@ -1,10 +1,12 @@
-#pragma once
-
 #include <cstddef>
 #include <limits>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
+
+#ifndef XCPC_GRAPH_GRAPH_HPP
+#define XCPC_GRAPH_GRAPH_HPP
+
 inline constexpr ll graphInf = std::numeric_limits<ll>::max() / 4;
 
 struct Graph {
@@ -32,3 +34,5 @@ struct Graph {
         return id;
     }
 };
+
+#endif

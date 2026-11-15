@@ -1,7 +1,8 @@
-#pragma once
-
 #include <utility>
 #include <vector>
+
+#ifndef XCPC_GEOMETRY_COVERED_LENGTH_HPP
+#define XCPC_GEOMETRY_COVERED_LENGTH_HPP
 
 template<class T>
 class CoveredLength {
@@ -43,3 +44,5 @@ private:
         pushup(u, l, r);
     }
 };
+
+#endif

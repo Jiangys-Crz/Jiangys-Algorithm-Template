@@ -1,7 +1,8 @@
-#pragma once
-
 #include <utility>
 #include <vector>
+
+#ifndef XCPC_DS_SPARSE_TABLE_HPP
+#define XCPC_DS_SPARSE_TABLE_HPP
 
 template<class T, class Op>
 struct SparseTable {
@@ -29,3 +30,5 @@ struct SparseTable {
         return op(st[j][l], st[j][r - (1 << j) + 1]);
     }
 };
+
+#endif

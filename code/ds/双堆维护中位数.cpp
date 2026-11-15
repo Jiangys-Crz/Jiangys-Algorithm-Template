@@ -4,7 +4,7 @@
 #include <utility>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 struct MedianHeap {
     std::priority_queue<ll> lo;

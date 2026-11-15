@@ -1,8 +1,7 @@
-#pragma once
-
 #include <cmath>
 
-#include "../types.hpp"
+#ifndef XCPC_GEOMETRY_POINT_HPP
+#define XCPC_GEOMETRY_POINT_HPP
 
 using Real = long double;
 
@@ -89,3 +88,5 @@ template<class T>
 struct Line {
     Point<T> a, b;
 };
+
+#endif

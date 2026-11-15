@@ -1,7 +1,8 @@
-#pragma once
-
 #include <string_view>
 #include <vector>
+
+#ifndef XCPC_STRING_PREFIX_FUNCTION_HPP
+#define XCPC_STRING_PREFIX_FUNCTION_HPP
 
 inline std::vector<int> prefixFunction(std::string_view s) {
     int n = static_cast<int>(s.size());
@@ -13,3 +14,5 @@ inline std::vector<int> prefixFunction(std::string_view s) {
     }
     return nxt;
 }
+
+#endif

@@ -1,6 +1,7 @@
-#pragma once
+using ull = unsigned long long;
 
-#include "euclid.hpp"
+#ifndef XCPC_MATH_QUOTIENT_BLOCKS_HPP
+#define XCPC_MATH_QUOTIENT_BLOCKS_HPP
 
 template<class Visit>
 void quotientBlocks(ull n, Visit visit) {
@@ -11,3 +12,5 @@ void quotientBlocks(ull n, Visit visit) {
         l = r + 1;
     }
 }
+
+#endif

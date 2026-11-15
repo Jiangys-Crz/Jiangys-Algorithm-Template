@@ -1,7 +1,8 @@
-#pragma once
-
 #include <utility>
 #include <vector>
+
+#ifndef XCPC_MATH_LINEAR_SIEVE_HPP
+#define XCPC_MATH_LINEAR_SIEVE_HPP
 
 struct LinearSieve {
     std::vector<int> primes, lp, phi, mu;
@@ -43,3 +44,5 @@ struct LinearSieve {
         return res;
     }
 };
+
+#endif

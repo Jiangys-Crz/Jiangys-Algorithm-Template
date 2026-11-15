@@ -1,6 +1,6 @@
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 void addRectangle(std::vector<std::vector<ll>>& diff,
                   int x1, int y1, int x2, int y2, ll delta) {

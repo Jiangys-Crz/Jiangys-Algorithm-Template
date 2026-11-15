@@ -1,8 +1,10 @@
-#pragma once
-
 #include <limits>
 
-#include "../types.hpp"
+using uint = unsigned int;
+using ull = unsigned long long;
+
+#ifndef XCPC_STL_BIT_OPS_HPP
+#define XCPC_STL_BIT_OPS_HPP
 
 inline int popcount32(uint x) {
     return __builtin_popcount(x);
@@ -27,3 +29,5 @@ inline int clz32(uint x) {
 inline int clz64(ull x) {
     return x ? __builtin_clzll(x) : std::numeric_limits<ull>::digits;
 }
+
+#endif

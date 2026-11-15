@@ -1,8 +1,9 @@
-#pragma once
-
 #include <numeric>
 #include <utility>
 #include <vector>
+
+#ifndef XCPC_DS_DSU_HPP
+#define XCPC_DS_DSU_HPP
 
 struct DSU {
     std::vector<int> fa, siz, rk;
@@ -36,3 +37,5 @@ struct DSU {
         return siz[find(u)];
     }
 };
+
+#endif

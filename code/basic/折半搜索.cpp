@@ -2,7 +2,7 @@
 #include <cstddef>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 ll countSubsetsWithSum(const std::vector<int>& a, ll target) {
     ll minSum = 0, maxSum = 0;

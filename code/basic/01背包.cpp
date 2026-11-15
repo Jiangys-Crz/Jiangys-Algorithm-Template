@@ -2,7 +2,7 @@
 #include <utility>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 ll knapsack01(int capacity,
                      const std::vector<std::pair<int, ll>>& items) {

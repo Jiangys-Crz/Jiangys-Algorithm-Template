@@ -1,1 +1,110 @@
 \chapter{杂项}
+
+\section{自定义运算符}
+
+\subsection{结构体内重载比较、加法与输出}
+
+以比赛记录为例，分数更高者优先，同分时罚时更短者优先。
+
+\begin{itemize}
+    \item 二元成员运算符的左操作数为 \texttt{*this}。以 \texttt{const} 限定成员函数后可比较常量对象。
+    \item \texttt{+=} 修改左操作数并返回引用。\texttt{+} 复制左操作数后复用 \texttt{+=}。
+    \item 在结构体内用 \texttt{friend} 定义流输出。以流为左操作数，返回流引用以支持连续输出。
+\end{itemize}
+
+\cppfile{code/zx/operator_overload.hpp}
+
+\texttt{std::sort} 默认按 \texttt{<} 从排名较低到较高排序。
+\texttt{std::priority\_queue<Score>} 的堆顶是排名最高的记录。
+使用 \texttt{std::greater<Score>} 可反转上述排序或堆的比较方向。
+
+\paragraph{复杂度}
+每次比较或加法为 $O(1)$。
+
+比较运算符要满足严格弱序。两条记录字段相同时，两个方向的 \texttt{<} 均返回假。
+累加后的分数和罚时应能用 \texttt{ll} 表示。
+
+\subsection{为 128 位整数添加流输出}
+
+实现包含十进制转换函数及全局输出运算符，支持通过 \texttt{std::cout << x} 输出 \texttt{lll}。
+
+\cppfile{code/zx/int128_output.hpp}
+
+\paragraph{复杂度}
+十进制输出需要 $O(d)$ 时间和临时空间，$d$ 是位数。
+
+该实现要求编译器支持 \texttt{\_\_int128}，并覆盖 \texttt{lll} 的完整值域。
+
+\section{对拍}
+
+\subsection{准备生成器、暴力解和待测解}
+
+对拍用小数据比较暴力解和待测解。暴力解尽量按定义独立实现。
+
+\begin{itemize}
+    \item 生成器接收整数种子，将合法输入写到标准输出。
+    \item 两个解读取同一份输入，采用相同的输出格式。
+\end{itemize}
+
+\paragraph{示例}
+
+输入是一个非空数组。暴力解枚举每段区间，复杂度为 $O(n^2)$。
+待测解扫描前缀和，减去此前的最小前缀，复杂度为 $O(n)$。
+同一份文件编译两次，定义 \texttt{BRUTE} 时选择暴力解。
+
+\cppfile{code/zx/max_subarray.cpp}
+
+边界用例包括单元素、全负数、最大规模及极端权值。
+
+\subsection{Linux 循环对拍脚本}
+
+以下命令在模板册源码的根目录执行。用于其他问题时，三个可执行文件分别由该问题的生成器、暴力解和待测解构建。
+
+\begin{lstlisting}[language=bash,numbers=none]
+g++ -std=c++17 -O2 code/zx/gen.cpp -o gen
+g++ -std=c++17 -O2 -DBRUTE code/zx/max_subarray.cpp -o brute
+g++ -std=c++17 -O2 code/zx/max_subarray.cpp -o sol
+bash code/zx/stress.sh ./gen ./brute ./sol 1000
+\end{lstlisting}
+
+脚本使用 Bash、GNU \texttt{timeout} 和 GNU \texttt{diff}。
+默认 1000 轮，填 $0$ 持续运行，按 \texttt{Ctrl+C} 停止。
+\texttt{TIME\_LIMIT} 可覆盖每个程序的两秒限时。
+失败时打印种子，保留输入、两份输出和错误日志。
+
+\cppfile[language=bash]{code/zx/stress.sh}
+
+\texttt{diff -Z} 忽略行尾空白。浮点容差、多解或特殊评测由对应的检查器判定。
+保存的 \texttt{data.in} 可用于复现并缩减反例。
+
+\section{随机数与数据生成}
+
+\subsection{整数、排列和树}
+
+实现包含 \texttt{RandomEngine}。在同一实现环境下，固定种子可重现生成的数据。
+\texttt{rng.next(l,r)} 在闭区间 $[l,r]$ 中均匀取整数。
+
+\begin{itemize}
+    \item 数组逐项取样，允许重复。排列先填 $1$ 到 $n$，再打乱顺序。
+    \item 造树时打乱点号，每个新点连向一个较早的点，得到连通、无环的 $n-1$ 条边。
+    \item 多次造数时复用同一个随机引擎。
+\end{itemize}
+
+\cppfile{code/zx/random_cases.hpp}
+
+\paragraph{复杂度}
+生成长度为 $n$ 的数组、排列或 $n$ 个节点的树，期望时间和额外空间均为 $O(n)$。
+
+数组和排列允许为空，整数区间要求 $l\le r$，树至少有一个点。
+此方法生成不同带标号树的概率可能不同，可另测链和星形树。
+
+\subsection{接收种子的 C++ 生成器}
+
+命令 \texttt{./gen 42 > data.in} 将种子 $42$ 对应的输入写入文件。
+首行是长度 $n\in[1,20]$，次行是 $n$ 个取自 $[-10,10]$ 的整数。
+
+\cppfile{code/zx/gen.cpp}
+
+\paragraph{参考资料}
+\href{https://github.com/CWNU-Open-Source-Community/xcpc-algorithm-template/blob/main/chapters/zx.tex}
+{西华师范大学 XCPC 模板的杂项章节}。

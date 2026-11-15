@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 ll minMergeCost(const std::vector<ll>& stones) {
     const int n = static_cast<int>(stones.size());

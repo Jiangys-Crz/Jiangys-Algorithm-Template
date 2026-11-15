@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 std::vector<ll> sortedUnique(std::vector<ll> values) {
     std::sort(values.begin(), values.end());

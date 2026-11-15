@@ -1,8 +1,9 @@
-#pragma once
-
 #include <cstddef>
 #include <string>
 #include <string_view>
+
+#ifndef XCPC_STRING_ENUMERATION_HPP
+#define XCPC_STRING_ENUMERATION_HPP
 
 template<class F>
 void forEachSubstring(std::string_view s, F visit) {
@@ -29,3 +30,5 @@ void forEachSubsequence(std::string_view s, F visit) {
     };
     dfs(dfs, 0);
 }
+
+#endif

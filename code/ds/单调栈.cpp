@@ -1,6 +1,6 @@
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 std::vector<int> previousSmaller(const std::vector<ll>& a) {
     int n = static_cast<int>(a.size());

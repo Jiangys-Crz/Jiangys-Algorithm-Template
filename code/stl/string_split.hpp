@@ -1,7 +1,8 @@
-#pragma once
-
 #include <string>
 #include <vector>
+
+#ifndef XCPC_STL_STRING_SPLIT_HPP
+#define XCPC_STL_STRING_SPLIT_HPP
 
 inline std::vector<std::string> split(const std::string& s, char sep) {
     std::vector<std::string> res;
@@ -16,3 +17,5 @@ inline std::vector<std::string> split(const std::string& s, char sep) {
         l = r + 1;
     }
 }
+
+#endif

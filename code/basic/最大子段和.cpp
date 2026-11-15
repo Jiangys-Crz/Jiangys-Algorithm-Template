@@ -2,7 +2,7 @@
 #include <cstddef>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 ll maxSubarraySum(const std::vector<ll>& a) {
     ll ending = a.front(), best = ending;

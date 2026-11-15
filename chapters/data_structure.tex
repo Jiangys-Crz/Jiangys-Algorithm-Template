@@ -11,211 +11,161 @@
 
 栈遵循后进先出。括号匹配、撤销操作和迭代 DFS 都可以用栈保存尚未处理完的状态。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item \texttt{push} 入栈，\texttt{top} 读取栈顶，\texttt{pop} 删除栈顶。
     \item 括号匹配时，遇到左括号就入栈。遇到右括号时，栈顶必须是对应类型的左括号。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：检查三种括号是否匹配。}
+\paragraph{检查三种括号是否匹配}
 
 扫描结束时栈为空才成功，空串合法。
 
 \cppfile{code/ds/栈.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 对长度为 $n$ 的括号串，时间和额外空间均为 $O(n)$。
-\end{complexity}
 
-\begin{warningbox}
 先用 \texttt{empty()} 判断是否有栈顶。标准库的 \texttt{pop()} 只负责删除，取值应在删除前完成。
-\end{warningbox}
-
 
 \subsection{队列}
 
 队列遵循先进先出。BFS 的待访问节点、按到达顺序处理的任务，都可以放在队列里。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item \texttt{push} 从队尾加入，\texttt{front} 读取队首，\texttt{pop} 删除队首。
     \item 按队首处理任务时，处理后需要继续等待的任务可以重新压到队尾。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：模拟交替丢牌与移到队尾。}
+\paragraph{模拟交替丢牌与移到队尾}
 
 初始队列为 $1$ 到 $n$，每轮丢弃队首，再把新的队首移到队尾。$n\ge 1$，返回最后一张牌。
 
 \cppfile{code/ds/队列.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 每轮减少一张牌，总时间与额外空间均为 $O(n)$。
-\end{complexity}
 
-\begin{warningbox}
 只剩一张牌就结束。若移走队首会让队列为空，应先结束本轮或检查队列。
-\end{warningbox}
-
 
 \subsection{双端队列}
 
-双端队列允许在两端插入和删除。需要按条件从左端或右端安排状态时，可以直接使用标准库的双端队列。
+双端队列支持在首尾插入和删除元素。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item \texttt{push\_front}、\texttt{push\_back} 分别从首尾插入，删除用对应的 \texttt{pop} 操作。
     \item 第三章的 0-1 BFS 同时利用两端入队，零权松弛到队首，一权松弛到队尾。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：按指定端点依次放入元素。}
+\paragraph{按指定端点依次放入元素}
 
 每条操作包含位置标志和数值。标志为 \texttt{true} 时从左端放入。
 
 \cppfile{code/ds/双端队列.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 端点操作耗时 $O(1)$。执行 $n$ 条操作并输出序列的时间和空间均为 $O(n)$。
-\end{complexity}
 
-\begin{warningbox}
-在中间插入和删除通常需要移动元素。插入或删除后，按容器规则重新确认原迭代器是否有效。
-\end{warningbox}
-
+中间位置的插入和删除最坏耗时 $O(n)$，并可能使迭代器失效。
 
 \subsection{优先队列（堆）}
 
 堆只保证当前最优元素位于堆顶，适合反复插入数据并取出最小值或最大值。标准库优先队列默认是大根堆。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 用 \texttt{std::greater<>} 可以得到小根堆。读取堆顶后再弹出。
     \item 合并多条有序序列时，每条序列只把第一个未输出的元素放入堆。某项出堆后，再把它在原序列中的后继推进去。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：用小根堆合并多条非递减序列。}
+\paragraph{用小根堆合并多条非递减序列}
 
 序列允许为空，也允许有重复元素。
 
 \cppfile{code/ds/优先队列.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 设有 $k$ 条序列、$n$ 个元素，总时间为 $O(k+n\log(k+1))$，除输出外额外空间为 $O(k)$。
-\end{complexity}
-
-\begin{warningbox}
-堆的底层顺序不是完整排序。需要依次取出有序结果时，应反复弹出堆顶。
-\end{warningbox}
-
 
 \subsection{哈希表}
 
-哈希表适合按键查找、去重和频次统计。用前缀和与哈希表，可以在线统计和恰为指定值的连续子数组。
+哈希表支持按键查找及频次统计。结合前缀和可统计和为指定值的连续子数组。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 令当前前缀和为 $S$，目标为 $x$，此前每次出现 $S-x$ 都对应一段合法子数组。
     \item 查询前缀频次后再加入当前前缀，并预先加入一次空前缀。
     \item \texttt{find} 可只查询，\texttt{operator[]} 会在键缺失时插入默认值。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：统计子数组和等于目标的个数。}
+\paragraph{统计子数组和等于目标的个数}
 
 支持负数与重复值，使用 64 位整数保存前缀和、频次及答案。
 
 \cppfile{code/ds/哈希表.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 通常耗时 $O(n)$，额外空间为 $O(n)$。若哈希碰撞集中，最坏时间可达 $O(n^2)$。
-\end{complexity}
 
-\begin{warningbox}
 预留桶能减少扩容次数。若输入可能针对哈希实现构造，可用有序映射取得稳定的对数复杂度。
-\end{warningbox}
-
 
 \subsection{有序集合}
 
 \texttt{set} 为每个键保存一份，\texttt{multiset} 保留重复键。它们都能按有序关系寻找元素的邻居。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item \texttt{lower\_bound(x)} 找第一个 $\ge x$ 的元素，\texttt{upper\_bound(x)} 找第一个 $>x$ 的元素。
     \item 严格前驱是 \texttt{lower\_bound} 的前一个元素，严格后继是 \texttt{upper\_bound} 指向的元素。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：插入、删除一份、查严格前驱与后继。}
+\paragraph{插入、删除一份、查严格前驱与后继}
 
 删除不存在的键返回假，没有对应邻居时返回空值。
 
 \cppfile{code/ds/有序集合.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 每次查找或修改为 $O(\log(n+1))$，存储 $n$ 个元素占 $O(n)$ 空间。
-\end{complexity}
 
-\begin{warningbox}
 使用 \texttt{s.erase(x)} 会按键删除所有相等项。只删一份时，先查找迭代器再删除。
-\end{warningbox}
-
 
 \subsection{单调栈}
 
 单调栈保存尚可能成为答案的下标。求每个位置左边最近的更小元素时，保留值严格递增的候选栈。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 处理 $a[i]$ 时，弹掉栈顶所有 $\ge a[i]$ 的候选。它们的值不更小，而且位置比 $i$ 更早。
     \item 弹完后，现有栈顶就是最近的严格更小元素。最后把 $i$ 压入栈。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：找每个元素左侧最近的严格更小位置。}
+\paragraph{找每个元素左侧最近的严格更小位置}
 
 输入与答案都使用 $0$ 起始下标。没有答案时返回 $-1$。
 
 \cppfile{code/ds/单调栈.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 每个下标至多入栈、出栈各一次。总时间为 $O(n)$，额外空间为 $O(n)$。
-\end{complexity}
 
-\begin{warningbox}
 相等元素是否弹出取决于题目的严格性。改求小于等于时，只弹出严格更大的元素。
-\end{warningbox}
-
 
 \subsection{单调队列}
 
 固定宽度的滑动窗口可以用双端队列维护最值。候选下标按进入顺序排列，所对应的值保持单调。
 
-\begin{algorithmnote}
 \begin{itemize}
-    \item 窗口右移时，先从队首删除已过期的下标。
+    \item 窗口右移时，删除队首位于窗口左端之外的下标。
     \item 插入新下标前，从队尾删除值不小于新值的候选。新值更小或相等，而且离开窗口更晚。
     \item 窗口完整时，队首对应的值是当前最小值。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：求每个长度为 $k$ 的连续窗口的最小值。}
+\paragraph{求每个长度为 $k$ 的连续窗口的最小值}
 
 输入用 $0$ 起始下标，结果按窗口左端顺序排列。$k$ 不合法时返回空数组。
 
 \cppfile{code/ds/单调队列.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 时间为 $O(n)$，除输出外额外空间为 $O(k)$。
-\end{complexity}
 
-\begin{warningbox}
 队列保存下标，才能可靠判断元素是否滑出窗口。最大值版本需要反转队尾比较方向。
-\end{warningbox}
-
 
 \section{并查集}
 
@@ -223,131 +173,97 @@
 
 并查集维护若干不相交集合，支持查询两个元素是否同组，以及把两个集合并成一个。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 每个集合是一棵父指针树，根代表整组。初始每个点自成一组。
     \item 合并时先找两个根。大小只对根有意义，更新集合信息时先找到新的代表元。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：合并、同组判断、查询集合大小。}
+\paragraph{合并、同组判断、查询集合大小}
 
 \texttt{merge} 返回是否成功合并两个不同集合。模板同时使用路径压缩和按秩合并。
 
 \cppfile{code/ds/dsu.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 初始化为 $O(n)$。合并与查询的均摊时间为 $O(\alpha(n))$，空间为 $O(n)$。
-\end{complexity}
 
-\begin{warningbox}
 普通并查集适合连通性逐步增加的过程。需要删除、回退或查询历史时，要使用相应的离线方法或其他结构。
-\end{warningbox}
-
 
 \subsection{路径压缩、按秩合并}
 
 路径压缩在查找代表元时缩短父指针链，按秩合并尽量避免合并后长出高树。两种技巧可以同时使用。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 本章的 \texttt{find} 用路径折半，将当前位置的父指针指向祖父，再继续向上。
     \item 秩表示在压缩前估计的高度上界。合并时让低秩根挂到高秩根下，只有秩相等时才把新根的秩加一。
     \item 按大小合并是另一种常用策略，将节点较少的树挂到节点较多的树下。
 \end{itemize}
-\end{algorithmnote}
-
-\textbf{用法}
 
 读取前一节模板的 \texttt{fa}、\texttt{rk} 和 \texttt{siz}。判断连通用 \texttt{same}，实际集合大小用 \texttt{size}。
 
-\begin{complexity}
+\paragraph{复杂度}
 单用按秩或按大小合并时，树高为 $O(\log n)$。配合路径压缩后，操作均摊为 $O(\alpha(n))$。
-\end{complexity}
 
-\begin{warningbox}
 路径压缩后，秩仅是维护合并策略的量。压缩不会让秩减小，也不能用秩代替集合大小。
-\end{warningbox}
-
 
 \subsection{带权并查集}
 
 当约束形如 $x_u-x_v=w$ 时，可在父指针之外存储 $u$ 到父节点的相对权值，并在压缩路径时累加权差。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 设 $\mathrm{dis}[u]=x_u-x_{\mathrm{fa}[u]}$。查找后 $\mathrm{dis}[u]$ 变为 $u$ 到根的权差。
     \item 若 $r_u$ 挂到 $r_v$，则应记录 $x_{r_u}-x_{r_v}=w-\mathrm{dis}[u]+\mathrm{dis}[v]$。
     \item 若两个点已同组，根据已有差值检查新约束是否相容。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：添加差值等式并查询已知差值。}
+\paragraph{添加差值等式并查询已知差值}
 
 \texttt{merge(u,v,w)} 返回这条等式是否相容，\texttt{difference(u,v)} 返回 $x_u-x_v$，关系未知时为空值。
 
 \cppfile{code/ds/带权并查集.cpp}
 
-\begin{complexity}
-操作均摊为 $O(\alpha(n))$，空间为 $O(n)$。
-\end{complexity}
-
-\begin{warningbox}
-调换挂接方向时，根之间的权差需要变号。关系的符号约定应与输入和查询一致。
-\end{warningbox}
-
+\paragraph{复杂度}
+操作均摊为 $O(\alpha(n))$，空间为 $O(n)$。根的挂接方向反转时，根间权差也取反。
 
 \subsection{扩展域并查集}
 
 如果每个元素只有两种相对关系，可以将每个 $u$ 拆成两个编号，分别表示 $u$ 与它的反面。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item $u$ 与 $v$ 同类时，合并 $u,v$ 和 $u+n,v+n$。异类时，交叉合并 $u,v+n$ 和 $u+n,v$。
     \item 添加前先检查反关系是否已经成立。发生矛盾时，保留此前已接纳的约束。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：维护同类和异类关系。}
+\paragraph{维护同类和异类关系}
 
 \texttt{add(u,v,different)} 用真表示异类。查询返回同类、异类，或尚未确定。
 
 \cppfile{code/ds/扩展域并查集.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 每条约束只需常数次并查集操作，均摊耗时 $O(\alpha(n))$，空间为 $O(n)$。
-\end{complexity}
 
-\begin{warningbox}
 两侧编号必须成对维护。若只加入一条蕴含关系而没有配对合并，会漏掉后续推导。
-\end{warningbox}
-
 
 \subsection{可撤销并查集}
 
 可撤销并查集把每次成功合并产生的修改压入栈，允许回退到当前分支中的某个旧状态，常与分治处理动态连通性配合。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 只按大小合并。合并前记录被挂接的根、新父根及其原大小。
     \item 快照是修改栈的长度。撤销时倒序恢复父指针和大小，并恢复连通分量数。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：记录快照并成批撤销。}
+\paragraph{记录快照并成批撤销}
 
 \texttt{snapshot()} 返回快照，\texttt{rollback(time)} 回到该状态。\texttt{cnt} 是当前分量数。
 
 \cppfile{code/ds/可撤销并查集.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 查找和合并最坏为 $O(\log n)$，撤销每条成功合并耗时 $O(1)$，空间为 $O(n)$。
-\end{complexity}
 
-\begin{warningbox}
-标准实现避免路径压缩，才能用固定大小的日志恢复一次合并。废弃分支上的快照不能用来恢复未来状态。
-\end{warningbox}
-
+省略路径压缩，使每次合并只需记录常数个字段。快照仅对当前分支及其祖先状态有效。
 
 \section{区间数据结构}
 
@@ -355,220 +271,171 @@
 
 ST 表预处理所有长度为二的幂的区间。若合并操作满足结合律和幂等性，查询可用两个允许重叠的区间覆盖。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item $\mathrm{st}[j][i]$ 保存从 $i$ 开始、长度为 $2^j$ 的区间结果。建表时合并左、右两段。
     \item 查询 $[l,r]$ 时令 $j=\lfloor\log_2(r-l+1)\rfloor$，取以 $l$ 开始和以 $r$ 结束的两个长度 $2^j$ 的区间。
     \item 最小值、最大值和最大公约数都满足重复覆盖不会改变结果。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：静态区间查询，合并函数可替换。}
+\paragraph{静态区间查询，合并函数可替换}
 
 输入为从 $1$ 开始的非空数组。用 \texttt{SparseTable st(a, op)} 构造，\texttt{op} 需可在常量上下文调用，元素类型须可默认构造。
 
 \cppfile{code/ds/sparse_table.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 合并耗时为常数时，预处理时间和空间为 $O(n\log n)$，查询时间为 $O(1)$。
-\end{complexity}
 
-\begin{warningbox}
-区间和会把重叠部分算两次，宜用前缀和。模板适用于静态数据，存在修改时可换线段树。
-\end{warningbox}
-
+加法不具幂等性，查询区间和时不能重复计入重叠部分。
 
 \subsection{树状数组}
 
-树状数组的 $\mathrm{f}[i]$ 维护以 $i$ 结尾、长度为 $\operatorname{lowbit}(i)$ 的区间和。借助这些区间，可以快速修改一个点和求前缀和。
+树状数组的 $\mathrm{f}[i]$ 保存以 $i$ 为右端点、长为 $\operatorname{lowbit}(i)$ 的区间和。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 从 $i$ 不断向上加 $\operatorname{lowbit}(i)$ 可更新所有包含该点的节点。
     \item 查询前缀时不断减 $\operatorname{lowbit}(i)$，区间和由两个前缀和相减得到。
     \item 维护非负频次时，前缀和单调。可从高位到低位试探下标，找第一个前缀和 $\ge k$ 的位置。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：单点加、区间求和与频次第 $k$ 小。}
+\paragraph{单点加、区间求和与频次第 $k$ 小}
 
 初值全零，\texttt{query(0)} 返回空前缀的和。\texttt{kth} 只用于非负频次，越界时返回 $0$。
 
 \cppfile{code/ds/fenwick.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 空间为 $O(n)$。单点修改、前缀和、区间和及倍增查找均耗时 $O(\log n)$。
-\end{complexity}
 
-\begin{warningbox}
-更新下标从 1 开始。若需要区间加、区间和，可用第二章路径查询中的双树状数组公式。
-\end{warningbox}
-
+更新下标从 $1$ 开始。区间加与区间求和的扩展见第二章树上路径查询。
 
 \subsection{线段树}
 
-线段树把区间拆成较小的相邻区间，每个节点保存一段的统计信息。只要合并满足结合律，就能复用节点上的结果。
+线段树把区间拆成较小的相邻区间，每个节点保存一段的统计信息。合并运算满足结合律时，查询结果可由各子区间的聚合值计算。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 叶子保存元素，父节点由左、右子节点合并。修改一个元素后向上更新其祖先。
     \item 迭代版把叶子放在一块连续区域内，查询时用两个累加器，维持从左到右的合并顺序。
     \item \texttt{Info\{\}} 是合并的单位元，\texttt{operator+} 表示连接两个相邻区间。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：单点覆盖、区间聚合。}
+\paragraph{单点覆盖、区间聚合}
 
-传入 $1$ 起始的 \texttt{Info} 数组。求区间和可直接用下一节的 \texttt{SumInfo}。
+构造函数接受下标从 $1$ 开始的 \texttt{Info} 数组。以区间和为聚合量时，信息类型应保存区间和，并以加法实现合并。
 
 \cppfile{code/ds/segment_tree.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 建树和存储均为 $O(n)$，单点修改及区间查询耗时 $O(\log n)$。结论按常数时间合并计算。
-\end{complexity}
 
-\begin{warningbox}
 查询接口使用闭区间。若维护矩阵乘积、拼接等运算，合并顺序必须与原区间一致。
-\end{warningbox}
-
 
 \subsection{懒标记线段树}
 
 区间修改完整覆盖当前节点时，可以直接修改节点汇总并记录标记。以后需要访问其子节点时，再把标记下传。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item \texttt{Info::apply} 更新汇总信息。\texttt{Tag::apply} 把较新的操作追加到旧标记后面。
     \item 区间加在旧标记基础上累加。区间覆盖会丢弃更早的覆盖和加法。
     \item 覆盖为零也是有效操作。用一个布尔值区分是否设置了覆盖标记。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板一：泛型区间修改和查询。}
+\paragraph{泛型区间修改和查询}
 
 输入为 $1$ 起始的非空数组。自定义 \texttt{Info} 需支持合并与按区间长度应用标记。
 
 \cppfile{code/ds/lazy_segment_tree.hpp}
 
-\textbf{模板二：区间加、覆盖与求和的 Info 和 Tag。}
+\paragraph{区间加、覆盖与求和的完整实现}
 
 使用 \texttt{LazySegmentTree<SumInfo, RangeTag>}。加 $x$ 可传 \texttt{\{false, 0, x\}}，覆盖为 $x$ 可传 \texttt{\{true, x, 0\}}。
 
 \cppfile{code/ds/range_sum.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 建树和存储为 $O(n)$。标记合成、应用及信息合并为常数时间时，区间修改和查询为 $O(\log n)$。
-\end{complexity}
 
-\begin{warningbox}
-标记的合成顺序不能颠倒。覆盖后加与加后覆盖的结果一般不同。求和时还要乘上区间长度。
-\end{warningbox}
-
+加法与覆盖不可交换。更新区间和时，加值或覆盖值须乘以区间长度。
 
 \subsection{动态开点线段树}
 
 当坐标范围很大且只有少数位置被修改时，可以只为访问到的修改路径分配节点，空区间用节点编号零表示。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 新根初始化为零。修改时按需创建节点，查询时遇到空节点直接返回零。
     \item 一个节点池可存多棵相同值域的树，通过不同根编号访问。
     \item 节点由整数下标访问。递归修改可能扩充节点池，返回新编号后再写入父节点的孩子下标。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：大坐标域单点加、区间和，可选第 $k$ 小与合并。}
+\paragraph{大坐标域单点加、区间和，可选第 $k$ 小与合并}
 
 构造时给定 \texttt{lo <= hi}。中点用无符号宽度计算，支持整个 \texttt{ll} 值域。
 修改位置必须在值域内，区间和应能用 \texttt{ll} 表示。
 
 \cppfile{code/ds/sparse_segment_tree.hpp}
 
-\begin{complexity}
-设值域有 $U$ 个整数，单点修改与查询耗时 $O(\log(U+1))$。$q$ 次单点修改最多分配 $O(q\log(U+1))$ 个节点。
-\end{complexity}
+\paragraph{复杂度}
+值域含 $U$ 个整数时，单次修改或查询耗时 $O(\log(U+1))$。
 
-\begin{warningbox}
+$q$ 次单点修改最多分配 $O(q\log(U+1))$ 个节点。
+
 普通动态开点树会原地修改。若需要同时查询旧根和新根，应使用可持久化版本。
-\end{warningbox}
-
 
 \subsection{权值线段树}
 
 权值线段树的下标表示值，区间内的和表示这个值域内的元素个数。它适合查询动态多重集合中的排名和第 $k$ 小。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 插入或删除某个数时，在该值处加一或减一。某值的严格排名等于比它小的元素个数加一。
     \item 求第 $k$ 小时先看左子树的频次和。如果左侧的数不够 $k$ 个，就减去左侧频次，再走向右子树。
     \item 值域能预先收集时，可先离散化。比较用编号，输出时映射回原值。
 \end{itemize}
-\end{algorithmnote}
-
-\textbf{用法}
 
 用前一节的 \texttt{SparseSumTree} 维护频次。调用 \texttt{kth(root,k)}，若排名不合法则返回空值。
 
-\begin{complexity}
+\paragraph{复杂度}
 单点频次更新、求排名及求第 $k$ 小均为 $O(\log(U+1))$。
-\end{complexity}
 
-\begin{warningbox}
 叶子频次须非负。删除前确认该值存在，或由题目保证所有删除合法。
-\end{warningbox}
-
 
 \subsection{可持久化线段树（主席树）}
 
 可持久化线段树在修改时只复制受影响的一条路径，其他子树由新旧版本共享。求静态子数组第 $k$ 小时，每个前缀对应一个权值树版本。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 将原值离散化。版本 $\mathrm{root}[i]$ 记录前 $i$ 个数的值域频次，版本零为空。
     \item $[l,r]$ 中的频次等于版本 $r$ 减去版本 $l-1$。两棵树一起向下走，用左孩子的频次差决定方向。
     \item 新版本只会改动新分配的节点，先前版本的根仍能用于查询。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：静态区间第 $k$ 小。}
+\paragraph{静态区间第 $k$ 小}
 
 输入为 $1$ 起始数组，允许重复值。\texttt{kth(l,r,k)} 返回原坐标值，$k$ 越界时返回空值。
 
 \cppfile{code/ds/主席树.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 设 $V$ 为不同值个数。建树需 $O(n\log(n+1))$ 时间和 $O(n\log(V+1))$ 空间，单次查询为 $O(\log(V+1))$。
-\end{complexity}
 
-\begin{warningbox}
-区间左端应减去版本 $l-1$，否则会漏掉第 $l$ 个元素。不要把共享子树作为普通动态树原地修改。
-\end{warningbox}
-
+闭区间 $[l,r]$ 的频次由版本 $r$ 减去版本 $l-1$ 得到。
+共享节点保持不可变，以保持各历史版本的有效性。
 
 \subsection{线段树合并}
 
-节点的值域划分相同时，可以把两棵动态线段树的统计合为一棵。常见用法是从叶子向上合并树上各子树的颜色频次。
+节点的值域划分相同时，可以把两棵动态线段树的统计合为一棵。例如，可按自底向上的顺序合并各子树的颜色频次。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 一棵树在当前区间为空时，直接接管另一棵树的对应节点。
     \item 两边都存在时，递归合并左右孩子。到达叶子就相加，再向上维护区间和。
     \item 每次遇到两个非空节点，会消费掉第二棵树相应的节点。可据此估算一系列破坏式合并的总成本。
 \end{itemize}
-\end{algorithmnote}
-
-\textbf{用法}
 
 调用 \texttt{SparseSumTree::merge(x,y)}，结果写回根 \texttt{x}，根 \texttt{y} 置零。两棵树须来自同一个节点池，且各自独占其节点。
 
-\begin{complexity}
+\paragraph{复杂度}
 单次耗时为 $O(1+C)$，$C$ 是两棵树都非空的对应节点数。共分配 $M$ 个节点、做 $q$ 次独占合并时，总合并耗时为 $O(M+q)$。
-\end{complexity}
 
-\begin{warningbox}
 模板不回收节点池中已经消费的槽位。需要同时保留两棵原树时，要另做非破坏式合并。
-\end{warningbox}
-
 
 \section{其他常用数据结构}
 
@@ -576,167 +443,131 @@ ST 表预处理所有长度为二的幂的区间。若合并操作满足结合�
 
 Treap 按键保持二叉搜索树顺序，按随机优先级保持堆序。旋转式 Treap 用旋转恢复堆序，FHQ Treap 用分裂和合并重组子树。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 旋转版把相同键的出现次数存于一个节点，更新子树大小时也要累加重复次数。
     \item FHQ 版分裂成 $<x$ 与 $\ge x$，或 $\le x$ 与 $>x$。合并时要求前一棵树中的键不大于后一棵树中的键。
     \item 两种模板都用子树元素个数求排名与第若干小。若需维护序列，可将 FHQ 的分裂条件改为左侧应保留的元素个数。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板一：旋转 Treap，有序多重集合。}
+\paragraph{旋转 Treap，有序多重集合}
 
 支持插入、删除一份、严格排名及第 $k$ 小。排名为比指定值小的元素个数加 $1$。
 
 \cppfile{code/ds/treap.hpp}
 
-\textbf{模板二：FHQ Treap，有序多重集合。}
+\paragraph{FHQ Treap，有序多重集合}
 
 支持相同查询，并提供严格前驱、后继。无答案时返回空值。
 
 \cppfile{code/ds/fhq_treap.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 设当前保存 $n$ 个元素。插入、删除和查询的期望时间为 $O(\log(n+1))$，极端不平衡时为 $O(n)$。节点池占用与累计分配的节点数成正比。
-\end{complexity}
 
-\begin{warningbox}
 分裂时直接比较键值，以便处理最小整数。每次旋转、分裂或合并后都要更新子树大小。
-\end{warningbox}
-
 
 \subsection{分块}
 
 把数组拆成近似等长的连续块。完整覆盖的块可以整体处理，区间两端的零散位置再逐项处理。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 块长取约 $\sqrt n$，一次操作至多扫描两个零散块，并访问至多 $O(n/\sqrt n)$ 个整块。
     \item 块和记录各元素的基础值之和。整块加法只改块标记，零散修改直接改基础单元并更新块和。
     \item 查询时将块标记乘以当前覆盖的元素个数，再加上覆盖部分的基础值。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：分块支持区间加和区间求和。}
+\paragraph{分块支持区间加和区间求和}
 
 输入为 $1$ 起始的非空数组，尾块使用实际长度。
 
 \cppfile{code/ds/分块.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 建块与存储为 $O(n)$。块长为 $B$ 时，单次修改或查询为 $O(B+n/B)$。
-\end{complexity}
 
-\begin{warningbox}
 基础值与块标记分开保存。零散修改做增量时无需先清空整块标记，但直接赋值需要重新处理该标记。
-\end{warningbox}
-
 
 \subsection{莫队算法}
 
 莫队将区间查询离线重排。相邻查询之间只移动左右端点，并增删跨过的元素。以下例子维护不同值个数。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 按左端点所在块分组，组内按右端点排序。交替改变右端点排序方向可以减少块间跳转。
     \item 窗口里某个值的频次从零变一时，不同值数加一。从一变零时减一。
     \item 按查询编号写回答案。模板先扩后缩以避免删除尚未在窗口中的位置。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：离线查询区间内不同值个数。}
+\paragraph{离线查询区间内不同值个数}
 
 输入为 $1$ 起始数组，值可为负。查询为有效闭区间，结果按原查询顺序返回。
 
 \cppfile{code/ds/莫队.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 块长为 $B$、查询数为 $q$ 时，共移动 $O(n\lceil n/B\rceil+qB)$ 次。
 离散化和排序另需 $O(n\log(n+1)+q\log(q+1))$，空间为 $O(n+q)$。
-\end{complexity}
 
-\begin{warningbox}
 只有端点增删足够便宜时，基础莫队才合适。含在线修改的问题需要扩展状态或更换方法。
-\end{warningbox}
-
 
 \subsection{堆维护前 K 大、前 K 小}
 
-数据持续加入时，可以用大小不超过 $k$ 的堆保留目前最好的 $k$ 项。堆顶是保留元素中最容易被替换的一个。
+元素依次加入时，大小至多为 $k$ 的堆可维护指定顺序中的前 $k$ 项。堆顶是保留集合的边界元素。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 前 $k$ 大用小根堆，遇到更大的数便替换堆顶。前 $k$ 小用大根堆，比较方向相反。
     \item 随插入和替换更新保留元素的和。堆满时，堆顶就是第 $k$ 大或第 $k$ 小。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：流式维护前 $k$ 项的总和及边界值。}
+\paragraph{流式维护前 $k$ 项的总和及边界值}
 
 使用 \texttt{KLargest} 或 \texttt{KSmallest}，$k\ge0$。未满时保留所有已加入元素，\texttt{kth()} 返回空值。
 
 \cppfile{code/ds/top_k.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 单次插入为 $O(1+\log(k+1))$，查询为 $O(1)$，空间为 $O(k)$。
-\end{complexity}
 
-\begin{warningbox}
 模板处理持续插入。若还要删除任意旧元素，需要配套维护候补元素或使用其他有序结构。
-\end{warningbox}
-
 
 \subsection{双堆维护中位数}
 
 将数据分为较小的一半和较大的一半。小的一半用大根堆维护上界，大的一半用小根堆维护下界。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 新值根据大小进入相应的堆。两堆元素数之差超过约定时，把堆顶移到另一堆。
     \item 让低半区大小等于高半区，或比高半区多一个。于是中间的一个或两个元素总在堆顶。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：流式插入并查询两个中间值。}
+\paragraph{流式插入并查询两个中间值}
 
 奇数个元素时两个结果相同，偶数个时分别为下中位数与上中位数。空集合返回空值。
 
 \cppfile{code/ds/双堆维护中位数.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 插入耗时 $O(\log(n+1))$，查询为 $O(1)$，存储 $n$ 个元素占 $O(n)$ 空间。
-\end{complexity}
 
-\begin{warningbox}
 若题目要偶数项的算术平均值，先转换到足够宽的类型再求和，避免两个中间值相加溢出。
-\end{warningbox}
-
 
 \subsection{Bitset}
 
 位集将多个布尔状态打包，按机器字进行与、或、异或和移位。它可用于集合运算、可达性和布尔背包。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 令第 $s$ 位表示和 $s$ 可达，初始化第零位置一。遇到权值 $x$ 时，原状态左移 $x$ 位对应选择该元素。
     \item 将移位结果与原状态按位或，就同时保留选择与跳过两种情况。每个元素只处理一次。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：用位集求 01 子集和可达性。}
+\paragraph{用位集求 01 子集和可达性}
 
 调用 \texttt{reachableSums<MAX>(a)}。元素非负，只保留和为 $0$ 到 \texttt{MAX} 的状态。
 
 \cppfile{code/ds/bitset_subset_sum.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 设位集长度为 $S$、机器字宽为 $w$。按字实现时，$n$ 次转移需 $O(n\lceil S/w\rceil)$ 字操作，位集占 $O(\lceil S/w\rceil)$ 个机器字。
-\end{complexity}
 
-\begin{warningbox}
 \texttt{std::bitset} 的长度在编译期指定。移位丢弃超出范围的位，负权输入需要另行设计状态。
-\end{warningbox}
-
 
 \paragraph{参考资料}
 \href{https://oi-wiki.org/ds/seg/}{OI Wiki：线段树基础}和

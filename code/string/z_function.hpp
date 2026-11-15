@@ -1,8 +1,9 @@
-#pragma once
-
 #include <algorithm>
 #include <string_view>
 #include <vector>
+
+#ifndef XCPC_STRING_Z_FUNCTION_HPP
+#define XCPC_STRING_Z_FUNCTION_HPP
 
 inline std::vector<int> zFunction(std::string_view s) {
     int n = static_cast<int>(s.size());
@@ -35,3 +36,5 @@ inline std::vector<int> extendedLcp(std::string_view s, std::string_view t) {
     }
     return ext;
 }
+
+#endif

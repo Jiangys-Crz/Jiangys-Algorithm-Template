@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 ll countWithoutEqualNeighbors(ll bound) {
     if (bound < 0) return 0;

@@ -1,8 +1,9 @@
-#pragma once
-
 #include <algorithm>
 #include <utility>
 #include <vector>
+
+#ifndef XCPC_STL_PERMUTATIONS_HPP
+#define XCPC_STL_PERMUTATIONS_HPP
 
 template<class T, class F>
 void forEachPermutation(std::vector<T> a, F visit, bool descending = false) {
@@ -14,3 +15,5 @@ void forEachPermutation(std::vector<T> a, F visit, bool descending = false) {
     } while (descending ? std::prev_permutation(a.begin(), a.end())
                         : std::next_permutation(a.begin(), a.end()));
 }
+
+#endif

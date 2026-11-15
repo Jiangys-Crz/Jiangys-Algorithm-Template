@@ -10,164 +10,126 @@
 
 字符串模拟按题意逐字符读取、修改和输出。数字长度超过整数范围时，可保留字符串并模拟竖式运算。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 十进制加法从最低位开始。每步加上两个当前数位和上一位进位，写入个位并产生新进位。
     \item 低位先写入结果，最后翻转。翻转前删掉多余的高位零，至少保留一个字符。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：两个非负十进制大整数相加。}
+\paragraph{两个非负十进制大整数相加}
 
 传入非空数字串，允许有前导零。返回规范的十进制字符串。
 
 \cppfile{code/string/字符串模拟.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 设两串较长的一方长度为 $n$，总时间为 $O(n)$，结果占 $O(n)$ 空间。
-\end{complexity}
 
-\begin{warningbox}
-短串一侧用零补齐。扫描完输入后，仍要处理可能剩余的最高位进位。
-\end{warningbox}
-
+缺少的数位按零处理，最高位的进位计入结果。
 
 \subsection{字符串枚举}
 
 子串由一对端点决定，子序列由保留哪些下标决定。枚举前先估算候选数量，再决定是否逐个检查。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 枚举非空子串时扫描所有 $l<r$ 的端点对，用 \texttt{string\_view} 传递区间可避免复制。
     \item 枚举子序列时对每个下标做保留或跳过的选择。递归复用同一个字符串作为当前结果。
     \item 两种枚举都按下标区分。不同的下标选择可能生成相同的字符串。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：通过回调枚举子串或子序列。}
+\paragraph{通过回调枚举子串或子序列}
 
 子串回调收到端点和视图。子序列回调收到临时视图，也会访问空子序列。
 
 \cppfile{code/string/字符串枚举.hpp}
 
-\begin{complexity}
-不计回调内部工作，子串枚举耗时 $O(n^2)$、额外空间 $O(1)$；
-子序列枚举耗时 $O(2^n)$、额外空间 $O(n)$。复制或逐字符输出需另计长度。
-\end{complexity}
+\paragraph{复杂度}
+不计回调本身的开销，子串枚举耗时 $O(n^2)$，额外空间为 $O(1)$。
+子序列枚举耗时 $O(2^n)$，额外空间为 $O(n)$。复制或逐字符输出需另计长度。
 
-\begin{warningbox}
 子序列视图仅在当前回调里有效。若须长期保存结果，应在回调内复制。
-\end{warningbox}
-
 
 \subsection{子串与子序列}
 
 子串必须取自一段连续区间。子序列只要求所选位置严格递增，可以跳过字符。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 判断子序列时对文本从左到右扫描。当前字符等于目标串尚未匹配的首字符时，就消耗这个字符。
     \item 选取最早可用的匹配位置，为后续保留的候选位置最多。
     \item 判断子串时可以使用标准库查找，或用本章的 KMP 定位连续匹配。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：判断模式串是否为文本的子序列。}
+\paragraph{判断模式串是否为文本的子序列}
 
 参数依次为模式串和文本。空模式串是任意字符串的子序列。
 
 \cppfile{code/string/子序列.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 扫描文本耗时 $O(n)$，额外空间为 $O(1)$。
-\end{complexity}
 
-\begin{warningbox}
-判断时先确认是否允许跳过字符。最长公共子串与最长公共子序列的转移可见第一章。
-\end{warningbox}
-
+子串要求匹配位置连续，子序列允许跳过字符。两类最长公共序列问题的转移见第一章。
 
 \subsection{字符串字典序}
 
 比较两串时，先看第一处不同的字符。若一串是另一串的前缀，则较短的字符串更小。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 将多段字符串拼成字典序最小的结果时，比较 $xy$ 与 $yx$ 决定 $x,y$ 的先后。
     \item 若相邻两段放反了，交换后会使拼接结果变小，外部已拼好的前缀不受影响。
     \item 实际比较时按拼接顺序逐个读取字节，省去比较中的临时拼接。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：排列所有字符串，使拼接结果最小。}
+\paragraph{排列所有字符串，使拼接结果最小}
 
 输入允许空串和相同字符串，按无符号字节比较。
 
 \cppfile{code/string/字符串字典序.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 设有 $k$ 段，最长一段长度为 $L$，总字符数为 $N$。
 排序时间为 $O(k(1+L)\log(k+1))$，形成结果另需 $O(N)$。模板按值接收输入。
-\end{complexity}
 
-\begin{warningbox}
 拼接的比较条件应使用严格小于。空串可以固定排在其他字符串之前。
-\end{warningbox}
-
 
 \subsection{字符串周期性}
 
 若所有满足 $i+p<n$ 的位置都有 $s[i]=s[i+p]$，正整数 $p$ 是一个周期。
 最短周期描述允许末尾有残段的重复，完整重复块还要求长度整除。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 长度为 $n-p$ 的相等前后缀恰好意味着 $p$ 是周期。令最长真前后缀长度为 $b$，最小周期就是 $n-b$。
     \item 如果 $n$ 能被最小周期整除，前 $p$ 个字符就是最短完整重复块。否则把整串作为一个块。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：同时求最小周期和最短完整重复块的长度。}
+\paragraph{同时求最小周期和最短完整重复块的长度}
 
 例如 \texttt{ababa} 的周期为 $2$，完整重复块长度为 $5$。空串返回两个 $0$。
 
 \cppfile{code/string/字符串周期.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 复用前缀函数，时间和空间均为 $O(n)$。
-\end{complexity}
 
-\begin{warningbox}
 可以有残段的周期与必须整段重复的题目使用不同的答案字段。
-\end{warningbox}
-
 
 \subsection{字符串 DP}
 
 常见字符串 DP 将两个前缀长度作为状态。以编辑距离为例，求通过插入、删除、替换把一个字符串改成另一个的最少操作数。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 设 $f[i][j]$ 表示两个前缀间的编辑距离。删除、插入分别来自 $f[i-1][j]$、$f[i][j-1]$，代价各为 $1$。
     \item 保留或替换最后一个字符来自 $f[i-1][j-1]$。两字符相等时该步代价为 $0$，否则为 $1$。
     \item 滚动更新时保存左上角的旧值。空前缀的距离就是另一侧前缀的长度。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：单位代价的 Levenshtein 编辑距离。}
+\paragraph{单位代价的 Levenshtein 编辑距离}
 
 支持空串。交换两串以缩短滚动数组，三种编辑操作各计一步。
 
 \cppfile{code/string/编辑距离.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 设两串长度为 $n,m$，耗时 $O((n+1)(m+1))$，额外空间为 $O(\min(n,m)+1)$。
-\end{complexity}
-
-\begin{warningbox}
-连续匹配、允许跳过和允许替换是不同的转移规则。按题目选择编辑距离、最长公共子串或最长公共子序列。
-\end{warningbox}
-
 
 \section{字符串匹配}
 
@@ -175,161 +137,117 @@
 
 预处理模式串后，KMP 可在线性时间内找出模式串在文本中的所有出现位置。失配时只回退已匹配长度，文本位置继续向前。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 扫描至文本位置 $i$，令 $j$ 为目前已匹配的模式串前缀长度。失配时从 $j$ 退到 $\mathrm{nxt}[j-1]$。
     \item 找到完整匹配后记录起点 $i-m+1$，并退到 $\mathrm{nxt}[m-1]$，即可继续寻找重叠匹配。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：固定模式串，匹配一个或多个文本。}
+\paragraph{固定模式串，匹配一个或多个文本}
 
 用 \texttt{KMP(t)} 预处理，\texttt{query(s)} 返回升序的匹配起点。空模式串匹配全部 $n+1$ 个边界。
 
 \cppfile{code/string/kmp.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 模式串长度为 $m$，预处理耗时和空间均为 $O(m)$。对长度为 $n$ 的文本，匹配耗时 $O(n+1)$，除结果外额外空间为 $O(1)$。
-\end{complexity}
-
-\begin{warningbox}
-发现一次匹配后仍要回退模式位置。直接清零会错过共享一段前后缀的匹配。
-\end{warningbox}
-
 
 \subsection{前缀函数（Prefix Function）}
 
-前缀函数 $\pi[i]$ 是前缀 $s[0,i+1)$ 中相等的最长真前缀和真后缀的长度。
-真前缀、真后缀都比整个前缀短。模板沿用 \texttt{nxt} 命名。
+前缀函数 $\pi[i]$ 为 $s[0,i+1)$ 的最长相等真前缀与真后缀的长度，代码记为 \texttt{nxt[i]}。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 处理 $i$ 时，从 $j=\mathrm{nxt}[i-1]$ 试着延长。若失配，则沿 $\mathrm{nxt}[j-1]$ 依次尝试更短的候选。
     \item 利用同一条回退链，可以枚举一个前缀的所有正长度边界，也能从最长边界推出最小周期。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：计算整个字符串的前缀函数。}
+\paragraph{计算整个字符串的前缀函数}
 
 首项为 $0$，空字符串返回空数组。KMP 与周期模板都直接调用它。
 
 \cppfile{code/string/prefix_function.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 候选长度每一步至多增长一，回退时严格下降。时间和空间均为 $O(n)$。
-\end{complexity}
-
-\begin{warningbox}
-数组下标是前缀的末尾位置，数组值是匹配长度。沿长度 $j$ 回退时访问 $\mathrm{nxt}[j-1]$。
-\end{warningbox}
-
 
 \subsection{Z 函数（扩展 KMP）}
 
 Z 函数 $\mathrm{z}[i]$ 是位置 $i$ 起的后缀与原串前缀的最长公共前缀长度。
 扩展 KMP 则把前缀固定为另一条模式串。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 维护当前最靠右的匹配区间 $[l,r)$。若 $i<r$，可先复用 $\min(r-i,\mathrm{z}[i-l])$，再逐字符尝试延伸。
     \item 匹配两串时，先计算模式串的 Z 数组。扫描文本时复用模式串内已知的公共前缀长度。
-    \item 模板直接比较两条字符串，适合输入字符全集已用尽的场景。
+    \item 扩展匹配直接比较文本与模式串，无需拼接或引入分隔符。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：计算 Z 数组和扩展匹配数组。}
+\paragraph{计算 Z 数组和扩展匹配数组}
 
 非空字符串有 $\mathrm{z}[0]=n$。\texttt{extendedLcp(s,t)} 返回文本每个位置和模式串 $t$ 的公共前缀长度。
 
 \cppfile{code/string/z_function.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 单串 Z 函数为 $O(n)$ 时间和空间。扩展匹配含预处理共 $O(n+m)$ 时间与空间。
-\end{complexity}
-
-\begin{warningbox}
-有的题目指定 Z 数组首项为零。输出前按该题的规定调整首项。
-\end{warningbox}
-
 
 \subsection{字符串哈希}
 
 多项式哈希把字符看成数字，按固定底数和模数递推前缀哈希。预处理底数的幂后，可常数时间取出任意子串的哈希。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 令 $P[0]=0$，$P[i+1]=(P[i]B+c_i)\bmod M$，其中 $c_i$ 是无符号字节值加一。
     \item 由 $P[r]-P[l]B^{r-l}$ 取得 $[l,r)$ 的哈希。再对模数归一化，使结果与起点无关。
     \item 假设替换位置 $i$，整串哈希的变化为新旧字符数值差乘 $B^{n-1-i}$。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：单模前缀哈希、子串哈希和假设替换。}
+\paragraph{单模前缀哈希、子串哈希和假设替换}
 
 \texttt{get()} 取整串哈希，\texttt{replaced(i,c)} 计算假设替换后的整串哈希，原对象可继续查询原串。
 
 \cppfile{code/string/rolling_hash.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 建表时间和空间均为 $O(n)$，每次取哈希或计算替换结果为 $O(1)$。
-\end{complexity}
 
-\begin{warningbox}
-判断子串是否相等时先确认长度一致。哈希有碰撞可能，必须严格正确时应逐字符验证或用确定性算法。
-\end{warningbox}
-
+比较子串时须同时检验长度与哈希值。需要确定性结果时，应逐字符核实哈希相等的候选区间，或采用确定性算法。
 
 \subsection{双哈希}
 
 双哈希用两组底数和模数表示同一子串。比较时同时要求两份结果相等，可以降低碰撞风险。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 两组前缀哈希复用同一个单哈希模板。各自按自己的底数和模数运算。
     \item 跨字符串比较时，两侧必须使用相同的两组参数和相同的字符编码。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：与单哈希一致的双哈希接口。}
+\paragraph{与单哈希一致的双哈希接口}
 
 整串、子串和假设替换都返回一对模值，可以直接用 \texttt{==} 比较。
 
 \cppfile{code/string/double_hash.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 预处理耗时和空间为 $O(n)$，查询为 $O(1)$，通常需要约两倍的单哈希存储。
-\end{complexity}
 
-\begin{warningbox}
-两组参数固定时仍可能出现构造碰撞。比较哈希的结果应按题目的正确性要求使用。
-\end{warningbox}
-
+固定参数的双哈希仍可能发生碰撞。
 
 \subsection{Rabin-Karp}
 
 Rabin-Karp 将模式串哈希与文本中每个等长窗口的哈希比较，快速排除不可能匹配的位置。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 用双哈希筛出候选，再将候选窗口与模式串逐字符核实。
     \item 窗口使用视图比较，无需复制每个子串。匹配时记录起始位置。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：双哈希筛选，逐字符确认匹配。}
+\paragraph{双哈希筛选，逐字符确认匹配}
 
 匹配结果无哈希误判，支持重叠匹配。空模式串匹配全部 $n+1$ 个边界。
 
 \cppfile{code/string/Rabin-Karp.cpp}
 
-\begin{complexity}
-预处理与筛选为 $O(n+m+1)$。设双哈希相等的候选窗口数为 $c$，核实最多再耗时 $O(cm)$。空间为 $O(n+m+1)$。
-\end{complexity}
-
-\begin{warningbox}
-重复字符很多时，真正匹配的窗口也可能很多。需要确定的线性匹配界时可用 KMP。
-\end{warningbox}
-
+\paragraph{复杂度}
+设文本长为 $n$，模式串长为 $m$，哈希筛出的候选数为 $c$。时间为 $O(n+m+cm+1)$，空间为 $O(n+m+1)$。
+逐字符核实所有候选，最坏情况下可能比较 $O(nm)$ 个字符。
 
 \section{字符串数据结构}
 
@@ -337,77 +255,65 @@ Rabin-Karp 将模式串哈希与文本中每个等长窗口的哈希比较，快
 
 Trie 让具有共同前缀的字符串共用一条路径。节点可以同时记录到此结束的字符串数，以及经过该节点的字符串数。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 沿字符编号访问 \texttt{ch}。插入时只创建缺失的节点，并更新经过次数 \texttt{pass} 和终止次数 \texttt{cnt}。
-    \item 查完整字符串读取终止次数，查某前缀读取经过次数。删除前先确认完整字符串存在。
+    \item 完整串查询读取终止次数，前缀查询读取经过次数。删除要求目标串的终止次数大于零。
     \item 字母表由编译期大小和字符编号函数描述。Trie、AC 自动机和 SAM 可复用同一字符映射。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{字母表模板}
+\paragraph{字母表模板}
 
 默认提供小写字母以及大小写字母和数字两种映射。
 
 \cppfile{code/string/alphabet.hpp}
 
-\textbf{模板：支持重复串与删除的 Trie。}
+\paragraph{支持重复串与删除的 Trie}
 
 \texttt{Trie<>} 默认接受大小写字母和数字。
-使用 \texttt{Trie<LowercaseAlphabet>} 可缩小每个节点的转移表。
-查询精确次数用 \texttt{query}，查询前缀次数用 \texttt{prefixCount}。
+
+\texttt{Trie<LowercaseAlphabet>} 仅支持小写字母，每个节点的转移表相应缩小。
+\texttt{query} 返回完整串的次数，\texttt{prefixCount} 返回前缀次数。
 
 \cppfile{code/string/trie.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 字母表固定时，每次插入、删除或查询耗时 $O(m+1)$，其中 $m$ 为操作串长度。设已分配 $V$ 个节点、字母表大小为 $\sigma$，空间为 $O(V\sigma)$。
-\end{complexity}
 
-\begin{warningbox}
 节点编号用于转移。遍历输出需要的字典序，须与字符实际比较顺序一致。删除只更新计数，重复插入时可以复用旧节点。
-\end{warningbox}
-
 
 \subsection{01 Trie}
 
 01 Trie 把整数写成固定宽度的二进制序列，从最高位到最低位建立路径。可以利用高位对数值的优先级寻找最大异或值。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 查询时优先走与当前位相反的分支，让结果的该位为一。若没有有效候选，再走同位分支。
     \item 每个节点保存子树中仍有效的数字数。删除后可能留下旧节点，查询前要检查计数。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：动态多重集合的最大异或查询。}
+\paragraph{动态多重集合的最大异或查询}
 
-\texttt{BinaryTrie<B>} 只接收低 $B$ 位内的无符号数，默认 $B=64$。
+\texttt{BinaryTrie<B>} 接受低 $B$ 位内的无符号数，默认 $B=64$。
+
 \texttt{maxXor(x)} 返回异或结果，集合为空时返回空值。
 
 \cppfile{code/string/binary_trie.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 插入、删除和查询耗时均为 $O(B)$。累计 $q$ 次插入最多分配 $O(qB)$ 个节点。
-\end{complexity}
 
-\begin{warningbox}
 最大异或按无符号值比较。删除不存在的数会返回假，并保留原来的计数。
-\end{warningbox}
-
 
 \subsection{AC 自动机}
 
 AC 自动机在 Trie 上加失配链接，同时匹配多条模式串。一个状态表示文本后缀中能在 Trie 上走到的最长前缀。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 按 BFS 顺序建立 \texttt{fail}。节点没有某条转移时，沿失配状态复用该字符的转移。
-    \item 扫描文本时，只记录每个状态被直接到达的次数。再按 BFS 逆序把次数累加到失配父节点，就能得到每个模式串的出现次数。
+    \item 扫描文本时，只记录每个状态被直接到达的次数。按 BFS 逆序将计数累加至失配父节点，可得到各模式串的出现次数。
     \item 每次查询创建自己的计数表，可以对同一模式集合匹配多条文本。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：返回每条模式串的出现次数。}
+\paragraph{返回每条模式串的出现次数}
 
 先插入所有模式串并保存返回的终点编号，再调用 \texttt{build()}。
 查询得到状态计数，按编号取值即为对应模式串的次数。
@@ -416,16 +322,12 @@ AC 自动机在 Trie 上加失配链接，同时匹配多条模式串。一个�
 
 \cppfile{code/string/ac_automaton.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 设模式串总长度为 $L$、状态数为 $V$、字母表大小为 $\sigma$。
 插入并建表耗时 $O(L+V\sigma)$，空间为 $O(V\sigma)$。
 长度为 $n$ 的文本需 $O(n+V)$ 时间。
-\end{complexity}
 
-\begin{warningbox}
-建表后转移已经补全。要添加新的模式，应先创建新的自动机。空模式在长度为 $n$ 的文本中有 $n+1$ 次出现。
-\end{warningbox}
-
+转移表构建后，新增模式需要重新构造自动机。
 
 \section{常考进阶}
 
@@ -433,139 +335,109 @@ AC 自动机在 Trie 上加失配链接，同时匹配多条模式串。一个�
 
 Manacher 线性求出所有回文中心的扩展半径。奇数回文中心是一个字符，偶数回文中心是两个相邻字符之间的空隙。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item $\mathrm{odd}[i]$ 包含中心字符，最长奇回文长度为 $2\mathrm{odd}[i]-1$。
     \item $\mathrm{even}[i]$ 的中心在 $i-1$ 和 $i$ 之间，最长偶回文长度为 $2\mathrm{even}[i]$。
     \item 维护右端最靠后的已知回文。当前中心位于其中时，先用对称中心的半径初始化，再比较区间之外的字符。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：求奇偶半径、区间回文判定和最长回文子串。}
+\paragraph{求奇偶半径、区间回文判定和最长回文子串}
 
 \texttt{isPalindrome(l,r)} 使用半开区间。最长子串有多个时，\texttt{longest()} 返回最靠左的区间。
 
 \cppfile{code/string/manacher.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 预处理时间和空间均为 $O(n)$。判定任意区间为 $O(1)$，枚举半径求最长子串为 $O(n)$。
-\end{complexity}
 
-\begin{warningbox}
-半径和长度的换算在奇偶两种情况下不同。模板分开计算两种中心，可直接处理包含任意字节的字符串。
-\end{warningbox}
-
+奇偶中心分别计算，因而无需引入分隔字符。
 
 \subsection{后缀数组（SA）}
 
 后缀数组将原串的所有非空后缀按字典序排列。倍增法用两个较短片段的排名组成新的比较键，逐轮加倍比较长度。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item \texttt{sa[i]} 是第 $i$ 个后缀的起点，\texttt{rk[u]} 是起点 $u$ 对应的排名，两者互为逆映射。
-    \item 将够不到第二段的起点放在前面，其余起点按第二段排名排列。再对第一段排名做稳定计数排序，就能按二元组排序。
+    \item 将不存在第二段的后缀置于序列开头，其余后缀按第二段排名排列。随后对第一段排名进行稳定计数排序，得到排名二元组的字典序。
     \item \texttt{height[i]} 是排名相邻的第 $i-1$ 与第 $i$ 个后缀的最长公共前缀，首项为零。用 Kasai 算法线性求出。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：倍增加计数排序构建 SA，并计算 Height。}
+\paragraph{倍增加计数排序构建 SA，并计算 Height}
 
 按无符号字节比较，支持空串。不同后缀 $u,v$ 的最长公共前缀，可在两者排名之间对 \texttt{height} 取最小值，区间排除较小排名。
 
 \cppfile{code/string/suffix_array.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 固定字节字母表时，构造耗时 $O(n\log(n+1))$，额外空间为 $O(n)$。计算 Height 为 $O(n)$。
-\end{complexity}
 
-\begin{warningbox}
 排序的是后缀起点。若接入第四章的 ST 表，需按该模板的起始下标处理 Height 数组。
-\end{warningbox}
-
 
 \subsection{后缀自动机（SAM）}
 
 SAM 用有限状态表示一条字符串的所有子串。结束位置集合相同的非空子串到达同一状态，后缀链接 \texttt{link} 指向更短的后缀状态。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 状态 $u$ 对应的子串长度在 $(\mathrm{len}[\mathrm{link}[u]],\mathrm{len}[u]]$ 内。把每个非根状态的长度差相加，就是不同非空子串数。
     \item 每次追加字符创建一个新状态。当已有转移的长度关系不符时，克隆对应状态并重定向转移与链接。
     \item 每个新建前缀状态初值为一，克隆状态初值为零。按长度从大到小向后缀链接累加，可得到各子串的出现次数。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：在线追加、判断子串、查询不同子串数与出现次数。}
+\paragraph{在线追加、判断子串、查询不同子串数与出现次数}
 
 \texttt{state(t)} 返回模式串所在状态，缺失时为 $-1$。
 通过 \texttt{occurrenceCounts()} 得到状态计数，出现次数包含重叠匹配。默认接受小写字母。
 
 \cppfile{code/string/suffix_automaton.hpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 固定字母表时，构造耗时 $O(n)$，空间为 $O(n\sigma)$。
 查找长度为 $m$ 的模式耗时 $O(m+1)$，计算全部出现次数或不同子串数为 $O(n+1)$。
-\end{complexity}
 
-\begin{warningbox}
 追加字符会改变新串的统计结果，应重新查询状态和计数。空模式对应根，计数按 $n+1$ 个边界处理。
-\end{warningbox}
-
 
 \subsection{最小表示法}
 
 将字符串视为一个环，比较所有起点形成的等长轮转，寻找字典序最小的一条。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 维护两个候选起点，逐字符比较它们的轮转。
     \item 若前 $k$ 个字符一样，第 $k+1$ 个字符不同时，较差起点及其之后紧接的 $k$ 个起点都可以跳过。
     \item 两候选重合时错开一个位置。比较至整圈相等时，保留较小起点。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：返回最小轮转的起点。}
+\paragraph{返回最小轮转的起点}
 
 若多个轮转相同且最小，返回最小起点。空串返回 $0$。
 输出时拼接起点之后的后缀与此前的前缀。
 
 \cppfile{code/string/最小表示法.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 时间为 $O(n)$，额外空间为 $O(1)$。
-\end{complexity}
 
-\begin{warningbox}
 比较时取模访问环上的字符，但候选起点必须在原串范围内。
-\end{warningbox}
-
 
 \subsection{回文串相关 DP}
 
 回文问题常将左右端点作为区间状态。最长回文子序列允许跳过位置，可以由更短区间的结果转移。
 
-\begin{algorithmnote}
 \begin{itemize}
     \item 设 $f[l][r]$ 表示闭区间内的最长回文子序列长度。单点为 $1$，空区间为 $0$。
     \item 两端字符相等时答案为 $f[l+1][r-1]+2$。否则取删除左端和删除右端两种方案的最大值。
     \item 按左端从大到小、右端从小到大迭代。滚动数组另存上一轮的左下角状态。
 \end{itemize}
-\end{algorithmnote}
 
-\textbf{模板：求最长回文子序列的长度。}
+\paragraph{求最长回文子序列的长度}
 
 空串返回零。若需要恢复一个最优序列，可保留完整的区间 DP 表。
 
 \cppfile{code/string/回文子序列DP.cpp}
 
-\begin{complexity}
+\paragraph{复杂度}
 时间为 $O(n^2)$，滚动数组占 $O(n)$ 额外空间。
-\end{complexity}
 
-\begin{warningbox}
 若题目要求连续回文串，区间只有在两端相同且内部也是回文时才成立。静态最值或判定可以使用 Manacher。
-\end{warningbox}
-
 
 \paragraph{参考资料}
 \href{https://oi-wiki.org/string/kmp/}{OI Wiki：前缀函数与 KMP}、

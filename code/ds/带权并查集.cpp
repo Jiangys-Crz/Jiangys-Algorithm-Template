@@ -3,7 +3,7 @@
 #include <utility>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 template<class T = ll>
 struct WeightedDSU {

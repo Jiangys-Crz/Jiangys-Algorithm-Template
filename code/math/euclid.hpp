@@ -1,9 +1,11 @@
-#pragma once
-
 #include <limits>
 #include <optional>
 
-#include "../types.hpp"
+using ll = long long;
+using ull = unsigned long long;
+
+#ifndef XCPC_MATH_EUCLID_HPP
+#define XCPC_MATH_EUCLID_HPP
 
 constexpr ull gcd(ull a, ull b) {
     while (b) {
@@ -31,3 +33,5 @@ inline ll exgcd(ll a, ll b, ll& x, ll& y) {
     y -= a / b * x;
     return d;
 }
+
+#endif

@@ -1,4 +1,4 @@
-#include "graph.hpp"
+#include <vector>
 
 struct FunctionalGraph {
     std::vector<int> bel, entry, dist, cycleLen;

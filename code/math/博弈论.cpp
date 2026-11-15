@@ -1,8 +1,9 @@
 #include <algorithm>
+#include <optional>
 #include <utility>
 #include <vector>
 
-#include "euclid.hpp"
+using ull = unsigned long long;
 
 std::optional<std::pair<int, ull>> nimMove(const std::vector<ull>& heaps) {
     ull x = 0;

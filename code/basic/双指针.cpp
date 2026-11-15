@@ -1,7 +1,7 @@
 #include <utility>
 #include <vector>
 
-#include "../types.hpp"
+using ll = long long;
 
 std::pair<int, int> findPairSum(const std::vector<int>& a, ll target) {
     int l = 0, r = static_cast<int>(a.size()) - 1;

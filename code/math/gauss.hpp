@@ -1,10 +1,11 @@
-#pragma once
-
 #include <algorithm>
 #include <bitset>
 #include <cmath>
 #include <utility>
 #include <vector>
+
+#ifndef XCPC_MATH_GAUSS_HPP
+#define XCPC_MATH_GAUSS_HPP
 
 enum class LinearStatus { unique, infinite, inconsistent };
 
@@ -76,3 +77,5 @@ LinearResult<std::bitset<M>> xorGauss(std::vector<std::bitset<M + 1>> a) {
                       ? LinearStatus::unique : LinearStatus::infinite;
     return {status, row, x};
 }
+
+#endif

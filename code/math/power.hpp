@@ -1,6 +1,7 @@
-#pragma once
+using ull = unsigned long long;
 
-#include "../types.hpp"
+#ifndef XCPC_MATH_POWER_HPP
+#define XCPC_MATH_POWER_HPP
 
 template<class T>
 constexpr T power(T a, ull b, T res = T{1}) {
@@ -11,3 +12,5 @@ constexpr T power(T a, ull b, T res = T{1}) {
     }
     return res;
 }
+
+#endif
