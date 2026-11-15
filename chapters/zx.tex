@@ -14,31 +14,27 @@
 
 \cppfile{code/zx/operator_overload.hpp}
 
-\texttt{std::sort} 默认按优先级递增排序。\texttt{std::priority\_queue<Score>} 的堆顶保存优先级最高的记录。
-\texttt{std::greater<Score>} 可反转比较方向。
+默认排序将高优先级记录置于末尾，默认优先队列将其置于堆顶。\texttt{std::greater<Score>} 反转次序。
 
 \paragraph{复杂度}
 每次比较或加法为 $O(1)$。
 
-比较运算符要满足严格弱序。两条记录字段相同时，两个方向的 \texttt{<} 均返回假。
-累加后的分数和罚时应能用 \texttt{ll} 表示。
+比较运算符须满足严格弱序。累加结果须能用 \texttt{ll} 表示。
 
 \subsection{为 128 位整数添加流输出}
 
-实现包含十进制转换函数及全局输出运算符，支持通过 \texttt{std::cout << x} 输出 \texttt{lll}。
+全局流输出运算符将 \texttt{lll} 转为十进制字符串，覆盖该类型的完整值域。
 
 \cppfile{code/zx/int128_output.hpp}
 
 \paragraph{复杂度}
 十进制输出需要 $O(d)$ 时间和临时空间，$d$ 是位数。
 
-该实现要求编译器支持 \texttt{\_\_int128}，并覆盖 \texttt{lll} 的完整值域。
-
 \section{对拍}
 
 \subsection{准备生成器、暴力解和待测解}
 
-对拍用小数据比较暴力解和待测解。暴力解尽量按定义独立实现。
+对拍在同一输入上比较独立实现的暴力解和待测解。
 
 \begin{itemize}
     \item 生成器接收整数种子，将合法输入写到标准输出。
@@ -74,8 +70,7 @@ bash code/zx/stress.sh ./gen ./brute ./sol 1000
 
 \cppfile[language=bash]{code/zx/stress.sh}
 
-\texttt{diff -Z} 忽略行尾空白。浮点容差、多解或特殊评测由对应的检查器判定。
-保存的 \texttt{data.in} 可用于复现并缩减反例。
+\texttt{diff -Z} 忽略行尾空白。浮点容差或多解由相应检查器判定，反例输入保存在 \texttt{data.in}。
 
 \section{随机数与数据生成}
 

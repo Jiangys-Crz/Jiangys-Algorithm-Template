@@ -52,13 +52,8 @@
 
 \subsection{欧几里得算法}
 
-任意公约数同时整除 $a,b$ 当且仅当它同时整除 $b,a\bmod b$。
-因此可以反复用余数替换较大的参数。
-
-\begin{itemize}
-    \item 在 $b>0$ 时将 $(a,b)$ 更新为 $(b,a\bmod b)$。
-    \item 余数为零时结束。最后一个非零除数是最大公约数。
-\end{itemize}
+当 $b>0$ 时，$(a,b)$ 与 $(b,a\bmod b)$ 的公约数集合相同。
+反复应用该变换，直至 $b=0$，返回此时的 $a$。
 
 辗转相除的迭代实现见本节前列的 \texttt{gcd}。
 
@@ -162,7 +157,7 @@
 
 \subsection{线性筛}
 
-线性筛让每个合数只由其最小质因子生成一次。生成合数时还能同步计算一些积性函数。
+线性筛用最小质因子生成每个合数一次，并可同步计算积性函数。
 
 \begin{itemize}
     \item 当 $\mathrm{lp}[i]=0$ 时，$i$ 是质数。枚举 $p$ 生成 $ip$，写入 $\mathrm{lp}[ip]=p$。
@@ -176,8 +171,6 @@
 
 \paragraph{复杂度}
 预处理时间与空间均为 $O(n)$。分解一个已筛过的数只需枚举它的质因子。
-
-整除分支需要立即退出。继续枚举会破坏每个合数只被生成一次的性质。
 
 \subsection{质因数分解}
 
@@ -195,8 +188,6 @@
 
 \paragraph{复杂度}
 试除最坏时间为 $O(\sqrt n)$。线性筛预处理后，分解耗时为 $O(\log n+1)$。
-
-适合试除的上界取决于时限。对很大的 64 位半素数，仅靠平方根试除可能过慢。
 
 \subsection{约数枚举}
 
@@ -236,16 +227,16 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
 
 \subsection{模运算性质}
 
-若 $m$ 整除 $a-b$，则 $a\equiv b\pmod m$。同余可在加、减、乘中传递，也可以在计算过程中不断规约以控制数值大小。
+设 $m>0$。若 $m$ 整除 $a-b$，记作 $a\equiv b\pmod m$。
 
 \begin{itemize}
-    \item $a+b$、$a-b$、$ab$ 可先规约两个操作数再计算。
+    \item 加、减、乘与模规约相容，可先将操作数规约至 $[0,m)$。
     \item C++ 的负数取余可能为负。要得到 $[0,m)$ 内的代表元，用 \texttt{safeMod(x,m)}。
     \item 模除法需要乘法逆元。只有除数与模数互质时才能使用。
 \end{itemize}
 
 例如声明 \texttt{using Z = MInt<998244353>;}。
-加减乘支持任意大于一的 32 位模数，\texttt{inv()} 和除法要求模数为质数且除数非零。
+加减乘支持 $2\le m<2^{32}$。\texttt{inv()} 和除法要求质数模，求逆的元素须非零。
 
 \cppfile{code/math/modint.hpp}
 
@@ -374,7 +365,6 @@ Lucas 定理给出 $\binom nk\equiv\prod_i\binom{n_i}{k_i}\pmod p$。
 \begin{itemize}
     \item $\mathrm{fac}[i]=i\,\mathrm{fac}[i-1]$，$\mathrm{invfac}[i-1]=i\,\mathrm{invfac}[i]$。
     \item 查询用 $\mathrm{fac}[n]\mathrm{invfac}[k]\mathrm{invfac}[n-k]$。
-    \item 预处理上界已知时一次建表。后续发现需要更大范围，可以显式扩展。
 \end{itemize}
 
 构造 \texttt{Comb<Z> comb(N)}，其中 $N$ 小于 $Z$ 对应的质数模。
@@ -470,12 +460,10 @@ Lucas 定理给出 $\binom nk\equiv\prod_i\binom{n_i}{k_i}\pmod p$。
     \item 在整数上，这个差也等于 $\binom{2n}{n}/(n+1)$。
 \end{itemize}
 
-调用 \texttt{catalan(n,comb)}，组合数表应预处理到 $2n$。
+调用 \texttt{catalan(n,comb)}，组合数表须覆盖 $2n$，且 $2n$ 小于模数。
 
 \paragraph{复杂度}
 阶乘表准备好后查询为 $O(1)$。
-
-整数除法公式移到模运算时要检查分母可逆。当前组合数模板仍要求阶乘上界小于模数。
 
 \subsection{组合计数}
 
@@ -721,15 +709,15 @@ Nim 扫描为 $O(n)$。给定拓扑序后，时间戳 mex 求全部 SG 需 $O(n+
 
 \subsection{概率与数学期望}
 
-概率刻画事件发生的可能性。离散随机变量的期望是 $\mathbb E[X]=\sum_x x\Pr(X=x)$，期望的线性性可用于拆分计数或耗时。
+离散随机变量的期望为 $\mathbb E[X]=\sum_x x\Pr(X=x)$。期望的线性性无需变量相互独立。
 
 \begin{itemize}
     \item 独立事件中至少一个发生的概率为一减全部不发生的概率。逐项累加时，可在当前概率上加尚未发生的概率乘本次概率。
-    \item 期望可直接相加，无需各项独立。若每次等概率抽一种物品，还缺 $k$ 种时，抽到一个新种类的概率为 $k/n$。
+    \item 从 $n$ 种物品中等概率、有放回地抽样，尚缺 $k$ 种时，下次抽到新品种的概率为 $k/n$。
     \item 收集齐 $n$ 种的期望抽数为各阶段几何等待时间之和，即 $\sum_{k=1}^n n/k$。
 \end{itemize}
 
-概率参数位于 $[0,1]$。抽样有放回，且每次对 $n$ 种物品等概率选择。
+概率参数须在 $[0,1]$ 内。
 
 \cppfile{code/math/概率期望.cpp}
 

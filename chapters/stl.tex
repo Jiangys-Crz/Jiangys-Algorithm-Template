@@ -229,7 +229,7 @@ void exampleOrderedSet() {
 \end{cppcode}
 
 \paragraph{复杂度}
-插入、查找通常为 $O(\log(n+1))$，按键删除多份要另计被删元素数。
+普通插入、查找耗时 $O(\log(n+1))$。按键删除还需计入被删项数。
 
 双向迭代器不能直接做差。若需动态查询排名或第若干小，可用前章平衡树或本章的 GNU 有序树。
 
@@ -515,16 +515,12 @@ void exampleBinarySearch() {
 \cppfile{code/stl/kth_smallest.hpp}
 
 \paragraph{复杂度}
-通常的无执行策略重载平均为 $O(n)$ 次操作。模板额外保存一份数组。
+不带执行策略的重载平均耗时 $O(n)$。此封装按值接收数组。
 
 \subsection{\texttt{unique}}
 
-去掉连续等价项的重复部分，把保留元素移到前面并返回新的逻辑末尾。
-
-\begin{itemize}
-    \item 若要让任意重复值都相邻，通常先排序，再用 \texttt{erase} 删除逻辑末尾到物理末尾的一段。
-    \item 只想压缩连续相同段时，可以直接应用，不必先排序。
-\end{itemize}
+每段连续等价项仅保留首项，函数返回新的逻辑末尾。
+全局去重可先排序，再由 \texttt{erase} 删除逻辑末尾之后的元素。
 
 \begin{cppcode}
 #include <algorithm>
@@ -543,8 +539,6 @@ void exampleUnique() {
 \paragraph{复杂度}
 单次去除相邻重复耗时 $O(n)$，若需要先排序，总耗时为 $O(n\log n)$。
 
-保留区间以返回迭代器为右端点。容器长度由随后的 \texttt{erase} 修改。
-
 \section{数学与序列函数}
 
 \subsection{\texttt{gcd}、\texttt{lcm}}
@@ -552,11 +546,9 @@ void exampleUnique() {
 标准库从 C++17 起提供最大公约数与最小公倍数。二者定义在 \texttt{<numeric>} 中。
 
 \begin{itemize}
-    \item 支持有符号参数，只要其绝对值可以由两参数的公共类型表示。结果非负。
-    \item 两参数都是零时 GCD 为零，任意一参数为零时 LCM 为零。
+    \item 参数的绝对值须能用两参数的公共类型表示。\texttt{lcm} 还要求结果能用该类型表示。
+    \item 两参数均为零时 GCD 为零，任一参数为零时 LCM 为零。
 \end{itemize}
-
-取一对整数的最大公约数与两个正整数的最小公倍数。
 
 \begin{cppcode}
 #include <numeric>
@@ -570,9 +562,7 @@ void exampleGcdAndLcm() {
 \end{cppcode}
 
 \paragraph{复杂度}
-通常由欧几里得算法实现，LCM 在此基础上做乘除。
-
-绝对值或最小公倍数超出公共类型范围时，标准接口的行为未定义。需要检测 LCM 溢出时可用第六章的模板。
+欧几里得算法的耗时见第六章。检查 LCM 溢出可用该章的 \texttt{lcmChecked}。
 
 \subsection{\texttt{accumulate}}
 
@@ -913,7 +903,7 @@ void exampleLambda() {
 \paragraph{复杂度}
 固定字段数时单次比较为 $O(1)$，排序为 $O(n\log n)$。
 
-等价元素在两个方向比较都返回假。使用小于等于会破坏严格性，可能导致排序结果错误。
+等价元素在两个方向的比较均为假。该等价关系也须满足传递性。
 
 \subsection{结构化绑定}
 

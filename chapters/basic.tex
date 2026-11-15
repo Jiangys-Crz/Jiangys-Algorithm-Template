@@ -9,24 +9,23 @@
 
 \subsubsection{二分查找}
 
-二分查找（Binary Search）根据中点的判定结果保留约一半区间，适用于具有单调性的判定条件。
+二分查找（Binary Search）按中点的判定结果缩半区间，以定位单调谓词的边界。
 
 \paragraph{查找第一个大于等于 $x$ 的位置}
 
-\texttt{firstAtLeast(a,x)} 接受含占位元素 \texttt{a[0]} 的数组。
-下标 $1$ 至 $n$ 的元素按非递减顺序排列，目标不存在时返回 $n+1$。
+\texttt{firstAtLeast(a,x)} 要求下标 $1$ 至 $n$ 的元素非递减，\texttt{a[0]} 为占位。
+所有元素均小于 $x$ 时返回 $n+1$。
 
 \cppfile{code/basic/二分查找1.cpp}
 
 \paragraph{查找最后一个小于等于 $x$ 的位置}
 
-\texttt{lastAtMost(a,x)} 采用相同的数组约定，无匹配时返回 $0$。
+\texttt{lastAtMost(a,x)} 采用相同的数组约定，所有元素均大于 $x$ 时返回 $0$。
 
 \cppfile{code/basic/二分查找2.cpp}
 
 \paragraph{复杂度}
-时间复杂度为 $O(\log n)$，
-空间复杂度为 $O(1)$。
+时间为 $O(\log(n+2))$，额外空间为 $O(1)$。
 
 左边界搜索的中点向下取整，右边界搜索的中点向上取整。数组长度与搜索端点须在下标类型的表示范围内。
 
@@ -116,25 +115,14 @@ mid_2=r-\frac{r-l}{3}
 
 \cppfile{code/basic/三分搜索2.cpp}
 
-其中 $\mathrm{calc}(x)$ 为目标函数。两个模板均接收区间端点、目标函数和可选的正容差，
-返回极值点位置的近似值，再代入目标函数即可估计极值。
+两个模板均接收区间端点、严格单峰或单谷目标函数及正容差，返回极值点位置的近似值。
+区间宽度不超过容差或浮点舍入阻止继续缩小时终止。
 
 \paragraph{复杂度}
-设初始区间长度为 $V$，
-单次函数计算复杂度为 $O(T)$。
+设初始区间宽度为 $V$，单次求值耗时 $O(T)$。
+若 $V>\varepsilon$ 且每轮按比例缩小，时间为 $O(1+T\log(V/\varepsilon))$。额外空间为 $O(1)$。
 
-时间复杂度为 $O\left(T\log_{\frac{3}{2}}\frac{V}{\varepsilon}\right)$，
-其中 $V>\varepsilon$，假设浮点运算能持续缩小区间。
-
-额外空间复杂度为 $O(1)$。
-
-\begin{itemize}
-    \item 必须满足单峰性或单谷性，
-    上述模板按严格单峰或单谷设计。
-    \item 浮点三分需合理设置 $\varepsilon$，
-    并防止浮点精度导致循环停滞。
-    \item 整数三分通常需要枚举最终剩余的候选值。
-\end{itemize}
+整数三分结束后需检查剩余候选点。
 
 \subsection{前缀和、后缀和、二维前缀和}
 
@@ -592,10 +580,7 @@ dp_i=\max(dp_{i-1},dp_{i-2}+a_i)\quad(i\ge 2).
 字符串长度分别为 $n,m$ 时，时间复杂度为 $O(nm)$，
 额外空间复杂度为 $O(\min(n,m)+1)$。
 
-\begin{itemize}
-    \item 字符不相等时必须清零，连续片段在这里中断。
-    \item 若需要返回子串，记录刷新最大值时在原串中的结束位置。
-\end{itemize}
+还原子串时，记录更新最大长度的位置。
 
 \subsection{最大子段和}
 
@@ -947,9 +932,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
 
 \subsubsection{Sprague--Grundy 函数}
 
-多个独立的无偏博弈可以通过 SG 函数组合。
-例如有若干堆石子，每次行动只从选择的一堆中取石子，
-无合法操作的一方失败。
+在正常规则下，SG 函数用于组合独立的无偏博弈。取石子时，每步只改变一堆。
 
 \begin{itemize}
     \item $g(x)$ 为状态 $x$ 的 SG 值，
@@ -969,10 +952,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
 \paragraph{复杂度}
 时间复杂度为 $O(n(m+1)+m)$，空间复杂度为 $O(n+m)$。
 
-\begin{itemize}
-    \item 只有在堆的合法取法一致时，才可以共用同一张 SG 表。
-    \item 当一次行动会同时改变多堆时，应重新定义状态并检查转移。
-\end{itemize}
+合法取法相同的石子堆可共用同一张 SG 表。
 
 \section{位运算技巧}
 
