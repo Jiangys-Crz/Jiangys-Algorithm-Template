@@ -61,7 +61,7 @@ g++ -std=c++17 -O2 code/zx/max_subarray.cpp -o sol
 bash code/zx/stress.sh ./gen ./brute ./sol 1000
 \end{lstlisting}
 
-脚本使用 Bash、GNU \texttt{timeout} 和 GNU \texttt{diff}。
+脚本使用 Bash、\texttt{timeout}、\texttt{sed} 和 \texttt{diff}。
 默认对拍 $1000$ 轮，轮数为 $0$ 时持续运行。
 
 \texttt{TIME\_LIMIT} 可覆盖每个程序默认的两秒时限。
@@ -69,7 +69,7 @@ bash code/zx/stress.sh ./gen ./brute ./sol 1000
 
 \cppfile[language=bash]{code/zx/stress.sh}
 
-\texttt{diff -Z} 忽略行尾空白。浮点容差或多解由相应检查器判定，反例输入保存在 \texttt{data.in}。
+比较时忽略行尾空白。浮点容差或多解由相应检查器判定，反例输入保存在 \texttt{data.in}。
 
 \section{随机数与数据生成}
 

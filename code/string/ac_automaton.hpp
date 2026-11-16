@@ -76,7 +76,8 @@ public:
         int u = 0;
         cnt[0] = 1;
         for (unsigned char c : s) {
-            u = tr[u].ch[digit(c)];
+            int x = Alphabet::id(c);
+            u = 0 <= x && x < Alphabet::size ? tr[u].ch[x] : 0;
             ++cnt[u];
         }
         for (auto it = order.rbegin(); it != order.rend(); ++it) {

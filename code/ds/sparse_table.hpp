@@ -1,3 +1,4 @@
+#include <cassert>
 #include <utility>
 #include <vector>
 
@@ -12,6 +13,7 @@ struct SparseTable {
 
     SparseTable(const vector<T>& a, Op op)
         : op(move(op)), lg(a.size()), st{a} {
+        if (a.size() <= 1) return;
         int n = static_cast<int>(a.size()) - 1;
         for (int i = 2; i <= n; ++i) lg[i] = lg[i / 2] + 1;
         for (int j = 1; j <= lg[n]; ++j) {
@@ -26,6 +28,7 @@ struct SparseTable {
     }
 
     T query(int l, int r) const {
+        assert(1 <= l && l <= r && r < static_cast<int>(lg.size()));
         int j = lg[r - l + 1];
         return op(st[j][l], st[j][r - (1 << j) + 1]);
     }

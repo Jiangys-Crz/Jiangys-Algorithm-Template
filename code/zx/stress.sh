@@ -22,7 +22,7 @@ cleanup() {
     if (( keep )); then
         printf 'Files kept in %s\n' "$work" >&2
     else
-        rm -- "$work"/{data.in,brute.out,sol.out,gen.err,brute.err,sol.err}
+        rm -- "$work"/{data.in,brute.out,sol.out,gen.err,brute.err,sol.err,brute.norm,sol.norm}
         rmdir -- "$work"
     fi
 }
@@ -54,7 +54,9 @@ for (( i=0; rounds == 0 || i < rounds; ++i )); do
     run_case gen data.in "$gen" "$seed" < /dev/null
     run_case brute brute.out "$brute" < "$work/data.in"
     run_case sol sol.out "$sol" < "$work/data.in"
-    if diff -uZ -- "$work/brute.out" "$work/sol.out"; then
+    sed 's/[[:space:]]*$//' "$work/brute.out" > "$work/brute.norm"
+    sed 's/[[:space:]]*$//' "$work/sol.out" > "$work/sol.norm"
+    if diff -u -- "$work/brute.norm" "$work/sol.norm"; then
         if (( (i + 1) % 100 == 0 )); then
             printf 'Passed %d cases\n' "$((i + 1))"
         fi

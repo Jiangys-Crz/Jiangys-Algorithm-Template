@@ -1,5 +1,6 @@
 #include <cstddef>
 #include <limits>
+#include <utility>
 #include <vector>
 
 using ll = long long;
@@ -45,22 +46,13 @@ struct Graph {
 #define XCPC_GRAPH_BELLMAN_FORD_HPP
 
 struct RelaxResult {
-    vector<ll> dist;
+    vector<lll> dist;
     bool negativeCycle = false;
 };
 
 namespace graph_detail {
 inline constexpr lll wideInf = lll{1} << 126;
 
-inline RelaxResult finishRelaxation(const vector<lll>& d, bool cycle) {
-    RelaxResult res{vector<ll>(d.size()), cycle};
-    for (size_t u = 0; u < d.size(); ++u) {
-        if (d[u] >= graphInf) res.dist[u] = graphInf;
-        else if (d[u] < -graphInf) res.dist[u] = -graphInf;
-        else res.dist[u] = static_cast<ll>(d[u]);
-    }
-    return res;
-}
 }
 
 inline RelaxResult bellmanFord(const Graph& g, int s) {
@@ -77,9 +69,9 @@ inline RelaxResult bellmanFord(const Graph& g, int s) {
             changed |= relax(u, v, w);
             if (!g.directed) changed |= relax(v, u, w);
         }
-        if (!changed) return graph_detail::finishRelaxation(d, false);
+        if (!changed) return {move(d), false};
     }
-    return graph_detail::finishRelaxation(d, true);
+    return {move(d), true};
 }
 
 #endif

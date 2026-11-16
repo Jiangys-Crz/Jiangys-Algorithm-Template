@@ -133,10 +133,15 @@ $t=((b-a)\times v)/(u\times v)$。
 
 \section{多边形}
 
-\subsection{多边形面积}
+\subsection{多边形面积与鞋带公式}
 
 \texttt{signedArea2(p)} 接收按边界排列的顶点，返回两倍有向面积 $S_2$。
 简单多边形的面积为 $\lvert S_2\rvert/2$，逆时针排列时 $S_2>0$，顺时针排列时 $S_2<0$。
+
+设顶点为 $p_0,\ldots,p_{n-1}$，且 $p_n=p_0$。两倍有向面积为
+$\sum_{i=0}^{n-1}(x_i y_{i+1}-y_i x_{i+1})$。
+平移原点至 $p_0$ 后，公式等价于累加以 $p_0$ 为共同顶点的三角形叉积。
+\texttt{signedArea2} 在顶点数不足三时返回零。
 
 \cppfile{code/geometry/polygon.hpp}
 
@@ -144,16 +149,6 @@ $t=((b-a)\times v)/(u\times v)$。
 扫描时间为 $O(n)$，额外空间为 $O(1)$。
 
 自交边界的计算结果为代数面积。
-
-\subsection{鞋带公式}
-
-设顶点为 $p_0,\ldots,p_{n-1}$，且 $p_n=p_0$。两倍有向面积为
-$\sum_{i=0}^{n-1}(x_i y_{i+1}-y_i x_{i+1})$。
-平移原点至 $p_0$ 后，公式等价于累加以 $p_0$ 为共同顶点的三角形叉积。
-\texttt{signedArea2} 在顶点数不足三时返回零。
-
-\paragraph{复杂度}
-耗时 $O(n)$，额外空间为 $O(1)$。
 
 \subsection{点在多边形内判定}
 

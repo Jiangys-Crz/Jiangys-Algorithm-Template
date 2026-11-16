@@ -4,9 +4,7 @@
 
 \texttt{Graph(n)} 构造有向图，\texttt{Graph(n,false)} 构造无向图。
 
-权值类型为 \texttt{ll}。采用哨兵的算法要求有限结果位于
-$(-\mathrm{graphInf},\mathrm{graphInf})$。部分模板以 \texttt{lll} 保存中间值，
-相应编译器须支持 128 位整数。整型中间结果须在其类型的表示范围内。
+边权类型为 \texttt{ll}。
 
 \section{图的基础}
 
@@ -145,7 +143,7 @@ DFS 沿当前分支深入后回退。BFS 从起点开始逐层访问，在无权
     \item 标准库优先队列无法直接减少已有项的键，模板插入新状态并在弹出时丢弃旧状态。
 \end{itemize}
 
-\texttt{sources} 保存源点，单源时只含一个顶点。\texttt{dist} 保存最短距离，不可达时为 \texttt{inf}。
+\texttt{sources} 保存源点，单源时只含一个顶点。\texttt{dist} 保存最短距离，不可达时为 \texttt{inf}。有限最短距离须小于 \texttt{inf}。
 
 \cppfile{code/graph/dijkstra.cpp}
 
@@ -161,8 +159,8 @@ Bellman-Ford 反复扫描所有边进行松弛，允许负边。在没有可达�
     \item 简单路径最多有 $n-1$ 条边。第 $n$ 轮仍有更新时，存在源点可达的负环。
 \end{itemize}
 
-\texttt{negativeCycle} 表示源点可达负环，此时受负环影响的距离没有有限最小值。
-松弛用 \texttt{lll} 计算，结束后在两个哨兵之间截断并转为 \texttt{ll}。
+\texttt{negativeCycle} 为真时，\texttt{dist} 保存检测到负环时的暂存距离；受负环影响的顶点没有有限最短距离。
+松弛和返回距离均使用 \texttt{lll}，不可达顶点为 \texttt{graph\_detail::wideInf}。
 
 \cppfile{code/graph/bellman_ford.hpp}
 
@@ -180,7 +178,7 @@ SPFA 使用队列减少 Bellman-Ford 的部分无效扫描。某点距离变小�
     \item 每次成功松弛记录新路径的边数 $\mathrm{len}[v]=\mathrm{len}[u]+1$。达到 $n$ 时报告可达负环。
 \end{itemize}
 
-返回类型与 Bellman-Ford 相同，不可达点仍为 \texttt{graphInf}。
+返回类型与 Bellman-Ford 相同。
 
 \cppfile{code/graph/SPFA.cpp}
 
@@ -197,9 +195,8 @@ $d[u][v]$ 表示仅允许使用已处理的中间顶点时，$u$ 到 $v$ 的最�
     \item 若 $d[k][k]<0$，则存在从 $k$ 出发并返回 $k$ 的负权闭合游走。对于能到达 $k$ 的 $u$ 和从 $k$ 可达的 $v$，$u$ 到 $v$ 的距离无有限下界。
 \end{itemize}
 
-\texttt{edges} 存放有向带权边，\texttt{dist} 保存距离矩阵，不可达时为 \texttt{inf}。
-达到代码中 \texttt{inf} 的值舍弃，低于其相反数的值截断。
-负环影响的点对须按上述可达关系另行判定。
+\texttt{edges} 存放有向带权边，\texttt{dist} 用 \texttt{lll} 保存距离矩阵，不可达时为 \texttt{inf}。
+低于 $-\mathrm{inf}$ 的松弛结果截断至 $-\mathrm{inf}$，以限制负环反复松弛时的数值范围。
 
 \cppfile{code/graph/Floyd.cpp}
 
@@ -245,7 +242,7 @@ $d[u][v]$ 表示仅允许使用已处理的中间顶点时，$u$ 到 $v$ 的最�
     \item 令源点方案数为 $1$，对每条合法边把 $\mathrm{ways}[u]$ 加到 $\mathrm{ways}[v]$。
 \end{itemize}
 
-对 $10^9+7$ 取模。平行边能产生不同的路径，源点的空路径计为一个方案。
+对参数 \texttt{mod} 取模，模数须为正，默认取 $10^9+7$。平行边按不同的路径计数。源点的空路径计为一个方案。
 
 \cppfile{code/graph/最短路计数.cpp}
 
@@ -264,7 +261,7 @@ Dijkstra 后额外排序 $O(n\log n)$，再扫描 $O(n+m)$，总时间为 $O((n+
     \item 若存在负环，把环上的各条不等式相加会得到矛盾。否则每个变量取其最短距离，就是一组可行解。
 \end{itemize}
 
-\texttt{add(u,v,w)} 表示 $x_u-x_v\le w$。无解时 \texttt{work()} 返回空值。
+\texttt{add(u,v,w)} 表示 $x_u-x_v\le w$。\texttt{work()} 返回用 \texttt{lll} 保存的可行解，无解时返回空值。
 
 \cppfile{code/graph/差分约束.cpp}
 

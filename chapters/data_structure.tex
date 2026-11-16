@@ -185,7 +185,7 @@ ST 表预处理所有长度为二的幂的区间。若合并操作满足结合�
     \item 最小值、最大值和最大公约数都满足重复覆盖不会改变结果。
 \end{itemize}
 
-输入为从 $1$ 开始的非空数组。用 \texttt{SparseTable st(a, op)} 构造，\texttt{op} 需可在常量上下文调用，元素类型须可默认构造。
+用 \texttt{SparseTable st(a, op)} 构造，有效元素从 $1$ 开始编号。\texttt{op} 须可在常量上下文调用，元素类型须可默认构造。查询区间须非空且位于数组内。
 
 \cppfile{code/ds/sparse_table.hpp}
 
@@ -247,7 +247,8 @@ int ans = rmq.query(l, r);
 
 \paragraph{泛型区间修改和查询}
 
-输入为 $1$ 起始的非空数组。自定义 \texttt{Info} 需支持合并与按区间长度应用标记。
+有效元素从 $1$ 开始编号。自定义 \texttt{Info} 须支持合并与按区间长度应用标记。
+当 $l>r$ 时，修改不执行任何操作，查询返回 \texttt{Info\{\}}。
 
 \cppfile{code/ds/lazy_segment_tree.hpp}
 
@@ -311,7 +312,7 @@ $q$ 次单点修改最多分配 $O(q\log(U+1))$ 个节点。
     \item 新版本只会改动新分配的节点，先前版本的根仍能用于查询。
 \end{itemize}
 
-输入为 $1$ 起始数组，允许重复值。\texttt{kth(l,r,k)} 返回原坐标值，$k$ 越界时返回空值。
+有效元素从 $1$ 开始编号，允许重复值。\texttt{kth(l,r,k)} 返回闭区间 $[l,r]$ 内从第 $1$ 小开始计数的原值。区间或 $k$ 无效时返回空值。
 
 \cppfile{code/ds/主席树.cpp}
 

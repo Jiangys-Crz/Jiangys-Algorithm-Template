@@ -531,8 +531,10 @@ $O((n+1)M+n\min(n,M)\lceil(M+1)/w\rceil+n)$。
     \item 求最大异或值时从高位到低位尝试主元，结果变大就接受。
 \end{itemize}
 
-复用第一章的 \texttt{XorBasis}，分别用 \texttt{insert}、\texttt{contains} 和 \texttt{maximum}
-插入、判定可表示性和查询最大值。
+\texttt{XorBasis} 提供 \texttt{insert}、\texttt{contains} 和 \texttt{maximum}。
+\texttt{insert} 恰在秩增加时返回真。最大值按无符号整数比较。
+
+\cppfile{code/math/XOR线性基.cpp}
 
 \paragraph{复杂度}
 位宽为 $B$ 时，每次操作耗时 $O(B)$，空间为 $O(B)$。
