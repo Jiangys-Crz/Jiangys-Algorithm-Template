@@ -1,17 +1,15 @@
-#include <algorithm>
-#include <iomanip>
-#include <iostream>
+// In solve: long double l, r and eps (l <= r, r - l finite, eps > 0).
+// The initial l must be feasible.
+auto check = [&](long double x) -> bool {
+    // Return true exactly when x satisfies the problem constraints.
+    // If x is feasible, every candidate <= x must be feasible.
+    return /* TODO: feasibility of x */;
+};
 
-int main() {
-    long double n;
-    if (!(std::cin >> n)) return 0;
-    long double l = 0, r = std::max(1.0L, n);
-    constexpr long double eps = 1e-8L;
-    while (r - l > eps) {
-        long double mid = l + (r - l) / 2;
-        if (mid == l || mid == r) break;
-        if (mid * mid <= n) l = mid;
-        else r = mid;
-    }
-    std::cout << std::fixed << std::setprecision(10) << l << '\n';
+while (r - l > eps) {
+    long double mid = l + (r - l) / 2;
+    if (mid == l || mid == r) break;
+    if (check(mid)) l = mid;
+    else r = mid;
 }
+long double ans = l;

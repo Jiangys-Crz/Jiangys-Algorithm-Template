@@ -1,98 +1,22 @@
-#include <limits>
-#include <optional>
 #include <utility>
 #include <vector>
 
 using ll = long long;
-using ull = unsigned long long;
 
-#ifndef XCPC_MATH_EUCLID_HPP
-#define XCPC_MATH_EUCLID_HPP
-
-constexpr ull gcd(ull a, ull b) {
-    while (b) {
-        ull r = a % b;
-        a = b;
-        b = r;
-    }
-    return a;
-}
-
-inline std::optional<ull> lcmChecked(ull a, ull b) {
-    if (!a || !b) return 0;
-    a /= gcd(a, b);
-    if (a > std::numeric_limits<ull>::max() / b) return std::nullopt;
-    return a * b;
-}
-
-inline ll exgcd(ll a, ll b, ll& x, ll& y) {
-    if (!b) {
-        x = 1;
-        y = 0;
-        return a;
-    }
-    ll d = exgcd(b, a % b, y, x);
-    y -= a / b * x;
-    return d;
-}
-
-#endif
-
-#ifndef XCPC_MATH_MOD_ARITHMETIC_HPP
-#define XCPC_MATH_MOD_ARITHMETIC_HPP
-
-constexpr ll safeMod(ll x, ll m) {
-    ll r = x % m;
-    return r < 0 ? r + m : r;
-}
-
-// a and b are reduced residues modulo m.
-constexpr ull addMod(ull a, ull b, ull m) {
-    return a >= m - b ? a - (m - b) : a + b;
-}
-
-constexpr ull mulMod(ull a, ull b, ull m) {
-    a %= m;
-    b %= m;
-    if (m <= (ull{1} << 32)) return a * b % m;
-    ull res = 0;
-    while (b) {
-        if (b & 1) res = addMod(res, a, m);
-        b >>= 1;
-        if (b) a = addMod(a, a, m);
-    }
-    return res;
-}
-
-constexpr ull powMod(ull a, ull b, ull m) {
-    ull res = 1 % m;
-    a %= m;
-    while (b) {
-        if (b & 1) res = mulMod(res, a, m);
-        b >>= 1;
-        if (b) a = mulMod(a, a, m);
-    }
-    return res;
-}
-
-inline std::optional<ll> invMod(ll a, ll m) {
-    ll x, y;
-    if (exgcd(safeMod(a, m), m, x, y) != 1) return std::nullopt;
-    return safeMod(x, m);
-}
-
-#endif
-
-std::pair<int, int> divisibleSubarray(const std::vector<ll>& a) {
-    int n = static_cast<int>(a.size());
-    if (!n) return {0, 0};
+// In solve: vector<ll> a. range is 0-based and half-open.
+int n = static_cast<int>(a.size());
+std::pair<int, int> range{0, 0};
+if (n > 0) {
     std::vector<int> first(n, -1);
     first[0] = 0;
-    ull r = 0;
+    ll rem = 0;
     for (int i = 0; i < n; ++i) {
-        r = addMod(r, safeMod(a[i], n), n);
-        if (first[r] != -1) return {first[r], i + 1};
-        first[r] = i + 1;
+        rem = (rem + a[i] % n) % n;
+        if (rem < 0) rem += n;
+        if (first[rem] != -1) {
+            range = {first[rem], i + 1};
+            break;
+        }
+        first[rem] = i + 1;
     }
-    return {0, 0};
 }

@@ -1,32 +1,32 @@
 #include <algorithm>
-#include <optional>
-#include <utility>
+#include <cstddef>
 #include <vector>
 
 using ull = unsigned long long;
 
-std::optional<std::pair<int, ull>> nimMove(const std::vector<ull>& heaps) {
-    ull x = 0;
-    for (ull h : heaps) x ^= h;
-    if (!x) return std::nullopt;
+// In solve: heaps contains the Nim heap sizes.
+ull x = 0;
+for (ull h : heaps) x ^= h;
+int heap = -1;
+ull after = 0;
+if (x) {
     for (int i = 0; i < static_cast<int>(heaps.size()); ++i) {
-        ull after = heaps[i] ^ x;
-        if (after < heaps[i]) return std::pair{i, after};
+        if ((heaps[i] ^ x) < heaps[i]) {
+            heap = i;
+            after = heaps[i] ^ x;
+            break;
+        }
     }
-    return std::nullopt;
 }
 
-std::vector<int> dagGrundy(const std::vector<std::vector<int>>& adj,
-                           const std::vector<int>& order) {
-    std::size_t maxDegree = 0;
-    for (const auto& edges : adj) maxDegree = std::max(maxDegree, edges.size());
-    std::vector<int> seen(maxDegree + 1, -1), sg(adj.size());
-    for (auto it = order.rbegin(); it != order.rend(); ++it) {
-        int u = *it;
-        for (int v : adj[u]) seen[sg[v]] = u;
-        int x = 0;
-        while (seen[x] == u) ++x;
-        sg[u] = x;
-    }
-    return sg;
+// For DAG games: adj is 0-based, order is a topological order.
+std::size_t maxDegree = 0;
+for (const auto& edges : adj) maxDegree = std::max(maxDegree, edges.size());
+std::vector<int> seen(maxDegree + 1, -1), sg(adj.size());
+for (auto it = order.rbegin(); it != order.rend(); ++it) {
+    int u = *it;
+    for (int v : adj[u]) seen[sg[v]] = u;
+    int mex = 0;
+    while (seen[mex] == u) ++mex;
+    sg[u] = mex;
 }

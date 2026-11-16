@@ -122,9 +122,9 @@ $t=((b-a)\times v)/(u\times v)$。
     \item 零向量没有极角，模板约定它排在非零向量之前。
 \end{itemize}
 
-以点 $o$ 为极点时，比较位移向量 $a-o$ 与 $b-o$。
+沿用本章的 \texttt{Point} 运算，给定极点 $o$ 后，直接按位移向量的极角对点集排序。
 
-\cppfile{code/geometry/polar_order.hpp}
+\cppfile{code/geometry/polar_order.cpp}
 
 \paragraph{复杂度}
 每次比较为 $O(1)$，排序 $n$ 个向量耗时 $O(n\log n)$。

@@ -1,16 +1,10 @@
 #include <algorithm>
-#include <iostream>
 #include <vector>
 
-int main() {
-    int n;
-    if (!(std::cin >> n)) return 0;
-    std::vector<int> a(n);
-    for (int& x : a) std::cin >> x;
-    std::sort(a.begin(), a.end());
+// In solve: a is the sequence to permute.
 
-    do {
-        for (int x : a) std::cout << x << ' ';
-        std::cout << '\n';
-    } while (std::next_permutation(a.begin(), a.end()));
-}
+std::sort(a.begin(), a.end());
+
+do {
+    // TODO: Process the current permutation, including the initial one.
+} while (std::next_permutation(a.begin(), a.end()));

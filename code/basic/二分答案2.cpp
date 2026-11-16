@@ -1,16 +1,18 @@
-#include <iostream>
-
 using ll = long long;
-using lll = __int128;
+using ull = unsigned long long;
 
-int main() {
-    ll n;
-    if (!(std::cin >> n)) return 0;
-    ll l = 0, r = n;
-    while (l < r) {
-        ll mid = r - (r - l) / 2;
-        if (lll(mid) * mid <= n) l = mid;
-        else r = mid - 1;
-    }
-    std::cout << l << '\n';
+// In solve: ll l, r are the inclusive search bounds, l <= r.
+// The initial l must be feasible.
+auto check = [&](ll x) -> bool {
+    // Return true exactly when x satisfies the problem constraints.
+    // If x is feasible, every candidate <= x must be feasible.
+    return /* TODO: feasibility of x */;
+};
+
+while (l < r) {
+    ull width = ull(r) - ull(l);
+    ll mid = r - static_cast<ll>(width / 2);
+    if (check(mid)) l = mid;
+    else r = mid - 1;
 }
+ll ans = l;

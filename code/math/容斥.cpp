@@ -1,52 +1,18 @@
-#include <limits>
-#include <optional>
+#include <cstddef>
+#include <numeric>
 #include <vector>
 
-using ll = long long;
 using ull = unsigned long long;
 
-#ifndef XCPC_MATH_EUCLID_HPP
-#define XCPC_MATH_EUCLID_HPP
-
-constexpr ull gcd(ull a, ull b) {
-    while (b) {
-        ull r = a % b;
-        a = b;
-        b = r;
+// In solve: ull n and positive divisors d. Count their union in [1, n].
+auto dfs = [&](auto&& self, std::size_t start, ull base) -> ull {
+    ull count = 0;
+    for (std::size_t i = start; i < d.size(); ++i) {
+        ull q = d[i] / std::gcd(base, d[i]);
+        if (base > n / q) continue;
+        ull next = base * q;
+        count += n / next - self(self, i + 1, next);
     }
-    return a;
-}
-
-inline std::optional<ull> lcmChecked(ull a, ull b) {
-    if (!a || !b) return 0;
-    a /= gcd(a, b);
-    if (a > std::numeric_limits<ull>::max() / b) return std::nullopt;
-    return a * b;
-}
-
-inline ll exgcd(ll a, ll b, ll& x, ll& y) {
-    if (!b) {
-        x = 1;
-        y = 0;
-        return a;
-    }
-    ll d = exgcd(b, a % b, y, x);
-    y -= a / b * x;
-    return d;
-}
-
-#endif
-
-ull countMultiples(ull n, const std::vector<ull>& d) {
-    auto dfs = [&](auto&& self, std::size_t start, ull base) -> ull {
-        ull ans = 0;
-        for (std::size_t i = start; i < d.size(); ++i) {
-            ull q = d[i] / gcd(base, d[i]);
-            if (base > n / q) continue;
-            ull next = base * q;
-            ans += n / next - self(self, i + 1, next);
-        }
-        return ans;
-    };
-    return dfs(dfs, 0, 1);
-}
+    return count;
+};
+ull ans = dfs(dfs, 0, 1);

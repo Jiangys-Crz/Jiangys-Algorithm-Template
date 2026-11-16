@@ -1,8 +1,8 @@
 \chapter{基础算法及技巧}
 
-全书采用 C++17。基础算法可直接写入解题函数。
-需要维护状态的结构可将定义置于同一源文件的全局作用域，共用定义由预处理条件保护。
-第九章的对拍示例使用多个源文件。
+全书采用 C++17。语句片段置于解题函数内，所列头文件置于源文件开头。
+按注释准备数据，并补全 \texttt{TODO} 处的判定、转移或处理操作。
+数据结构的定义置于同一源文件的全局作用域。第九章的对拍示例使用多个源文件。
 
 \section{基础算法}
 
@@ -14,14 +14,14 @@
 
 \paragraph{查找第一个大于等于 $x$ 的位置}
 
-输入 $n,x$ 及 $n$ 个非递减元素，下标从 $1$ 开始。
-首个不小于 $x$ 的位置不存在时输出 $n+1$。
+数组 $a$ 按非递减顺序排列，下标为 $1$ 至 $n$。
+\texttt{ans} 为首个不小于 $x$ 的位置，无此位置时为 $n+1$。
 
 \cppfile{code/basic/二分查找1.cpp}
 
 \paragraph{查找最后一个小于等于 $x$ 的位置}
 
-输入格式相同，最后一个不大于 $x$ 的位置不存在时输出 $0$。
+\texttt{ans} 为最后一个不大于 $x$ 的位置，无此位置时为 $0$。
 
 \cppfile{code/basic/二分查找2.cpp}
 
@@ -32,25 +32,24 @@
 
 \subsubsection{二分答案}
 
-二分答案（Binary Search on Answer）在候选区间上搜索可行性边界。两例均输入非负整数 $n$。
+二分答案（Binary Search on Answer）在闭区间 $[l,r]$ 内搜索可行性边界。\texttt{check(x)} 表示 $x$ 是否满足题目约束。
 
 \paragraph{寻找最小可行答案}
 
-在 $[0,n]$ 内求满足 $x^2\ge n$ 的最小整数。若中点可行，保留其左侧及中点。
+可行候选构成区间的后缀，初始右端点须可行。若中点可行，保留其左侧及中点。
 
 \cppfile{code/basic/二分答案1.cpp}
 
 \paragraph{寻找最大可行答案}
 
-在 $[0,n]$ 内求满足 $x^2\le n$ 的最大整数。若中点可行，保留其右侧及中点。
+可行候选构成区间的前缀，初始左端点须可行。若中点可行，保留其右侧及中点。
 
 \cppfile{code/basic/二分答案2.cpp}
 
 \paragraph{复杂度}
 设区间含 $V$ 个候选值，单次判定耗时 $O(T)$。总时间为 $O(1+T\log V)$，判定之外仅用常数空间。
 
-求最小值时初始右端点须可行，求最大值时初始左端点须可行。
-两例在乘法前转为 \texttt{lll}，避免计算平方时溢出。
+区间宽度以 \texttt{ull} 计算，使搜索可覆盖完整的 \texttt{ll} 值域。
 
 \subsubsection{浮点二分}
 
@@ -59,13 +58,13 @@
 
 \paragraph{寻找最小可行实数答案}
 
-输入 $0\le n\le 10^{12}$。搜索 $x^2\ge n$ 的左边界，以可行的右端点近似 $\sqrt n$。
+可行性随候选值增大由假变真。以当前可行的右端点近似下边界。
 
 \cppfile{code/basic/浮点二分1.cpp}
 
 \paragraph{寻找最大可行实数答案}
 
-输入范围相同。搜索 $x^2\le n$ 的右边界，以可行的左端点近似 $\sqrt n$。
+可行性随候选值增大由真变假。以当前可行的左端点近似上边界。
 
 \cppfile{code/basic/浮点二分2.cpp}
 
@@ -80,7 +79,7 @@
 
 \begin{itemize}
     \item 传入有限的区间宽度和正容差。最小可行答案要求初始右端可行，最大可行答案要求初始左端可行。
-    \item 若舍入导致中点与端点重合，则输出当前可行侧端点。
+    \item 若舍入导致中点与端点重合，则保留当前可行侧端点。
 \end{itemize}
 
 \subsubsection{三分搜索}
@@ -114,8 +113,7 @@ mid_2=r-\frac{r-l}{3}
 
 \cppfile{code/basic/三分搜索2.cpp}
 
-两例均输入 $l,r,p$，其中 $l\le p\le r$。目标函数分别为 $-(x-p)^2$ 与 $(x-p)^2$，输出极值点的近似位置。
-区间宽度不超过容差或浮点舍入阻止继续缩小时终止。
+\texttt{calc(x)} 计算目标函数值。区间宽度达到容差或舍入使区间无法缩小时，取中点近似极值位置。
 
 \paragraph{复杂度}
 设初始区间宽度为 $V$，单次求值耗时 $O(T)$。
@@ -130,7 +128,7 @@ mid_2=r-\frac{r-l}{3}
 前缀和 $P_i$ 为序列前 $i$ 项之和。令 $P_0=0$，递推 $P_i=P_{i-1}+a_i$。
 闭区间 $[l,r]$ 的和为 $P_r-P_{l-1}$。
 
-依次输入 $n,q$、$n$ 个元素和 $q$ 组闭区间端点，区间满足 $1\le l\le r\le n$。
+数组 $a$ 从 $1$ 编号，查询区间满足 $1\le l\le r\le n$。
 
 \cppfile{code/basic/前缀和.cpp}
 
@@ -144,7 +142,7 @@ mid_2=r-\frac{r-l}{3}
 后缀和 $S_i$ 为第 $i$ 项至末项之和。令 $S_{n+1}=0$，按下标递减的顺序计算 $S_i=a_i+S_{i+1}$。
 闭区间 $[l,r]$ 的和为 $S_l-S_{r+1}$。
 
-输入格式与前缀和示例相同。
+下标约定与前缀和相同。
 
 \cppfile{code/basic/后缀和.cpp}
 
@@ -163,7 +161,7 @@ mid_2=r-\frac{r-l}{3}
     \]
 \end{itemize}
 
-依次输入 $n,m,q$、矩阵及 $q$ 组端点 $x_1,y_1,x_2,y_2$。行、列区间均为 $1$ 起始的闭区间。
+矩阵行、列均从 $1$ 编号，查询采用闭区间。
 
 \cppfile{code/basic/二维前缀和.cpp}
 
@@ -184,7 +182,7 @@ mid_2=r-\frac{r-l}{3}
     \item 从左向右恢复 $a_i=\sum_{j=1}^i D_j$。
 \end{itemize}
 
-依次输入 $n,q$、原序列及 $q$ 组更新 $l,r,v$，输出修改后的序列。下标从 $1$ 开始。
+\texttt{updates} 保存区间端点和增量，还原后 \texttt{d[1..n]} 保存更新后的序列。
 
 \cppfile{code/basic/差分.cpp}
 
@@ -206,8 +204,7 @@ mid_2=r-\frac{r-l}{3}
     \item 先求差分的行前缀和，再累加上一行已恢复的值，等价于取二维前缀和。
 \end{itemize}
 
-依次输入 $n,m,q$、原矩阵及 $q$ 组更新 $x_1,y_1,x_2,y_2,v$，输出修改后的矩阵。
-更新使用从 $1$ 开始的行、列下标。
+矩阵和修改坐标均从 $1$ 编号。还原后差分表内的有效区域保存更新后的矩阵。
 
 \cppfile{code/basic/二维差分.cpp}
 
@@ -227,8 +224,7 @@ mid_2=r-\frac{r-l}{3}
     \item 用编号减 $1$ 访问值表，可以取回对应原值。
 \end{itemize}
 
-依次输入 $n,q$、构造值表的 $n$ 个数和 $q$ 个待查值。
-若值表含 $m$ 个不同值，则编号为 $1$ 至 $m$，缺失时输出 $0$。
+对候选值集合去重后编号。查询值 $x$ 缺失时，\texttt{rank} 为 $0$。
 
 \cppfile{code/basic/离散化.cpp}
 
@@ -251,7 +247,7 @@ mid_2=r-\frac{r-l}{3}
     \item 两指针相遇时已经找不到两个不同位置。
 \end{itemize}
 
-输入 $n$、目标和及 $n$ 个非递减元素。输出一对从 $0$ 开始的下标，无解时输出 $-1,-1$。
+数组从 $0$ 编号。循环结束时若 $l<r$，则 $(l,r)$ 为一组解。
 
 \cppfile{code/basic/双指针.cpp}
 
@@ -269,20 +265,20 @@ mid_2=r-\frac{r-l}{3}
 当右端点推进后窗口不再满足条件，就移动左端点恢复可行性。
 
 \begin{itemize}
-    \item 本例要求所有元素非负，因此加入右侧元素只会让窗口和不减，移除左侧元素只会让窗口和不增。
-    \item 对每个右端点，尽量保留仍使窗口和不超过上限的最小左端点。
-    \item 每个元素至多进出窗口各一次。
+    \item 可行窗口的所有子区间均须可行。右端扩张后，从左侧删除元素直至恢复可行性。
+    \item 对每个右端点保留最靠左的可行左端点，以获得最长窗口。
 \end{itemize}
 
-输入 $n$、区间和上限及 $n$ 个非负整数。中间和须能用 \texttt{ll} 表示，无可行区间时输出 $0$。
+\texttt{add} 和 \texttt{remove} 更新窗口统计量，\texttt{valid} 判定当前窗口是否可行。
+\texttt{ans} 为最大窗口长度，空窗口的长度为 $0$。
 
 \cppfile{code/basic/滑动窗口.cpp}
 
 \paragraph{复杂度}
-时间复杂度为 $O(n)$，额外空间为 $O(1)$。
+窗口端点共移动 $O(n)$ 次。若每次状态更新和判定均为常数时间，总时间为 $O(n)$。
 
 \begin{itemize}
-    \item 序列出现负数时，左端点可能需要回退，本模板的单调性条件无法保证。
+    \item 若以区间和不超过上限为判定，序列含负数时可能失去可行性的单调性。
     \item 收缩可能得到空窗口，循环应保护左端点始终在当前窗口内。
 \end{itemize}
 
@@ -327,7 +323,7 @@ mid_2=r-\frac{r-l}{3}
     \item 将同一个交换论证用于剩余区间，即可得到最优选取数量。
 \end{itemize}
 
-输入区间数 $n$ 及 $n$ 组半开区间 $[l,r)$，且 $l<r$。
+储存半开区间 $[l,r)$，其中 $l<r$。\texttt{ans} 为最多可选区间数。
 两个相邻区间可以在同一坐标结束和开始。
 
 \cppfile{code/basic/贪心选区间.cpp}
@@ -354,7 +350,7 @@ mid_2=r-\frac{r-l}{3}
     \item 最终答案为左半、右半和跨越两半的逆序对数之和。
 \end{itemize}
 
-输入 $n$ 及 $n$ 个整数，输出逆序对数。归并时将原数组排序。
+\texttt{ans} 为严格逆序对数。归并同时对原数组排序。
 
 \cppfile{code/basic/分治求逆序对.cpp}
 
@@ -382,8 +378,7 @@ mid_2=r-\frac{r-l}{3}
     \item 无向图中，若要遍历所有连通分量，对每个尚未访问的顶点发起搜索，并共用访问标记。
 \end{itemize}
 
-输入顶点数 $n$、边数 $m$、起点及 $m$ 条有向边，顶点从 $0$ 编号。输出首次访问顺序。
-无向图建边时同时加入反向边。
+邻接表从 $0$ 编号，\texttt{order} 保存首次访问顺序。无向图将每条边存入两端的邻接表。
 
 \cppfile{code/basic/深度优先搜索.cpp}
 
@@ -410,7 +405,7 @@ mid_2=r-\frac{r-l}{3}
     \item 若要还原路径，可在写入距离的同时记录 $u$ 的前驱为 $v$。
 \end{itemize}
 
-输入格式与 DFS 示例相同。按顶点编号输出最短距离，不可达时输出 $-1$。
+\texttt{dist[v]} 为起点至 $v$ 的最短距离，不可达时为 $-1$。
 
 \cppfile{code/basic/广度优先搜索.cpp}
 
@@ -435,7 +430,7 @@ mid_2=r-\frac{r-l}{3}
     \item 右半相同的和可能来自不同子集，匹配数由二分得到的等值区间长度给出。
 \end{itemize}
 
-输入 $n$、目标和及 $n$ 个整数，输出满足条件的子集数。子集按下标区分，计入空集。
+\texttt{count} 统计元素和等于目标值的子集。子集按下标区分，计入空集。
 
 \cppfile{code/basic/折半搜索.cpp}
 
@@ -466,7 +461,7 @@ dp_0=0,\qquad dp_1=\max(0,a_1),\qquad
 dp_i=\max(dp_{i-1},dp_{i-2}+a_i)\quad(i\ge 2).
 \]
 
-输入 $n$ 及 $n$ 个整数。允许不选元素，空数组输出 $0$。转移结果须能用 \texttt{ll} 表示。
+允许不选元素，空数组的答案为 $0$。转移结果须能用 \texttt{ll} 表示。
 
 \cppfile{code/basic/线性DP.cpp}
 
@@ -492,14 +487,13 @@ dp_i=\max(dp_{i-1},dp_{i-2}+a_i)\quad(i\ge 2).
     否则 $dp_{i,j}=\max(dp_{i-1,j},dp_{i,j-1})$。
 \end{itemize}
 
-分两行输入字符串，输出最长公共子序列的长度。使用较短字符串作为列。每次覆盖单元格前保存旧值，
+使用较短字符串作为列。每次覆盖单元格前保存旧值，
 供下一列计算左上角的状态。
 
 \cppfile{code/basic/最长公共子序列.cpp}
 
 \paragraph{复杂度}
-字符串长度分别为 $n,m$ 时，时间复杂度为 $O(nm)$，
-额外空间复杂度为 $O(\min(n,m)+1)$。
+字符串长度分别为 $n,m$ 时，时间为 $O((n+1)(m+1))$，额外空间为 $O(\min(n,m)+1)$。
 
 \begin{itemize}
     \item 列按从左到右的顺序更新，以便读到当前行的左邻状态。
@@ -521,7 +515,7 @@ dp_i=\max(dp_{i-1},dp_{i-2}+a_i)\quad(i\ge 2).
     若所有已有结尾都小于 $x$，则追加 $x$。
 \end{itemize}
 
-输入 $n$ 及 $n$ 个整数，输出 \texttt{tails.size()}。
+\texttt{tails.size()} 为最长上升子序列的长度。
 
 \cppfile{code/basic/最长上升子序列.cpp}
 
@@ -546,14 +540,13 @@ dp_i=\max(dp_{i-1},dp_{i-2}+a_i)\quad(i\ge 2).
     答案为所有状态的最大值。
 \end{itemize}
 
-分两行输入字符串，输出最长公共子串的长度。使用较短字符串作为列，每行从右到左更新，
+使用较短字符串作为列，每行从右到左更新，
 使 \texttt{dp[j - 1]} 在转移时仍是上一行的值。
 
 \cppfile{code/basic/最长公共子串.cpp}
 
 \paragraph{复杂度}
-字符串长度分别为 $n,m$ 时，时间复杂度为 $O(nm)$，
-额外空间复杂度为 $O(\min(n,m)+1)$。
+字符串长度分别为 $n,m$ 时，时间为 $O((n+1)(m+1))$，额外空间为 $O(\min(n,m)+1)$。
 
 还原子串时，保存更新最大长度时的结束下标。
 
@@ -572,7 +565,7 @@ dp_i=\max(dp_{i-1},dp_{i-2}+a_i)\quad(i\ge 2).
 dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
 \]
 
-输入 $n\ge 1$ 及 $n$ 个整数，转移结果须能用 \texttt{ll} 表示。
+数组须非空，转移结果须能用 \texttt{ll} 表示。
 只保留当前结尾的最优值和全局答案。
 
 \cppfile{code/basic/最大子段和.cpp}
@@ -601,7 +594,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \item 压缩成一维后，从大到小枚举容量，使 $dp_{c-w_i}$ 仍来自上一轮。
 \end{itemize}
 
-输入 $n,V$，再逐件输入重量 $w$ 和价值 $v$，其中 $w$ 为正整数，$v$ 非负。
+每件物品由重量 $w$ 和价值 $v$ 表示，其中 $w$ 为正整数，$v$ 非负。
 容量满足 $0\le V<2^{31}-1$，最大价值须能用 \texttt{ll} 表示。
 
 \cppfile{code/basic/01背包.cpp}
@@ -624,7 +617,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \item 压缩成一维后，从小到大枚举容量，以便读到当前轮的 $dp_{c-w_i}$。
 \end{itemize}
 
-输入 $n,V$，再逐种输入重量 $w$ 和价值 $v$，其中 $w$ 为正整数，$v$ 非负。
+每种物品由重量 $w$ 和价值 $v$ 表示，其中 $w$ 为正整数，$v$ 非负。
 容量满足 $0\le V<2^{31}-1$，最大价值须能用 \texttt{ll} 表示。
 
 \cppfile{code/basic/完全背包.cpp}
@@ -650,7 +643,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     例如 $13=1+2+4+6$。
 \end{itemize}
 
-输入物品种类数和容量 $V$，再逐种输入正整数重量、非负价值和非负整数数量。
+每种物品由正整数重量、非负价值和非负整数数量表示。
 容量满足 $0\le V<2^{31}-1$，最大价值须能用 \texttt{ll} 表示。
 
 \cppfile{code/basic/多重背包.cpp}
@@ -675,7 +668,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     $dp_{c-w}+v$ 更新下一层的 $c$。整组处理完成后再替换上一层。
 \end{itemize}
 
-输入组数和容量 $V$，每组先输入物品数，再输入各物品的正整数重量和非负价值。
+每组可含若干物品。物品重量为正整数，价值非负。
 容量满足 $0\le V<2^{31}-1$，最大价值须能用 \texttt{ll} 表示。
 
 \cppfile{code/basic/分组背包.cpp}
@@ -707,7 +700,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \]
 \end{itemize}
 
-输入 $n$ 及 $n$ 个非负石子重量，输出最小合并代价。空数组输出 $0$。
+合并代价由题目确定。石子合并的代价为 $S(l,r)$，与分界点无关。空数组的答案为 $0$。
 总重量以及 $(n-1)$ 倍的总重量应在 \texttt{ll} 范围内。
 
 \cppfile{code/basic/区间DP石子合并.cpp}
@@ -739,8 +732,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \item 添加新元素后掩码增大，按掩码递增顺序枚举即可保证状态已算出。
 \end{itemize}
 
-输入 $0\le n\le20$ 及 $n\times n$ 代价矩阵，输出最小总代价。
-每个代价的绝对值不超过 $10^9$，所有分配均允许。
+代价矩阵为 $n\times n$，其中 $0\le n\le20$。每个代价的绝对值不超过 $10^9$，所有分配均允许。
 
 \cppfile{code/basic/状态压缩DP任务分配.cpp}
 
@@ -770,8 +762,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \item 填完全部数位得到一种方案。仅记录前缀已经小于上界的状态。
 \end{itemize}
 
-输入 \texttt{ll} 型上界，输出 $[0,\text{上界}]$ 内相邻数位不同的整数个数。
-数字 $0$ 计为一种方案，前导零不参与比较。
+按题目填写相邻有效数位的合法性判定。数字 $0$ 计为一种方案，前导零不参与判定。
 
 \cppfile{code/basic/数位DP相邻数字.cpp}
 
@@ -801,8 +792,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \texttt{ways[col - 1]} 已更新为当前行左邻格的计数。
 \end{itemize}
 
-输入行数、列数及网格，\texttt{\#} 表示障碍。输出从左上角到右下角的路径数模 $10^9+7$。
-空网格输出 $0$。
+按题目填写正模数和障碍判定。\texttt{ans} 为路径数对该模数的余数。空网格的答案为 $0$。
 
 \cppfile{code/basic/计数DP网格路径.cpp}
 
@@ -833,7 +823,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     仍来自上一次试验。
 \end{itemize}
 
-输入 $n,k$ 及 $n$ 次试验的成功概率，输出恰好成功 $k$ 次的概率。$k$ 越界时输出 $0$。
+模板计算 $0\le k\le n$ 时恰好成功 $k$ 次的概率。$k$ 越界时概率为 $0$。
 
 \cppfile{code/basic/概率DP独立试验.cpp}
 
@@ -864,13 +854,13 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \item 用 $E_n=E_{n+1}=0$ 初始化，按位置从大到小计算。
 \end{itemize}
 
-输入 $n$ 及各位置移动一格、两格的非负概率，每对概率的和不超过 $1$。
+各位置移动一格、两格的概率均非负，且每对概率的和不超过 $1$。
 若以正概率进入无法前进的状态，结果为正无穷。
 
 \cppfile{code/basic/期望DP带自环.cpp}
 
 \paragraph{复杂度}
-递推耗时 $O(n)$，两项期望占 $O(1)$ 空间。逆序读取所需的概率数组占 $O(n)$ 空间。
+递推耗时 $O(n)$，除已给定的概率数组外仅占 $O(1)$ 空间。
 
 \begin{itemize}
     \item 只累加正概率的转移项，避免浮点运算出现 $0\cdot\infty$。
@@ -891,7 +881,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \item 取石子时，每步取走正数个石子，按剩余石子数从小到大计算。
 \end{itemize}
 
-输入石子数 $n$、取法数 $m$ 及 $m$ 个正整数。先手胜时输出 \texttt{First}，否则输出 \texttt{Second}。
+\texttt{moves} 保存合法的正整数取法，\texttt{win[n]} 为先手是否必胜。
 
 \cppfile{code/basic/博弈DP取石子.cpp}
 
@@ -918,7 +908,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     用当前石子数作为标记，记录本轮出现的 SG 值。
 \end{itemize}
 
-输入 $n,m$ 及 $m$ 个合法取石数，依次输出堆大小 $0$ 至 $n$ 的 SG 值。
+\texttt{grundy[x]} 为堆大小 $x$ 对应的 SG 值。
 
 \cppfile{code/basic/博弈DP格兰迪数.cpp}
 
@@ -944,7 +934,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \item 与掩码的按位补码做按位与可清除该位。
 \end{itemize}
 
-输入 64 位无符号整数和位编号 $0\leq bit<64$，依次输出该位的值、置位、清位和翻转的结果。
+位编号满足 $0\leq bit<64$，各操作结果分别保存。
 
 \cppfile{code/basic/位运算基础.cpp}
 
@@ -970,7 +960,7 @@ $\operatorname{lowbit}(x)$ 保留 $x$ 从低到高遇到的第一个 $1$，
     $x\mathbin{\&}(x-1)$ 相同。
 \end{itemize}
 
-依次输出最低置位的掩码与置位总数。输入为 $0$ 时两项均为 $0$。
+最低置位掩码与置位数分别保存。$x=0$ 时两项均为 $0$。
 
 \cppfile{code/basic/lowbit.cpp}
 
@@ -993,7 +983,7 @@ $\operatorname{lowbit}(x)$ 保留 $x$ 从低到高遇到的第一个 $1$，
     \item 与 $m$ 取按位与，丢弃 $m$ 中不存在的位，即得到下一个子掩码。
 \end{itemize}
 
-输入 $m$，按数值递减输出全部子掩码，包含 $0$。
+按数值递减枚举 $m$ 的全部子掩码，包含 $0$。各子掩码的用途由题目确定。
 
 \cppfile{code/basic/子集枚举.cpp}
 
@@ -1017,8 +1007,7 @@ $\operatorname{lowbit}(x)$ 保留 $x$ 从低到高遇到的第一个 $1$，
     两集合不相交的充要条件为 $(A\mathbin{\&}B)=0$。
 \end{itemize}
 
-输入两组元素的个数及元素编号，编号为 $0$ 至 $63$。
-依次输出第一组是否包含第二组、两组是否不相交。
+元素编号为 $0$ 至 $63$。\texttt{contains} 和 \texttt{disjoint} 分别为包含与不相交的判定结果。
 
 \cppfile{code/basic/二进制状态压缩.cpp}
 
@@ -1050,7 +1039,7 @@ $F[m]=\sum_{s\subseteq m}a[s]$，其中 $s\subseteq m$ 表示 $s$ 为 $m$ 的子
     将置位后的状态加到 $F[m]$。
 \end{itemize}
 
-输入位数 $n$ 及按掩码顺序给出的 $2^n$ 个值，且 $n$ 小于 \texttt{size\_t} 的位宽。
+数组含 $2^n$ 个值，按掩码顺序存放。$n$ 须小于 \texttt{size\_t} 的位宽。
 所有中间的加和都应在 \texttt{ll} 表示范围内。
 
 \cppfile{code/basic/SOS_DP.cpp}
@@ -1077,7 +1066,7 @@ $F[m]=\sum_{s\subseteq m}a[s]$，其中 $s\subseteq m$ 表示 $s$ 为 $m$ 的子
     则全序列的异或值就是该元素。
 \end{itemize}
 
-依次输入 $n,q$、序列及 $q$ 组查询端点 $l,r$，满足 $0\leq l\leq r\leq n$。
+查询区间 $[l,r)$ 满足 $0\leq l\leq r\leq n$。
 空区间的异或值为 $0$。
 
 \cppfile{code/basic/前缀异或.cpp}
@@ -1102,7 +1091,7 @@ $F[m]=\sum_{s\subseteq m}a[s]$，其中 $s\subseteq m$ 表示 $s$ 为 $m$ 的子
     否则跳过这一位，并继续试探低位。
 \end{itemize}
 
-输入 $n$ 及 $n$ 个无符号整数，相同数值可按不同下标配对。元素不足两个时输出 \texttt{NONE}。
+数组至少含两个无符号整数，相同数值可按不同下标配对。
 
 \cppfile{code/basic/位运算贪心.cpp}
 

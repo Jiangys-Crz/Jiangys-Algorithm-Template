@@ -1,33 +1,18 @@
 #include <cstddef>
-#include <iostream>
 #include <vector>
 
-int main() {
-    int n, m;
-    if (!(std::cin >> n >> m)) return 0;
-    std::vector<std::vector<int>> adj(n + 1);
-    std::vector<int> deg(n + 1);
-    for (int i = 0; i < m; ++i) {
-        int u, v;
-        std::cin >> u >> v;
-        adj[u].push_back(v);
-        ++deg[v];
-    }
+// In solve: 1-based directed graph adj with n vertices.
 
-    std::vector<int> order;
-    for (int u = 1; u <= n; ++u) {
-        if (!deg[u]) order.push_back(u);
-    }
-    for (std::size_t i = 0; i < order.size(); ++i) {
-        for (int v : adj[order[i]]) {
-            if (--deg[v] == 0) order.push_back(v);
-        }
-    }
-
-    if (static_cast<int>(order.size()) != n) {
-        std::cout << "CYCLE\n";
-    } else {
-        for (int u : order) std::cout << u << ' ';
-        std::cout << '\n';
+std::vector<int> deg(n + 1), order;
+for (int u = 1; u <= n; ++u) {
+    for (int v : adj[u]) ++deg[v];
+}
+for (int u = 1; u <= n; ++u) {
+    if (!deg[u]) order.push_back(u);
+}
+for (std::size_t i = 0; i < order.size(); ++i) {
+    for (int v : adj[order[i]]) {
+        if (--deg[v] == 0) order.push_back(v);
     }
 }
+bool acyclic = order.size() == static_cast<std::size_t>(n);

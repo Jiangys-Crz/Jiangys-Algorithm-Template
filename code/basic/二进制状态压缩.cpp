@@ -1,20 +1,7 @@
-#include <iostream>
-
 using ull = unsigned long long;
 
-int main() {
-    int n, m;
-    if (!(std::cin >> n >> m)) return 0;
-    ull a = 0, b = 0;
-    for (int i = 0; i < n; ++i) {
-        int x;
-        std::cin >> x;
-        a |= 1ULL << x;
-    }
-    for (int i = 0; i < m; ++i) {
-        int x;
-        std::cin >> x;
-        b |= 1ULL << x;
-    }
-    std::cout << ((a & b) == b) << ' ' << ((a & b) == 0) << '\n';
-}
+// In solve: elements contains indices in [0, 63]; ull b is another mask.
+ull a = 0;
+for (int x : elements) a |= 1ULL << x;
+bool contains = (a & b) == b;
+bool disjoint = (a & b) == 0;

@@ -1,30 +1,16 @@
-#include <iostream>
+#include <tuple>
 #include <vector>
 
 using ll = long long;
 
-int main() {
-    int n, q;
-    if (!(std::cin >> n >> q)) return 0;
-    std::vector<ll> d(n + 2);
-    ll prev = 0;
-    for (int i = 1; i <= n; ++i) {
-        ll x;
-        std::cin >> x;
-        d[i] = x - prev;
-        prev = x;
-    }
+// In solve: int n; a[0] = 0, a[1..n] are the original values.
+// updates contains tuples (l, r, delta) for closed intervals.
+std::vector<ll> d(n + 2);
+for (int i = 1; i <= n; ++i) d[i] = a[i] - a[i - 1];
 
-    while (q--) {
-        int l, r;
-        ll v;
-        std::cin >> l >> r >> v;
-        d[l] += v;
-        d[r + 1] -= v;
-    }
-
-    for (int i = 1; i <= n; ++i) {
-        d[i] += d[i - 1];
-        std::cout << d[i] << (i == n ? '\n' : ' ');
-    }
+for (auto [l, r, delta] : updates) {
+    d[l] += delta;
+    d[r + 1] -= delta;
 }
+for (int i = 1; i <= n; ++i) d[i] += d[i - 1];
+// d[1..n] now stores the updated values.

@@ -1,30 +1,23 @@
-#include <iostream>
 #include <cstddef>
 #include <string>
 #include <vector>
 
-int main() {
-    std::size_t rows, columns;
-    if (!(std::cin >> rows >> columns)) return 0;
-    if (rows == 0 || columns == 0) {
-        std::cout << "0\n";
-        return 0;
-    }
-    constexpr int mod = 1000000007;
-    std::vector<int> ways(columns);
-    ways[0] = 1;
+// In solve: nonempty rectangular grid; an empty grid has answer 0.
+// A path may move right or down.
 
-    for (std::size_t i = 0; i < rows; ++i) {
-        std::string row;
-        std::cin >> row;
-        for (std::size_t col = 0; col < columns; ++col) {
-            if (row[col] == '#') {
-                ways[col] = 0;
-            } else if (col > 0) {
-                ways[col] += ways[col - 1];
-                if (ways[col] >= mod) ways[col] -= mod;
-            }
+// Positive modulus chosen for the problem.
+const int mod = /* TODO: modulus */;
+std::size_t columns = grid.front().size();
+std::vector<int> ways(columns);
+ways[0] = 1 % mod;
+
+for (const auto& row : grid) {
+    for (std::size_t col = 0; col < columns; ++col) {
+        if (/* TODO: this cell is blocked */) {
+            ways[col] = 0;
+        } else if (col > 0) {
+            ways[col] = (1LL * ways[col] + ways[col - 1]) % mod;
         }
     }
-    std::cout << ways.back() << '\n';
 }
+int ans = ways.back();

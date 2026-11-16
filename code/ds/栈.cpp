@@ -1,28 +1,26 @@
-#include <iostream>
 #include <stack>
 #include <string>
 
-int main() {
-    std::string s;
-    if (!std::getline(std::cin, s)) return 0;
-    std::stack<char> stk;
-    for (char c : s) {
-        if (c == '(' || c == '[' || c == '{') {
-            stk.push(c);
-            continue;
-        }
-        if (stk.empty()) {
-            std::cout << "NO\n";
-            return 0;
-        }
-        char left = stk.top();
-        if ((left == '(' && c != ')') ||
-            (left == '[' && c != ']') ||
-            (left == '{' && c != '}')) {
-            std::cout << "NO\n";
-            return 0;
-        }
-        stk.pop();
+// In solve: s contains only parentheses, square brackets or braces.
+
+std::stack<char> stk;
+bool matched = true;
+for (char c : s) {
+    if (c == '(' || c == '[' || c == '{') {
+        stk.push(c);
+        continue;
     }
-    std::cout << (stk.empty() ? "YES" : "NO") << '\n';
+    if (stk.empty()) {
+        matched = false;
+        break;
+    }
+    char left = stk.top();
+    if ((left == '(' && c != ')') ||
+        (left == '[' && c != ']') ||
+        (left == '{' && c != '}')) {
+        matched = false;
+        break;
+    }
+    stk.pop();
 }
+matched = matched && stk.empty();

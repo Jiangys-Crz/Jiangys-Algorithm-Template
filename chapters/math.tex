@@ -24,7 +24,7 @@
 
 \paragraph{迭代辗转相除}
 
-输入两个非负 64 位整数，输出最大公约数。
+初始 $a,b$ 为非负 64 位整数。循环结束后，$a$ 为两者的最大公约数。
 
 \cppfile{code/math/gcd.cpp}
 
@@ -88,13 +88,13 @@
     \item 累乘从单位元开始。模 $m$ 时初值取 $1\bmod m$，方阵则从单位矩阵开始。
 \end{itemize}
 
-输入无符号 64 位整数 $a,b,m$，其中 $m>0$，输出 $a^b\bmod m$。
+$a,b,m$ 为无符号 64 位整数，且 $m>0$。\texttt{ans} 保存原底数与指数对应的模幂。
 先转为 \texttt{ulll} 再相乘，乘积取模后存回 \texttt{ull}。
 
 \cppfile{code/math/power.cpp}
 
 \paragraph{复杂度}
-执行 $O(\log(b+1))$ 次乘法。此模幂示例额外空间为 $O(1)$。
+执行 $O(\log(b+1))$ 次乘法。模幂循环占 $O(1)$ 额外空间。
 
 普通整数快速幂可去掉取模，并在仍需后续幂次时才平方。中间乘积须在类型表示范围内。
 
@@ -110,7 +110,7 @@
 
 \paragraph{倍增模乘}
 
-输入 $a,b,m$，输出 $ab\bmod m$，其中 $a,b$ 为无符号整数且 $m>0$。
+$a,b$ 为无符号整数，$m>0$。\texttt{ans} 为原两因子乘积对 $m$ 的余数。
 
 \cppfile{code/math/mod_multiply.cpp}
 
@@ -147,7 +147,7 @@
     \item 筛完后从二开始收集未被标记的整数。
 \end{itemize}
 
-输入 $n\ge0$，输出升序质数列表。
+$n\ge0$。\texttt{primes} 升序保存不超过 $n$ 的质数。
 
 \cppfile{code/math/eratosthenes.cpp}
 
@@ -183,9 +183,9 @@
     \item 大量查询的数都在筛表范围内时，优先沿最小质因子分解。
 \end{itemize}
 
-\texttt{factorize(n)} 接收正整数，返回升序的质因子及其指数。一的分解为空。
+\texttt{factors} 升序保存正整数 $n$ 的质因子及其指数。$n=1$ 时列表为空。
 
-\cppfile{code/math/factorization.hpp}
+\cppfile{code/math/质因数分解.cpp}
 
 \paragraph{复杂度}
 试除最坏时间为 $O(\sqrt n)$。线性筛预处理后，分解耗时为 $O(\log n+1)$。
@@ -199,7 +199,7 @@
     \item 平方根恰为整数时只存一次。最后逆序接上较大因子列表，得到升序结果。
 \end{itemize}
 
-输入 $n\ge1$，对 $1$ 返回仅含 $1$ 的列表。
+$n\ge1$。\texttt{divisors} 升序保存约数。
 
 \cppfile{code/math/约数枚举.cpp}
 
@@ -217,7 +217,9 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
     \item 在线性筛中，若 $p\mid i$，则 $\varphi(ip)=p\varphi(i)$。若 $p\nmid i$，则 $\varphi(ip)=(p-1)\varphi(i)$。
 \end{itemize}
 
-单次计算调用 \texttt{eulerPhi(n)}，成批查询读取 \texttt{LinearSieve::phi}。
+试除循环将结果存入 \texttt{phi}。成批查询可用线性筛预处理。
+
+\cppfile{code/math/euler_phi.cpp}
 
 \paragraph{复杂度}
 试除版最坏耗时 $O(\sqrt n)$。线性筛预处理为 $O(n)$，之后单次读取为 $O(1)$。
@@ -284,7 +286,7 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
     \item 互质时也有 $a^{-1}\equiv a^{\varphi(m)-1}\pmod m$。单点求逆通常直接使用扩展欧几里得。
 \end{itemize}
 
-先用 \texttt{eulerPhi(m)} 或筛表求欧拉函数，再调用 \texttt{powMod}。这里取 $m>1$。
+先按前述试除循环或筛表求 $\varphi(m)$，再按快速幂模板计算。取 $m>1$。
 
 \paragraph{复杂度}
 试除求 $\varphi$ 最坏为 $O(\sqrt m)$，快速幂另需 $O(\log m)$ 次模乘。
@@ -387,7 +389,7 @@ Lucas 定理给出 $\binom nk\equiv\prod_i\binom{n_i}{k_i}\pmod p$。
     \item 模板从某条件的倍数中减去还满足后续条件的部分。这样按最后一个满足的条件分组，累加过程保持非负。
 \end{itemize}
 
-所有除数为正，可以重复。传入 $n=0$ 时返回 $0$。
+所有除数为正，可以重复。\texttt{ans} 保存并集大小，$n=0$ 时为 $0$。
 
 \cppfile{code/math/容斥.cpp}
 
@@ -405,7 +407,7 @@ Lucas 定理给出 $\binom nk\equiv\prod_i\binom{n_i}{k_i}\pmod p$。
     \item 两个同余前缀之差对应一个非空子数组，其元素和为 $n$ 的倍数。
 \end{itemize}
 
-支持负数，返回 $0$ 起始的半开区间。空输入返回空区间。
+支持负数。\texttt{range} 保存从 $0$ 开始的半开区间，空数组对应空区间。
 
 \cppfile{code/math/鸽巢原理.cpp}
 
@@ -605,7 +607,7 @@ $\lfloor n/i\rfloor$ 只取少量不同的值，可以按连续的等商区间�
     \item 处理 $[l,r]$ 后前进到 $r+1$。多个取整商一起出现时，取它们各自右端的最小值。
 \end{itemize}
 
-输入 $n$，逐段输出 $l,r,q$。若求 $\sum_{i=1}^n\lfloor n/i\rfloor$，每段累加 $(r-l+1)q$。
+每段的用途由题目确定。若求 $\sum_{i=1}^n\lfloor n/i\rfloor$，每段累加 $(r-l+1)q$。
 
 \cppfile{code/math/quotient_blocks.cpp}
 
@@ -697,8 +699,8 @@ FFT 在系数大或长度长时可能产生取整误差。NTT 的单模结果只
     \item 按逆拓扑序求 SG，终止节点的值为零。组合独立游戏时，每步只在一个子游戏内走。
 \end{itemize}
 
-\texttt{nimMove} 返回堆的下标和取完后的大小，必败时返回空值。
-\texttt{dagGrundy} 接收从 $0$ 编号的邻接表与合法拓扑序。
+\texttt{heap} 和 \texttt{after} 保存 Nim 胜着的堆下标和新大小，必败时 \texttt{heap} 为 $-1$。
+有向无环图使用从 $0$ 编号的邻接表与拓扑序，\texttt{sg} 保存各状态的 SG 值。
 
 \cppfile{code/math/博弈论.cpp}
 

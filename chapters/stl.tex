@@ -1,6 +1,6 @@
 \chapter{STL 常见函数}
 
-本章采用 C++17。示例列出所需的声明，可作为独立函数置于竞赛源文件。
+本章采用 C++17，列出标准库调用方式与解题语句片段。
 除个别接口另有说明，迭代器区间都为左闭右开 $[\mathrm{first},\mathrm{last})$。
 编译器内建函数和 GNU 扩展集中在最后一节。
 
@@ -74,7 +74,7 @@ void exampleArray() {
 
 \paragraph{按单个分隔符切分字符串}
 
-输入一行字符串，按逗号切分并逐行输出各字段，保留空字段。
+按指定字符 \texttt{sep} 切分。预留的字段处理位置也会收到空字段。
 
 \cppfile{code/stl/string_split.cpp}
 
@@ -434,7 +434,7 @@ C++17 中有足够辅助内存时为 $O(n\log n)$ 次比较，否则为 $O(n\log
 
 \paragraph{求某个值出现的下标半开区间}
 
-输入 $n,x$ 及非递减数组，输出 $x$ 出现的半开区间端点 $l,r$。未找到时两个边界相等。
+\texttt{first} 和 \texttt{last} 为 $x$ 在非递减数组中出现的半开区间端点。未找到时两个边界相等。
 
 \cppfile{code/stl/sorted_search.cpp}
 
@@ -505,7 +505,7 @@ void exampleBinarySearch() {
 
 \paragraph{查询第 $k$ 小并检查越界}
 
-输入 $n,k$ 及数组。允许重复元素，排名从 $1$ 开始，越界时输出 \texttt{NONE}。
+排名从 $1$ 开始，调用前须保证 $1\le k\le n$。允许重复元素，\texttt{ans} 为第 $k$ 小元素。
 
 \cppfile{code/stl/kth_smallest.cpp}
 
@@ -598,7 +598,7 @@ void exampleAccumulate() {
 
 \paragraph{按数值排序原下标，同值按下标排序}
 
-输入 $n$ 及 $n$ 个整数，按数值从小到大输出其原下标，下标从 $0$ 开始。
+\texttt{id} 按数值从小到大保存原下标，下标从 $0$ 开始。
 
 \cppfile{code/stl/sorted_indices.cpp}
 
@@ -692,12 +692,12 @@ void exampleRotate() {
 
 \paragraph{按字典序枚举排列}
 
-输入 $n$ 及 $n$ 个元素，按字典序逐行输出排列。$n=0$ 时输出一个空排列。
+按字典序逐个处理排列。空序列产生一个空排列。
 
 \cppfile{code/stl/permutations.cpp}
 
 \paragraph{复杂度}
-每次推进最坏耗时 $O(n)$，另计初始排序与输出开销。
+每次推进最坏耗时 $O(n)$，另计初始排序与逐项处理开销。
 
 \subsection{\texttt{prev\_permutation}}
 
@@ -875,7 +875,7 @@ void exampleLambda() {
 
 \paragraph{分数降序、罚时升序、编号升序}
 
-输入记录数，再按编号、分数、罚时的顺序输入每条记录，输出排序后的编号。
+\texttt{Record} 保存编号、分数和罚时。排序直接作用于记录数组。
 
 \cppfile{code/stl/record_sort.cpp}
 
@@ -926,7 +926,7 @@ void exampleStructuredBinding() {
 
 \paragraph{闭区间随机整数与洗牌}
 
-输入 \texttt{uint} 种子，输出 $[1,10]$ 内的随机整数和一个长度为 $5$ 的排列。
+根据题目设置种子、整数取样范围和待打乱的序列。
 
 \cppfile{code/stl/random_engine.cpp}
 
@@ -968,7 +968,7 @@ void exampleStructuredBinding() {
 
 \paragraph{统计 64 位整数的置位数、尾零和前导零}
 
-输入无符号 64 位整数，依次输出三项计数。输入为 $0$ 时，尾零和前导零均取位宽。
+$x$ 为无符号 64 位整数。$x=0$ 时，尾零和前导零均取位宽。
 
 \cppfile{code/stl/bit_ops.cpp}
 
