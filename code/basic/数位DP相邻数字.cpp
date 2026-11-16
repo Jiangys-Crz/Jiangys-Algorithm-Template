@@ -1,11 +1,17 @@
+#include <iostream>
 #include <array>
 #include <string>
 #include <vector>
 
 using ll = long long;
 
-ll countWithoutEqualNeighbors(ll bound) {
-    if (bound < 0) return 0;
+int main() {
+    ll bound;
+    if (!(std::cin >> bound)) return 0;
+    if (bound < 0) {
+        std::cout << "0\n";
+        return 0;
+    }
     const std::string digits = std::to_string(bound);
     const int length = static_cast<int>(digits.size());
     constexpr int noPrevious = 10;
@@ -28,5 +34,5 @@ ll countWithoutEqualNeighbors(ll bound) {
         if (!tight) memo[pos][previous] = ways;
         return ways;
     };
-    return dfs(dfs, 0, noPrevious, true);
+    std::cout << dfs(dfs, 0, noPrevious, true) << '\n';
 }

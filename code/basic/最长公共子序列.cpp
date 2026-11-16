@@ -1,11 +1,18 @@
+#include <iostream>
 #include <algorithm>
 #include <cstddef>
-#include <string_view>
+#include <string>
 #include <vector>
 
-std::size_t lcsLength(std::string_view a, std::string_view b) {
+int main() {
+    std::string a, b;
+    if (!std::getline(std::cin, a) || !std::getline(std::cin, b)) return 0;
+
     if (a.size() < b.size()) a.swap(b);
-    if (b.empty()) return 0;
+    if (b.empty()) {
+        std::cout << "0\n";
+        return 0;
+    }
     std::vector<std::size_t> dp(b.size() + 1);
     for (char x : a) {
         std::size_t diagonal = 0;
@@ -16,5 +23,5 @@ std::size_t lcsLength(std::string_view a, std::string_view b) {
             diagonal = above;
         }
     }
-    return dp.back();
+    std::cout << dp.back() << '\n';
 }

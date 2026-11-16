@@ -1,14 +1,12 @@
-#include <cstdint>
+#include <iostream>
 
-// visit receives every submask, including the empty submask.
-template <class Visit>
-void forEachSubmask(std::uint64_t mask, Visit visit) {
-    std::uint64_t subset = mask;
-    while (true) {
-        visit(subset);
-        if (subset == 0) {
-            break;
-        }
-        subset = (subset - 1) & mask;
+using ull = unsigned long long;
+
+int main() {
+    ull mask;
+    if (!(std::cin >> mask)) return 0;
+    for (ull s = mask; ; s = (s - 1) & mask) {
+        std::cout << s << (s == 0 ? '\n' : ' ');
+        if (s == 0) break;
     }
 }

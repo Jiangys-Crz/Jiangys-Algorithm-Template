@@ -1,8 +1,16 @@
+#include <iostream>
 #include <algorithm>
+#include <limits>
 #include <string>
 #include <vector>
 
-std::string smallestConcatenation(std::vector<std::string> a) {
+int main() {
+    int n;
+    if (!(std::cin >> n)) return 0;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::vector<std::string> a(n);
+    for (auto& s : a) std::getline(std::cin, s);
+
     std::sort(a.begin(), a.end(), [](const std::string& x, const std::string& y) {
         if (x.empty() != y.empty()) return x.empty();
         for (std::size_t i = 0; i < x.size() + y.size(); ++i) {
@@ -12,7 +20,6 @@ std::string smallestConcatenation(std::vector<std::string> a) {
         }
         return false;
     });
-    std::string res;
-    for (const auto& s : a) res += s;
-    return res;
+    for (const auto& s : a) std::cout << s;
+    std::cout << '\n';
 }

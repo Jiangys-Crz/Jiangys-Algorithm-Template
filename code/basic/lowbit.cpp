@@ -1,14 +1,16 @@
-#include <cstdint>
+#include <iostream>
 
-std::uint64_t lowbit(std::uint64_t mask) {
-    return mask & (std::uint64_t{0} - mask);
-}
+using ull = unsigned long long;
 
-int countSetBits(std::uint64_t mask) {
+int main() {
+    ull x;
+    if (!(std::cin >> x)) return 0;
+    std::cout << (x & -x) << '\n';
+
     int count = 0;
-    while (mask != 0) {
-        mask -= lowbit(mask);
+    while (x) {
+        x -= x & -x;
         ++count;
     }
-    return count;
+    std::cout << count << '\n';
 }

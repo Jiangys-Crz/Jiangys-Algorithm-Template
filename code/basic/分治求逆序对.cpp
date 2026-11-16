@@ -1,8 +1,14 @@
+#include <iostream>
 #include <vector>
 
 using ll = long long;
 
-ll countInversions(std::vector<int>& a) {
+int main() {
+    int n;
+    if (!(std::cin >> n)) return 0;
+    std::vector<int> a(n);
+    for (int& x : a) std::cin >> x;
+
     std::vector<int> buffer(a.size());
     auto solve = [&](auto&& self, int l, int r) -> ll {
         if (r - l <= 1) {
@@ -30,5 +36,5 @@ ll countInversions(std::vector<int>& a) {
         }
         return count;
     };
-    return solve(solve, 0, static_cast<int>(a.size()));
+    std::cout << solve(solve, 0, n) << '\n';
 }

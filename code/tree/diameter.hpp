@@ -56,29 +56,6 @@ struct Tree {
 
 #endif
 
-#ifndef XCPC_TREE_TREE_BFS_HPP
-#define XCPC_TREE_TREE_BFS_HPP
-
-struct TreeBfs {
-    std::vector<int> order, fa, dep;
-
-    explicit TreeBfs(const Tree& tr, int root = 1)
-        : fa(tr.n + 1), dep(tr.n + 1) {
-        order.push_back(root);
-        for (int i = 0; i < static_cast<int>(order.size()); ++i) {
-            int u = order[i];
-            for (int v : tr.adj[u]) {
-                if (v == fa[u]) continue;
-                fa[v] = u;
-                dep[v] = dep[u] + 1;
-                order.push_back(v);
-            }
-        }
-    }
-};
-
-#endif
-
 #ifndef XCPC_TREE_DIAMETER_HPP
 #define XCPC_TREE_DIAMETER_HPP
 
@@ -88,14 +65,28 @@ struct Diameter {
 };
 
 inline Diameter treeDiameter(const Tree& tr) {
-    int u = TreeBfs(tr).order.back();
-    TreeBfs bfs(tr, u);
-    int v = bfs.order.back();
+    std::vector<int> fa(tr.n + 1), q;
+    auto farthest = [&](int root) {
+        fa[root] = 0;
+        q.assign(1, root);
+        for (int i = 0; i < static_cast<int>(q.size()); ++i) {
+            int u = q[i];
+            for (int v : tr.adj[u]) {
+                if (v == fa[u]) continue;
+                fa[v] = u;
+                q.push_back(v);
+            }
+        }
+        return q.back();
+    };
 
+    int u = farthest(1);
+    int v = farthest(u);
     std::vector<int> path;
-    for (int x = v; x; x = bfs.fa[x]) path.push_back(x);
+    for (int x = v; x; x = fa[x]) path.push_back(x);
     std::reverse(path.begin(), path.end());
-    return {u, v, bfs.dep[v], std::move(path)};
+    int len = static_cast<int>(path.size()) - 1;
+    return {u, v, len, std::move(path)};
 }
 
 #endif

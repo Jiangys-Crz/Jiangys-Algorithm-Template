@@ -1,11 +1,18 @@
+#include <iostream>
 #include <algorithm>
 #include <cstddef>
-#include <string_view>
+#include <string>
 #include <vector>
 
-std::size_t longestCommonSubstring(std::string_view a, std::string_view b) {
+int main() {
+    std::string a, b;
+    if (!std::getline(std::cin, a) || !std::getline(std::cin, b)) return 0;
+
     if (a.size() < b.size()) a.swap(b);
-    if (b.empty()) return 0;
+    if (b.empty()) {
+        std::cout << "0\n";
+        return 0;
+    }
     std::vector<std::size_t> dp(b.size() + 1);
     std::size_t best = 0;
     for (char x : a) {
@@ -14,5 +21,5 @@ std::size_t longestCommonSubstring(std::string_view a, std::string_view b) {
             best = std::max(best, dp[j]);
         }
     }
-    return best;
+    std::cout << best << '\n';
 }

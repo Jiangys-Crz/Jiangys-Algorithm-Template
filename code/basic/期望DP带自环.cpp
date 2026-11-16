@@ -1,8 +1,15 @@
+#include <iomanip>
+#include <iostream>
 #include <array>
 #include <limits>
 #include <vector>
 
-long double expectedSteps(const std::vector<std::array<long double, 2>>& moves) {
+int main() {
+    int n;
+    if (!(std::cin >> n)) return 0;
+    std::vector<std::array<long double, 2>> moves(n);
+    for (auto& [p1, p2] : moves) std::cin >> p1 >> p2;
+
     long double next = 0, nextTwo = 0;
     for (auto it = moves.rbegin(); it != moves.rend(); ++it) {
         const auto [p1, p2] = *it;
@@ -19,5 +26,5 @@ long double expectedSteps(const std::vector<std::array<long double, 2>>& moves) 
         nextTwo = next;
         next = weighted / advance;
     }
-    return next;
+    std::cout << std::setprecision(15) << next << '\n';
 }

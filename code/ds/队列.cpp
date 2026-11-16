@@ -1,6 +1,9 @@
+#include <iostream>
 #include <queue>
 
-int lastCard(int n) {
+int main() {
+    int n;
+    if (!(std::cin >> n)) return 0;
     std::queue<int> q;
     for (int i = 1; i <= n; ++i) q.push(i);
     while (q.size() > 1) {
@@ -9,5 +12,5 @@ int lastCard(int n) {
         q.pop();
         q.push(x);
     }
-    return q.front();
+    std::cout << q.front() << '\n';
 }

@@ -1,12 +1,16 @@
+#include <iostream>
 #include <deque>
-#include <utility>
-#include <vector>
 
-std::vector<int> arrangeDeque(const std::vector<std::pair<bool, int>>& ops) {
+int main() {
+    int n;
+    if (!(std::cin >> n)) return 0;
     std::deque<int> q;
-    for (auto [left, x] : ops) {
+    for (int i = 0; i < n; ++i) {
+        int left, x;
+        std::cin >> left >> x;
         if (left) q.push_front(x);
         else q.push_back(x);
     }
-    return {q.begin(), q.end()};
+    for (int x : q) std::cout << x << ' ';
+    std::cout << '\n';
 }

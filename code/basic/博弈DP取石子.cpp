@@ -1,6 +1,12 @@
+#include <iostream>
 #include <vector>
 
-bool canWinStones(int n, const std::vector<int>& moves) {
+int main() {
+    int n, m;
+    if (!(std::cin >> n >> m)) return 0;
+    std::vector<int> moves(m);
+    for (int& x : moves) std::cin >> x;
+
     std::vector<char> win(n + 1);
     for (int stones = 1; stones <= n; ++stones) {
         for (int take : moves) {
@@ -10,5 +16,5 @@ bool canWinStones(int n, const std::vector<int>& moves) {
             }
         }
     }
-    return win[n];
+    std::cout << (win[n] ? "First" : "Second") << '\n';
 }

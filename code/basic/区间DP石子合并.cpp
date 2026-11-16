@@ -1,15 +1,22 @@
+#include <iostream>
 #include <algorithm>
 #include <vector>
 
 using ll = long long;
 
-ll minMergeCost(const std::vector<ll>& stones) {
-    const int n = static_cast<int>(stones.size());
-    if (n == 0) return 0;
+int main() {
+    int n;
+    if (!(std::cin >> n)) return 0;
+    if (n == 0) {
+        std::cout << "0\n";
+        return 0;
+    }
 
     std::vector<ll> prefix(n + 1);
     for (int i = 0; i < n; ++i) {
-        prefix[i + 1] = prefix[i] + stones[i];
+        ll x;
+        std::cin >> x;
+        prefix[i + 1] = prefix[i] + x;
     }
 
     std::vector<std::vector<ll>> dp(n, std::vector<ll>(n));
@@ -24,5 +31,5 @@ ll minMergeCost(const std::vector<ll>& stones) {
             dp[l][r] = best + cost;
         }
     }
-    return dp[0][n - 1];
+    std::cout << dp[0][n - 1] << '\n';
 }

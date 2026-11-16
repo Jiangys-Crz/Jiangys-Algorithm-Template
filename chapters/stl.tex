@@ -74,12 +74,12 @@ void exampleArray() {
 
 \paragraph{按单个分隔符切分字符串}
 
-保留开头、连续分隔符之间及末尾的空字段。空字符串得到一个空字段。
+输入一行字符串，按逗号切分并逐行输出各字段，保留空字段。
 
-\cppfile{code/stl/string_split.hpp}
+\cppfile{code/stl/string_split.cpp}
 
 \paragraph{复杂度}
-模板逐个查找分隔字符，扫描和复制累计为 $O(n+1)$，结果占 $O(n+1)$ 空间。
+扫描和复制累计为 $O(n+1)$，临时字段最多占 $O(n)$ 空间。
 
 先和 \texttt{npos} 比较，再计算下一个位置。使用 \texttt{getline} 读取整行时，要留意上一次格式化读取留下的换行。
 
@@ -598,9 +598,9 @@ void exampleAccumulate() {
 
 \paragraph{按数值排序原下标，同值按下标排序}
 
-生成从零开始的下标数组，原输入可继续按旧顺序访问。
+输入 $n$ 及 $n$ 个整数，按数值从小到大输出其原下标，下标从 $0$ 开始。
 
-\cppfile{code/stl/sorted_indices.hpp}
+\cppfile{code/stl/sorted_indices.cpp}
 
 \paragraph{复杂度}
 生成编号为 $O(n)$，排序编号为 $O(n\log n)$，额外空间为 $O(n)$。
@@ -690,16 +690,14 @@ void exampleRotate() {
     \item 若原序列有重复值，相同值不可区分，枚举自然跳过重复排列。
 \end{itemize}
 
-\paragraph{用回调按字典序枚举排列}
+\paragraph{按字典序枚举排列}
 
-默认升序，最后一个参数设为 \texttt{true} 可降序。空输入会访问一次空排列。
+输入 $n$ 及 $n$ 个元素，按字典序逐行输出排列。$n=0$ 时输出一个空排列。
 
-\cppfile{code/stl/permutations.hpp}
+\cppfile{code/stl/permutations.cpp}
 
 \paragraph{复杂度}
-每次推进最坏为 $O(n)$，另计初始排序与回调开销。枚举规模在最坏情况下为阶乘级。
-
-使用先访问后推进的循环，升序的初始排列也应计入答案。回调若要长期保留排列，应自行复制。
+每次推进最坏耗时 $O(n)$，另计初始排序与输出开销。
 
 \subsection{\texttt{prev\_permutation}}
 
@@ -710,9 +708,6 @@ void exampleRotate() {
     \item 比较等价的元素按同一值处理，重复项不会额外增加可观察的字典序排列。
     \item 头文件为 \texttt{<algorithm>}。
 \end{itemize}
-
-调用 \texttt{forEachPermutation(a, visit, true)}，
-或直接在降序初始序列上反复调用相应标准函数。
 
 \paragraph{复杂度}
 单次推进最坏为 $O(n)$。
@@ -880,9 +875,9 @@ void exampleLambda() {
 
 \paragraph{分数降序、罚时升序、编号升序}
 
-排序要求 \texttt{<algorithm>}，多字段引用键来自 \texttt{<tuple>}。
+输入记录数，再按编号、分数、罚时的顺序输入每条记录，输出排序后的编号。
 
-\cppfile{code/stl/record_sort.hpp}
+\cppfile{code/stl/record_sort.cpp}
 
 \paragraph{复杂度}
 固定字段数时单次比较为 $O(1)$，排序为 $O(n\log n)$。
@@ -971,11 +966,11 @@ void exampleStructuredBinding() {
     \item 零的置位数为零。位集比机器字更宽时，可以逐字统计，或使用 bitset 的成员函数。
 \end{itemize}
 
-\paragraph{按位宽封装 popcount、ctz 和 clz}
+\paragraph{统计 64 位整数的置位数、尾零和前导零}
 
-使用 \texttt{popcount32}、\texttt{popcount64} 统计置位数。另两类封装处理了零输入。
+输入无符号 64 位整数，依次输出三项计数。输入为 $0$ 时，尾零和前导零均取位宽。
 
-\cppfile{code/stl/bit_ops.hpp}
+\cppfile{code/stl/bit_ops.cpp}
 
 \paragraph{复杂度}
 固定字宽下一次调用视为 $O(1)$，实际指令取决于编译目标。
@@ -988,7 +983,7 @@ void exampleStructuredBinding() {
 
 \begin{itemize}
     \item 例如二进制 $101000_2$ 的末尾有三个零。最低置位的掩码是 $2^3$。
-    \item 本章的 \texttt{ctz32}、\texttt{ctz64} 在输入为零时返回对应类型的位宽。
+    \item 上述示例在零输入时用类型位宽表示尾零数。
 \end{itemize}
 
 获取最低置位编号。
@@ -1009,7 +1004,7 @@ void exampleTrailingZeros() {
 \paragraph{复杂度}
 固定字宽下为 $O(1)$。
 
-原始内建函数以零为参数时结果未定义。封装返回位宽时，也不能拿该值直接移位。
+内建函数要求非零参数。位宽不能作为移位量。
 
 \subsection{\texttt{\_\_builtin\_clz}}
 
@@ -1017,7 +1012,7 @@ void exampleTrailingZeros() {
 
 \begin{itemize}
     \item 若类型位宽为 $w$，非零 $x$ 的最高置位下标为 $w-1-\mathrm{clz}(x)$。
-    \item 封装 \texttt{clz32}、\texttt{clz64} 对零返回位宽，因此零由位数公式得到零。
+    \item 零输入可单独将前导零数设为位宽，此时有效位数为零。
 \end{itemize}
 
 计算无符号整数的有效位数。

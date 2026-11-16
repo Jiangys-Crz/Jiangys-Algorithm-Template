@@ -1,10 +1,16 @@
+#include <iostream>
 #include <algorithm>
-#include <string_view>
+#include <string>
 #include <vector>
 
-int longestPalindromicSubsequence(std::string_view s) {
+int main() {
+    std::string s;
+    if (!std::getline(std::cin, s)) return 0;
     int n = static_cast<int>(s.size());
-    if (!n) return 0;
+    if (!n) {
+        std::cout << "0\n";
+        return 0;
+    }
 
     std::vector<int> dp(n);
     for (int i = n - 1; i >= 0; --i) {
@@ -17,5 +23,5 @@ int longestPalindromicSubsequence(std::string_view s) {
             diag = old;
         }
     }
-    return dp.back();
+    std::cout << dp.back() << '\n';
 }

@@ -1,10 +1,15 @@
+#include <iostream>
 #include <cstddef>
 #include <vector>
 
 using ll = long long;
 
-// values has length 2^n. All intermediate sums fit in ll.
-std::vector<ll> sumOverSubsets(std::vector<ll> values, int n) {
+int main() {
+    int n;
+    if (!(std::cin >> n)) return 0;
+    std::vector<ll> values(std::size_t{1} << n);
+    for (ll& x : values) std::cin >> x;
+
     for (int bit = 0; bit < n; ++bit) {
         const std::size_t flag = std::size_t{1} << bit;
         for (std::size_t mask = 0; mask < values.size(); ++mask) {
@@ -13,5 +18,6 @@ std::vector<ll> sumOverSubsets(std::vector<ll> values, int n) {
             }
         }
     }
-    return values;
+    for (ll x : values) std::cout << x << ' ';
+    std::cout << '\n';
 }

@@ -1,6 +1,6 @@
 \chapter{树}
 
-输入为非空无向树，顶点编号为 $1$ 至 $n$。\texttt{add(u,v)} 添加边，\texttt{work(root)} 按指定根预处理。
+输入为非空无向树，顶点编号为 $1$ 至 $n$。采用 \texttt{Tree} 时，\texttt{add(u,v)} 添加边，\texttt{work(root)} 预处理。
 根的深度和父节点编号均为 $0$。点权数组从下标 $1$ 开始。
 边权记在子节点上时，根的权值为 $0$。
 权值、累加值和乘积均应在对应整型的范围内。
@@ -17,19 +17,11 @@
     \item BFS 的入队顺序按到起点的距离非递减。
 \end{itemize}
 
-\paragraph{迭代 DFS 与有根树预处理}
+\paragraph{邻接表上的迭代遍历}
 
-\texttt{Tree} 同时记录父节点、深度、子树大小和 DFS 序。
-\texttt{dfn[u]} 是 $u$ 的序号，\texttt{id[i]} 是序号为 $i$ 的节点。
+输入 $n$、根节点及 $n-1$ 条无向边。依次输出 DFS 序、BFS 序和各节点到根的距离。
 
-\cppfile{code/tree/tree.hpp}
-
-\paragraph{从指定起点做 BFS}
-
-\texttt{TreeBfs} 只读取邻接表，建边后即可使用。\texttt{order} 从下标 $0$ 开始，
-\texttt{fa} 和 \texttt{dep} 按节点编号访问。
-
-\cppfile{code/tree/tree_bfs.hpp}
+\cppfile{code/tree/树的遍历.cpp}
 
 \paragraph{复杂度}
 DFS 和 BFS 均耗时 $O(n)$，额外空间均为 $O(n)$。
@@ -43,8 +35,7 @@ DFS 和 BFS 均耗时 $O(n)$，额外空间均为 $O(n)$。
     \item 逆 DFS 序保证孩子先于父节点，可用于自底向上的转移。固定子树顺序的后序应在退出节点时记录。
 \end{itemize}
 
-\texttt{lc[u]} 与 \texttt{rc[u]} 分别表示左右孩子，$0$ 表示空节点。
-传入空根时返回空序列。
+输入 $n$、根节点及各节点的左右孩子，$0$ 表示空节点。依次输出前序、中序和后序遍历结果。
 
 \cppfile{code/tree/二叉树遍历.cpp}
 
@@ -62,7 +53,10 @@ DFS 和 BFS 均耗时 $O(n)$，额外空间均为 $O(n)$。
     \item \texttt{Tree::work} 入栈时确定深度，随后按逆 DFS 序累加子树大小。
 \end{itemize}
 
-调用 \texttt{tr.work(root)} 后读取 \texttt{tr.siz[u]} 和 \texttt{tr.dep[u]}。
+\texttt{Tree} 将父节点、深度、子树大小和 DFS 序集中预处理。
+\texttt{dfn[u]} 是 $u$ 的 DFS 序号，\texttt{id[i]} 是序号为 $i$ 的节点。
+
+\cppfile{code/tree/tree.hpp}
 
 \paragraph{复杂度}
 预处理耗时 $O(n)$，单次读取为 $O(1)$，两个数组共占 $O(n)$ 空间。

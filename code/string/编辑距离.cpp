@@ -1,9 +1,12 @@
+#include <iostream>
 #include <algorithm>
 #include <numeric>
-#include <string_view>
+#include <string>
 #include <vector>
 
-int editDistance(std::string_view a, std::string_view b) {
+int main() {
+    std::string a, b;
+    if (!std::getline(std::cin, a) || !std::getline(std::cin, b)) return 0;
     if (a.size() < b.size()) a.swap(b);
     std::vector<int> dp(b.size() + 1);
     std::iota(dp.begin(), dp.end(), 0);
@@ -17,5 +20,5 @@ int editDistance(std::string_view a, std::string_view b) {
             diag = up;
         }
     }
-    return dp.back();
+    std::cout << dp.back() << '\n';
 }

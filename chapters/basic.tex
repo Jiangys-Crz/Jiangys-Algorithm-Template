@@ -354,7 +354,7 @@ mid_2=r-\frac{r-l}{3}
     \item 最终答案为左半、右半和跨越两半的逆序对数之和。
 \end{itemize}
 
-输入为可修改的整数向量，返回逆序对数，并将原向量按非递减顺序排列。
+输入 $n$ 及 $n$ 个整数，输出逆序对数。归并时将原数组排序。
 
 \cppfile{code/basic/分治求逆序对.cpp}
 
@@ -382,8 +382,8 @@ mid_2=r-\frac{r-l}{3}
     \item 无向图中，若要遍历所有连通分量，对每个尚未访问的顶点发起搜索，并共用访问标记。
 \end{itemize}
 
-图使用邻接表，顶点编号从 $0$ 开始，起点与所有邻点编号均有效。
-有向图按边方向遍历。无向边应加入两端的邻接表。
+输入顶点数 $n$、边数 $m$、起点及 $m$ 条有向边，顶点从 $0$ 编号。输出首次访问顺序。
+无向图建边时同时加入反向边。
 
 \cppfile{code/basic/深度优先搜索.cpp}
 
@@ -410,8 +410,7 @@ mid_2=r-\frac{r-l}{3}
     \item 若要还原路径，可在写入距离的同时记录 $u$ 的前驱为 $v$。
 \end{itemize}
 
-输入邻接表，顶点编号从 $0$ 开始，起点有效。
-返回到各顶点的最短边数，不可达的顶点对应 $-1$。
+输入格式与 DFS 示例相同。按顶点编号输出最短距离，不可达时输出 $-1$。
 
 \cppfile{code/basic/广度优先搜索.cpp}
 
@@ -436,7 +435,7 @@ mid_2=r-\frac{r-l}{3}
     \item 右半相同的和可能来自不同子集，匹配数由二分得到的等值区间长度给出。
 \end{itemize}
 
-支持负数与重复值。子集按下标区分，计入空集。
+输入 $n$、目标和及 $n$ 个整数，输出满足条件的子集数。子集按下标区分，计入空集。
 
 \cppfile{code/basic/折半搜索.cpp}
 
@@ -493,7 +492,7 @@ dp_i=\max(dp_{i-1},dp_{i-2}+a_i)\quad(i\ge 2).
     否则 $dp_{i,j}=\max(dp_{i-1,j},dp_{i,j-1})$。
 \end{itemize}
 
-使用较短字符串作为列，按字节比较。每次覆盖单元格前保存旧值，
+分两行输入字符串，输出最长公共子序列的长度。使用较短字符串作为列。每次覆盖单元格前保存旧值，
 供下一列计算左上角的状态。
 
 \cppfile{code/basic/最长公共子序列.cpp}
@@ -547,7 +546,7 @@ dp_i=\max(dp_{i-1},dp_{i-2}+a_i)\quad(i\ge 2).
     答案为所有状态的最大值。
 \end{itemize}
 
-使用较短字符串作为列，按字节比较。每行从右到左更新，
+分两行输入字符串，输出最长公共子串的长度。使用较短字符串作为列，每行从右到左更新，
 使 \texttt{dp[j - 1]} 在转移时仍是上一行的值。
 
 \cppfile{code/basic/最长公共子串.cpp}
@@ -651,7 +650,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     例如 $13=1+2+4+6$。
 \end{itemize}
 
-每种物品给定正整数重量、非负价值和非负整数数量。
+输入物品种类数和容量 $V$，再逐种输入正整数重量、非负价值和非负整数数量。
 容量满足 $0\le V<2^{31}-1$，最大价值须能用 \texttt{ll} 表示。
 
 \cppfile{code/basic/多重背包.cpp}
@@ -676,7 +675,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     $dp_{c-w}+v$ 更新下一层的 $c$。整组处理完成后再替换上一层。
 \end{itemize}
 
-组可以为空，物品重量为正整数、价值非负。
+输入组数和容量 $V$，每组先输入物品数，再输入各物品的正整数重量和非负价值。
 容量满足 $0\le V<2^{31}-1$，最大价值须能用 \texttt{ll} 表示。
 
 \cppfile{code/basic/分组背包.cpp}
@@ -708,7 +707,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \]
 \end{itemize}
 
-传入从 $0$ 开始编号的非负石子重量。空数组返回 $0$。
+输入 $n$ 及 $n$ 个非负石子重量，输出最小合并代价。空数组输出 $0$。
 总重量以及 $(n-1)$ 倍的总重量应在 \texttt{ll} 范围内。
 
 \cppfile{code/basic/区间DP石子合并.cpp}
@@ -740,8 +739,8 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \item 添加新元素后掩码增大，按掩码递增顺序枚举即可保证状态已算出。
 \end{itemize}
 
-代价矩阵为 $n\times n$，$0\le n\le20$，
-每个代价的绝对值不超过 $10^9$，所有分配均允许。空矩阵返回 $0$。
+输入 $0\le n\le20$ 及 $n\times n$ 代价矩阵，输出最小总代价。
+每个代价的绝对值不超过 $10^9$，所有分配均允许。
 
 \cppfile{code/basic/状态压缩DP任务分配.cpp}
 
@@ -771,8 +770,8 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \item 填完全部数位得到一种方案。仅记录前缀已经小于上界的状态。
 \end{itemize}
 
-传入 \texttt{ll} 型上界。数字 $0$ 计为一种方案，
-前导零不参与相邻数字的比较。
+输入 \texttt{ll} 型上界，输出 $[0,\text{上界}]$ 内相邻数位不同的整数个数。
+数字 $0$ 计为一种方案，前导零不参与比较。
 
 \cppfile{code/basic/数位DP相邻数字.cpp}
 
@@ -802,9 +801,8 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \texttt{ways[col - 1]} 已更新为当前行左邻格的计数。
 \end{itemize}
 
-传入矩形网格，\texttt{\#} 表示障碍，其他字符表示可通行。
-返回从左上角到右下角的路径数对 $10^9+7$ 取模的结果。
-网格没有格子时返回 $0$。
+输入行数、列数及网格，\texttt{\#} 表示障碍。输出从左上角到右下角的路径数模 $10^9+7$。
+空网格输出 $0$。
 
 \cppfile{code/basic/计数DP网格路径.cpp}
 
@@ -835,7 +833,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     仍来自上一次试验。
 \end{itemize}
 
-各次成功概率在 $[0,1]$ 内。若 $k<0$ 或 $k>n$，返回 $0$。
+输入 $n,k$ 及 $n$ 次试验的成功概率，输出恰好成功 $k$ 次的概率。$k$ 越界时输出 $0$。
 
 \cppfile{code/basic/概率DP独立试验.cpp}
 
@@ -866,13 +864,13 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \item 用 $E_n=E_{n+1}=0$ 初始化，按位置从大到小计算。
 \end{itemize}
 
-数组每项保存移动一格、两格的非负概率，二者的和不超过 $1$。
+输入 $n$ 及各位置移动一格、两格的非负概率，每对概率的和不超过 $1$。
 若以正概率进入无法前进的状态，结果为正无穷。
 
 \cppfile{code/basic/期望DP带自环.cpp}
 
 \paragraph{复杂度}
-时间复杂度为 $O(n)$，额外空间复杂度为 $O(1)$。
+递推耗时 $O(n)$，两项期望占 $O(1)$ 空间。逆序读取所需的概率数组占 $O(n)$ 空间。
 
 \begin{itemize}
     \item 只累加正概率的转移项，避免浮点运算出现 $0\cdot\infty$。
@@ -893,7 +891,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     \item 取石子时，每步取走正数个石子，按剩余石子数从小到大计算。
 \end{itemize}
 
-传入非负的石子数 $n$ 和允许取走的正整数个数。
+输入石子数 $n$、取法数 $m$ 及 $m$ 个正整数。先手胜时输出 \texttt{First}，否则输出 \texttt{Second}。
 
 \cppfile{code/basic/博弈DP取石子.cpp}
 
@@ -920,8 +918,7 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
     用当前石子数作为标记，记录本轮出现的 SG 值。
 \end{itemize}
 
-传入最大堆大小 $n\ge0$ 和 $m$ 种正整数取法。
-返回大小为 $n+1$ 的数组，第 $x$ 项为堆大小 $x$ 时的 SG 值。
+输入 $n,m$ 及 $m$ 个合法取石数，依次输出堆大小 $0$ 至 $n$ 的 SG 值。
 
 \cppfile{code/basic/博弈DP格兰迪数.cpp}
 
@@ -941,13 +938,13 @@ dp_1=a_1,\qquad dp_i=a_i+\max(0,dp_{i-1})\quad(i\ge 2).
 位编号从最低位的 $0$ 开始。
 
 \begin{itemize}
-    \item 用 \texttt{uint64\_t\{1\} << bit} 构造仅第 $bit$ 位为 $1$ 的掩码。
+    \item 用 \texttt{1ULL << bit} 构造仅第 $bit$ 位为 $1$ 的掩码。
     无符号数右移 $bit$ 位等价于除以 $2^{bit}$ 后向下取整。
     \item 与掩码做按位与可检查该位，做按位或可置位，做按位异或可翻转。
     \item 与掩码的按位补码做按位与可清除该位。
 \end{itemize}
 
-输入为 64 位无符号整数，位编号满足 $0\leq bit<64$。修改函数返回新的整数。
+输入 64 位无符号整数和位编号 $0\leq bit<64$，依次输出该位的值、置位、清位和翻转的结果。
 
 \cppfile{code/basic/位运算基础.cpp}
 
@@ -973,7 +970,7 @@ $\operatorname{lowbit}(x)$ 保留 $x$ 从低到高遇到的第一个 $1$，
     $x\mathbin{\&}(x-1)$ 相同。
 \end{itemize}
 
-\texttt{lowbit(0)} 和 \texttt{countSetBits(0)} 均返回 $0$。
+依次输出最低置位的掩码与置位总数。输入为 $0$ 时两项均为 $0$。
 
 \cppfile{code/basic/lowbit.cpp}
 
@@ -996,7 +993,7 @@ $\operatorname{lowbit}(x)$ 保留 $x$ 从低到高遇到的第一个 $1$，
     \item 与 $m$ 取按位与，丢弃 $m$ 中不存在的位，即得到下一个子掩码。
 \end{itemize}
 
-传入回调 \texttt{visit} 处理每个子掩码。若 $m=0$，回调只接收一次 $0$。
+输入 $m$，按数值递减输出全部子掩码，包含 $0$。
 
 \cppfile{code/basic/子集枚举.cpp}
 
@@ -1020,7 +1017,8 @@ $\operatorname{lowbit}(x)$ 保留 $x$ 从低到高遇到的第一个 $1$，
     两集合不相交的充要条件为 $(A\mathbin{\&}B)=0$。
 \end{itemize}
 
-元素编号为 $0$ 到 $63$，同一元素的重复出现对应同一位。
+输入两组元素的个数及元素编号，编号为 $0$ 至 $63$。
+依次输出第一组是否包含第二组、两组是否不相交。
 
 \cppfile{code/basic/二进制状态压缩.cpp}
 
@@ -1052,7 +1050,7 @@ $F[m]=\sum_{s\subseteq m}a[s]$，其中 $s\subseteq m$ 表示 $s$ 为 $m$ 的子
     将置位后的状态加到 $F[m]$。
 \end{itemize}
 
-输入长度为 $2^n$，且 $n$ 小于 \texttt{size\_t} 的位宽。
+输入位数 $n$ 及按掩码顺序给出的 $2^n$ 个值，且 $n$ 小于 \texttt{size\_t} 的位宽。
 所有中间的加和都应在 \texttt{ll} 表示范围内。
 
 \cppfile{code/basic/SOS_DP.cpp}
@@ -1104,8 +1102,7 @@ $F[m]=\sum_{s\subseteq m}a[s]$，其中 $s\subseteq m$ 表示 $s$ 为 $m$ 的子
     否则跳过这一位，并继续试探低位。
 \end{itemize}
 
-元素不足两个时返回 \texttt{std::nullopt}。
-相同数值可按不同下标配对。
+输入 $n$ 及 $n$ 个无符号整数，相同数值可按不同下标配对。元素不足两个时输出 \texttt{NONE}。
 
 \cppfile{code/basic/位运算贪心.cpp}
 

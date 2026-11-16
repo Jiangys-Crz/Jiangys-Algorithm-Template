@@ -1,7 +1,17 @@
+#include <iostream>
 #include <queue>
 #include <vector>
 
-std::vector<int> bfsDistances(const std::vector<std::vector<int>>& graph, int start) {
+int main() {
+    int n, m, start;
+    if (!(std::cin >> n >> m >> start)) return 0;
+    std::vector<std::vector<int>> graph(n);
+    for (int i = 0; i < m; ++i) {
+        int u, v;
+        std::cin >> u >> v;
+        graph[u].push_back(v);
+    }
+
     std::vector<int> dist(graph.size(), -1);
     std::queue<int> q;
     dist[start] = 0;
@@ -16,5 +26,6 @@ std::vector<int> bfsDistances(const std::vector<std::vector<int>>& graph, int st
             }
         }
     }
-    return dist;
+    for (int x : dist) std::cout << x << ' ';
+    std::cout << '\n';
 }

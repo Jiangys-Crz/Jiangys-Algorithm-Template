@@ -1,58 +1,38 @@
 #include <cstddef>
-#include <limits>
-#include <optional>
+#include <iostream>
 #include <vector>
 
-using ll = long long;
-
-#ifndef XCPC_GRAPH_GRAPH_HPP
-#define XCPC_GRAPH_GRAPH_HPP
-
-inline constexpr ll graphInf = std::numeric_limits<ll>::max() / 4;
-
-struct Graph {
-    struct Edge {
+int main() {
+    int n, m;
+    if (!(std::cin >> n >> m)) return 0;
+    std::vector<std::vector<int>> adj(n + 1);
+    for (int i = 0; i < m; ++i) {
         int u, v;
-        ll w;
-    };
-    struct Arc {
-        int v, id;
-    };
-
-    int n;
-    bool directed;
-    std::vector<Edge> edges;
-    std::vector<std::vector<Arc>> adj;
-
-    explicit Graph(int n, bool directed = true)
-        : n(n), directed(directed), adj(n + 1) {}
-
-    int addEdge(int u, int v, ll w = 1) {
-        int id = static_cast<int>(edges.size());
-        edges.push_back({u, v, w});
-        adj[u].push_back({v, id});
-        if (!directed) adj[v].push_back({u, id});
-        return id;
+        std::cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
     }
-};
 
-#endif
-
-std::optional<std::vector<int>> bipartiteColor(const Graph& g) {
-    std::vector<int> color(g.n + 1, -1), q;
-    for (int s = 1; s <= g.n; ++s) {
+    std::vector<int> color(n + 1, -1), q;
+    for (int s = 1; s <= n; ++s) {
         if (color[s] != -1) continue;
         color[s] = 0;
         q.assign(1, s);
         for (std::size_t i = 0; i < q.size(); ++i) {
             int u = q[i];
-            for (auto [v, id] : g.adj[u]) {
-                if (color[v] == color[u]) return std::nullopt;
+            for (int v : adj[u]) {
+                if (color[v] == color[u]) {
+                    std::cout << "NO\n";
+                    return 0;
+                }
                 if (color[v] != -1) continue;
                 color[v] = color[u] ^ 1;
                 q.push_back(v);
             }
         }
     }
-    return color;
+    std::cout << "YES\n";
+    for (int u = 1; u <= n; ++u) {
+        std::cout << color[u] << (u == n ? '\n' : ' ');
+    }
 }

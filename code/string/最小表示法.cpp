@@ -1,10 +1,16 @@
+#include <iostream>
 #include <algorithm>
 #include <cstddef>
-#include <string_view>
+#include <string>
 
-std::size_t minimumRotation(std::string_view s) {
+int main() {
+    std::string s;
+    if (!std::getline(std::cin, s)) return 0;
     auto n = s.size();
-    if (!n) return 0;
+    if (!n) {
+        std::cout << "0\n";
+        return 0;
+    }
 
     std::size_t i = 0, j = 1, k = 0;
     while (i < n && j < n && k < n) {
@@ -18,5 +24,5 @@ std::size_t minimumRotation(std::string_view s) {
             k = 0;
         }
     }
-    return std::min(i, j);
+    std::cout << std::min(i, j) << '\n';
 }

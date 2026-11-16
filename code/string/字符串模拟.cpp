@@ -1,8 +1,11 @@
+#include <iostream>
 #include <algorithm>
 #include <string>
-#include <string_view>
 
-std::string addDecimal(std::string_view a, std::string_view b) {
+int main() {
+    std::string a, b;
+    if (!(std::cin >> a >> b)) return 0;
+
     auto i = a.size(), j = b.size();
     int carry = 0;
     std::string res;
@@ -15,5 +18,5 @@ std::string addDecimal(std::string_view a, std::string_view b) {
     }
     while (res.size() > 1 && res.back() == '0') res.pop_back();
     std::reverse(res.begin(), res.end());
-    return res;
+    std::cout << res << '\n';
 }

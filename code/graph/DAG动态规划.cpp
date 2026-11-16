@@ -1,76 +1,47 @@
 #include <algorithm>
 #include <cstddef>
+#include <iostream>
 #include <limits>
-#include <optional>
+#include <utility>
 #include <vector>
 
 using ll = long long;
 
-#ifndef XCPC_GRAPH_GRAPH_HPP
-#define XCPC_GRAPH_GRAPH_HPP
-
-inline constexpr ll graphInf = std::numeric_limits<ll>::max() / 4;
-
-struct Graph {
-    struct Edge {
+int main() {
+    int n, m, s;
+    if (!(std::cin >> n >> m >> s)) return 0;
+    std::vector<std::vector<std::pair<int, ll>>> adj(n + 1);
+    std::vector<int> deg(n + 1);
+    for (int i = 0; i < m; ++i) {
         int u, v;
         ll w;
-    };
-    struct Arc {
-        int v, id;
-    };
-
-    int n;
-    bool directed;
-    std::vector<Edge> edges;
-    std::vector<std::vector<Arc>> adj;
-
-    explicit Graph(int n, bool directed = true)
-        : n(n), directed(directed), adj(n + 1) {}
-
-    int addEdge(int u, int v, ll w = 1) {
-        int id = static_cast<int>(edges.size());
-        edges.push_back({u, v, w});
-        adj[u].push_back({v, id});
-        if (!directed) adj[v].push_back({u, id});
-        return id;
+        std::cin >> u >> v >> w;
+        adj[u].push_back({v, w});
+        ++deg[v];
     }
-};
 
-#endif
-
-#ifndef XCPC_GRAPH_TOPOSORT_HPP
-#define XCPC_GRAPH_TOPOSORT_HPP
-
-inline std::optional<std::vector<int>> topologicalSort(const Graph& g) {
-    std::vector<int> deg(g.n + 1), order;
-    for (auto [u, v, w] : g.edges) ++deg[v];
-    for (int u = 1; u <= g.n; ++u) {
+    constexpr ll negInf = -std::numeric_limits<ll>::max() / 4;
+    std::vector<ll> dp(n + 1, negInf);
+    dp[s] = 0;
+    std::vector<int> order;
+    for (int u = 1; u <= n; ++u) {
         if (!deg[u]) order.push_back(u);
     }
     for (std::size_t i = 0; i < order.size(); ++i) {
         int u = order[i];
-        for (auto [v, id] : g.adj[u]) {
+        for (auto [v, w] : adj[u]) {
+            if (dp[u] != negInf) dp[v] = std::max(dp[v], dp[u] + w);
             if (--deg[v] == 0) order.push_back(v);
         }
     }
-    if (static_cast<int>(order.size()) != g.n) return std::nullopt;
-    return order;
-}
-
-#endif
-
-std::optional<std::vector<ll>> dagLongestPath(const Graph& g, int s) {
-    auto order = topologicalSort(g);
-    if (!order) return std::nullopt;
-
-    std::vector<ll> dp(g.n + 1, -graphInf);
-    dp[s] = 0;
-    for (int u : *order) {
-        if (dp[u] == -graphInf) continue;
-        for (auto [v, id] : g.adj[u]) {
-            dp[v] = std::max(dp[v], dp[u] + g.edges[id].w);
-        }
+    if (static_cast<int>(order.size()) != n) {
+        std::cout << "CYCLE\n";
+        return 0;
     }
-    return dp;
+
+    for (int u = 1; u <= n; ++u) {
+        if (dp[u] == negInf) std::cout << "NONE";
+        else std::cout << dp[u];
+        std::cout << (u == n ? '\n' : ' ');
+    }
 }

@@ -22,11 +22,11 @@
 
 \cppfile{code/types.hpp}
 
-\paragraph{GCD、带溢出检查的 LCM 和扩展欧几里得}
+\paragraph{迭代辗转相除}
 
-普通 \texttt{gcd(a,b)} 接收非负 64 位整数。
+输入两个非负 64 位整数，输出最大公约数。
 
-\cppfile{code/math/euclid.hpp}
+\cppfile{code/math/gcd.cpp}
 
 \paragraph{复杂度}
 辗转相除耗时为 $O(\log(\min(a,b)+1)+1)$，额外空间为 $O(1)$。
@@ -43,7 +43,7 @@
     \item 乘法前用类型最大值除以另一个因子，检查最终结果能否表示。
 \end{itemize}
 
-调用 \texttt{lcmChecked(a,b)}，返回无符号结果。结果超过 \texttt{ull} 范围时返回空值。
+后文欧几里得模板中的 \texttt{lcmChecked(a,b)} 返回无符号结果，超出 \texttt{ull} 范围时返回空值。
 
 \paragraph{复杂度}
 耗时主要来自 GCD，乘法检查为 $O(1)$。
@@ -55,7 +55,7 @@
 当 $b>0$ 时，$(a,b)$ 与 $(b,a\bmod b)$ 的公约数集合相同。
 反复应用该变换，直至 $b=0$，返回此时的 $a$。
 
-辗转相除的迭代实现见本节前列的 \texttt{gcd}。
+迭代实现见本节最大公约数示例。
 
 \paragraph{复杂度}
 较小参数每两步至少减半，耗时 $O(\log(\min(a,b)+1)+1)$。
@@ -72,6 +72,8 @@
 
 \texttt{exgcd(a,b,x,y)} 传入非负 \texttt{ll}，返回 GCD，并通过引用写回两系数。
 
+\cppfile{code/math/euclid.hpp}
+
 \paragraph{复杂度}
 时间和递归栈大小为 $O(\log(\min(a,b)+1)+1)$。
 
@@ -83,18 +85,18 @@
 
 \begin{itemize}
     \item 指数最低位为 $1$ 时乘入当前幂，随后右移指数。
-    \item 整数和模整数的单位元是一。矩阵可显式传入单位矩阵。
+    \item 累乘从单位元开始。模 $m$ 时初值取 $1\bmod m$，方阵则从单位矩阵开始。
 \end{itemize}
 
-\texttt{power(a,b)} 的指数为非负整数。
-第三个参数可指定单位元，或指定从左侧累乘的初始结果。
+输入无符号 64 位整数 $a,b,m$，其中 $m>0$，输出 $a^b\bmod m$。
+先转为 \texttt{ulll} 再相乘，乘积取模后存回 \texttt{ull}。
 
-\cppfile{code/math/power.hpp}
+\cppfile{code/math/power.cpp}
 
 \paragraph{复杂度}
-执行 $O(\log(b+1))$ 次乘法，额外空间取决于元素类型。
+执行 $O(\log(b+1))$ 次乘法。此模幂示例额外空间为 $O(1)$。
 
-指数为零时返回初始结果。普通整数运算的中间乘积须在类型表示范围内。
+普通整数快速幂可去掉取模，并在仍需后续幂次时才平方。中间乘积须在类型表示范围内。
 
 \subsection{快速乘}
 
@@ -106,12 +108,11 @@
     \item 模数不超过 $2^{32}$ 时，两因子规约后的乘积可直接用 64 位无符号整数表示。
 \end{itemize}
 
-\paragraph{安全模加、模乘、模幂与通用逆元}
+\paragraph{倍增模乘}
 
-\texttt{mulMod} 和 \texttt{powMod} 支持正 \texttt{ull} 模数。
-直接调用 \texttt{addMod} 时，两个加数须先规约。
+输入 $a,b,m$，输出 $ab\bmod m$，其中 $a,b$ 为无符号整数且 $m>0$。
 
-\cppfile{code/math/mod_arithmetic.hpp}
+\cppfile{code/math/mod_multiply.cpp}
 
 \paragraph{复杂度}
 安全模加为 $O(1)$。大模数的倍增模乘最多处理 $O(\log m)$ 位，额外空间为 $O(1)$。
@@ -231,7 +232,7 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
 
 \begin{itemize}
     \item 加、减、乘与模规约相容，可先将操作数规约至 $[0,m)$。
-    \item C++ 的负数取余可能为负。要得到 $[0,m)$ 内的代表元，用 \texttt{safeMod(x,m)}。
+    \item 若 \texttt{x \% m} 为负，加上 $m$ 即得 $[0,m)$ 中的代表元。
     \item 模除法需要乘法逆元。只有除数与模数互质时才能使用。
 \end{itemize}
 
@@ -254,7 +255,8 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
     \item 质数模数可以用费马小定理快速幂求逆。一般模数可直接用扩展欧几里得。
 \end{itemize}
 
-调用 \texttt{invMod(a,m)}，其中 $m>1$。不可逆时返回空值。质数模的 \texttt{MInt} 则提供 \texttt{inv()}。
+中国剩余定理模板中的 \texttt{invMod(a,m)} 接收 $m>1$，不可逆时返回空值。
+质数模的 \texttt{MInt} 提供 \texttt{inv()}。
 
 \paragraph{复杂度}
 扩展欧几里得求逆耗时 $O(\log m)$，空间为 $O(\log m)$ 的递归栈。
@@ -268,7 +270,7 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
     \item 底数非零模 $p$ 时，可以按 $p-1$ 规约很大的指数。
 \end{itemize}
 
-先将底数规约成非零余数，再调用 \texttt{powMod(a,p-2,p)}。也可使用 \texttt{MInt<p>::inv()}。
+先将底数规约为非零余数，再按快速幂示例求 $a^{p-2}\bmod p$。也可使用 \texttt{MInt<p>::inv()}。
 
 \paragraph{复杂度}
 需要 $O(\log p)$ 次模乘，实际耗时取决于模乘实现。
@@ -603,12 +605,12 @@ $\lfloor n/i\rfloor$ 只取少量不同的值，可以按连续的等商区间�
     \item 处理 $[l,r]$ 后前进到 $r+1$。多个取整商一起出现时，取它们各自右端的最小值。
 \end{itemize}
 
-回调依次收到 $l,r,q$。例如要计算 $\sum_{i=1}^n\lfloor n/i\rfloor$，每段累加 $(r-l+1)q$。
+输入 $n$，逐段输出 $l,r,q$。若求 $\sum_{i=1}^n\lfloor n/i\rfloor$，每段累加 $(r-l+1)q$。
 
-\cppfile{code/math/quotient_blocks.hpp}
+\cppfile{code/math/quotient_blocks.cpp}
 
 \paragraph{复杂度}
-共有 $O(\sqrt n)$ 个区间。不计回调工作，额外空间为 $O(1)$。
+共有 $O(\sqrt n)$ 个区间，额外空间为 $O(1)$。
 
 只在左端不超过上界时计算商。若上界比原数小，还需把每段右端截到上界。
 

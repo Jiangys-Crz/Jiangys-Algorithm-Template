@@ -1,22 +1,28 @@
-#include <cstdint>
-#include <optional>
+#include <iostream>
 #include <vector>
 
-std::optional<std::uint64_t> maxPairAnd(const std::vector<std::uint64_t>& values) {
-    if (values.size() < 2) {
-        return std::nullopt;
-    }
+using ull = unsigned long long;
 
-    std::uint64_t answer = 0;
+int main() {
+    int n;
+    if (!(std::cin >> n)) return 0;
+    if (n < 2) {
+        std::cout << "NONE\n";
+        return 0;
+    }
+    std::vector<ull> values(n);
+    for (ull& x : values) std::cin >> x;
+
+    ull answer = 0;
     for (int bit = 63; bit >= 0; --bit) {
-        const std::uint64_t candidate = answer | (std::uint64_t{1} << bit);
+        ull candidate = answer | (1ULL << bit);
         int matches = 0;
-        for (std::uint64_t value : values) {
+        for (ull value : values) {
             if ((value & candidate) == candidate && ++matches == 2) {
                 answer = candidate;
                 break;
             }
         }
     }
-    return answer;
+    std::cout << answer << '\n';
 }

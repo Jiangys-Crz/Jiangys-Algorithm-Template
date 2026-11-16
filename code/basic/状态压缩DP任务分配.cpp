@@ -1,3 +1,4 @@
+#include <iostream>
 #include <algorithm>
 #include <bitset>
 #include <limits>
@@ -5,8 +6,14 @@
 
 using ll = long long;
 
-ll minAssignmentCost(const std::vector<std::vector<ll>>& cost) {
-    const int n = static_cast<int>(cost.size());
+int main() {
+    int n;
+    if (!(std::cin >> n)) return 0;
+    std::vector<std::vector<ll>> cost(n, std::vector<ll>(n));
+    for (auto& row : cost) {
+        for (ll& x : row) std::cin >> x;
+    }
+
     const unsigned states = 1u << n;
     std::vector<ll> dp(states, std::numeric_limits<ll>::max());
     dp[0] = 0;
@@ -20,5 +27,5 @@ ll minAssignmentCost(const std::vector<std::vector<ll>>& cost) {
             dp[next] = std::min(dp[next], dp[mask] + cost[worker][task]);
         }
     }
-    return dp.back();
+    std::cout << dp.back() << '\n';
 }

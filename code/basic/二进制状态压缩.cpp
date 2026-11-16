@@ -1,19 +1,20 @@
-#include <cstdint>
-#include <vector>
+#include <iostream>
 
-// Element IDs must be in [0, 63]. Duplicates represent the same element.
-std::uint64_t makeMask(const std::vector<int>& elements) {
-    std::uint64_t mask = 0;
-    for (int element : elements) {
-        mask |= std::uint64_t{1} << element;
+using ull = unsigned long long;
+
+int main() {
+    int n, m;
+    if (!(std::cin >> n >> m)) return 0;
+    ull a = 0, b = 0;
+    for (int i = 0; i < n; ++i) {
+        int x;
+        std::cin >> x;
+        a |= 1ULL << x;
     }
-    return mask;
-}
-
-bool containsAll(std::uint64_t mask, std::uint64_t required) {
-    return (mask & required) == required;
-}
-
-bool isDisjoint(std::uint64_t first, std::uint64_t second) {
-    return (first & second) == 0;
+    for (int i = 0; i < m; ++i) {
+        int x;
+        std::cin >> x;
+        b |= 1ULL << x;
+    }
+    std::cout << ((a & b) == b) << ' ' << ((a & b) == 0) << '\n';
 }

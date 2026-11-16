@@ -37,7 +37,7 @@ DFS 沿当前分支深入后回退。BFS 从起点开始逐层访问，在无权
     \item BFS 发现新节点时立即设置距离并入队，同一节点只入队一次。
 \end{itemize}
 
-两种遍历都从给定起点开始。有向图沿出边走。BFS 对不可达点返回 $-1$。
+输入 $n,m,s$ 及 $m$ 条有向边。依次输出从 $s$ 出发的 DFS 序与最短距离，不可达时输出 $-1$。
 
 \cppfile{code/graph/图的遍历.cpp}
 
@@ -55,7 +55,7 @@ DFS 沿当前分支深入后回退。BFS 从起点开始逐层访问，在无权
     \item 从该点访问所有可达点，并在第一次发现时填入同一个编号。
 \end{itemize}
 
-返回数组 \texttt{bel}，编号从 $1$ 开始。孤立点各自构成一个分量。
+输入 $n,m$ 及无向边。先输出分量数，再按顶点顺序输出从 $1$ 起始的分量编号。
 
 \cppfile{code/graph/连通分量.cpp}
 
@@ -75,9 +75,9 @@ DFS 沿当前分支深入后回退。BFS 从起点开始逐层访问，在无权
 
 \paragraph{Kahn 算法}
 
-输入有向图。图无环时返回一个拓扑序，有环时返回空值。
+输入 $n,m$ 及有向边。图无环时输出一个拓扑序，有环时输出 \texttt{CYCLE}。
 
-\cppfile{code/graph/toposort.hpp}
+\cppfile{code/graph/toposort.cpp}
 
 \paragraph{复杂度}
 时间为 $O(n+m)$，额外空间为 $O(n)$。
@@ -92,7 +92,7 @@ DFS 沿当前分支深入后回退。BFS 从起点开始逐层访问，在无权
     \item 同一拓扑序也可用于最短路、路径计数或依赖关系转移。
 \end{itemize}
 
-图有环时返回空值。图无环时，不可达点的值为 \texttt{-graphInf}。
+输入 $n,m,s$ 及有向带权边。有环时输出 \texttt{CYCLE}，否则输出最长路，不可达时输出 \texttt{NONE}。
 
 \cppfile{code/graph/DAG动态规划.cpp}
 
@@ -130,7 +130,7 @@ DFS 沿当前分支深入后回退。BFS 从起点开始逐层访问，在无权
     \item 若遇到颜色相同的边，其两端间已确定的奇偶性互相矛盾。
 \end{itemize}
 
-传入无向图。成功时每个点的颜色为 $0$ 或 $1$，失败时返回空值。
+输入 $n,m$ 及无向边。染色成功时输出 \texttt{YES} 及各顶点颜色，否则输出 \texttt{NO}。
 
 \cppfile{code/graph/二分图判定.cpp}
 
@@ -169,9 +169,10 @@ $k+1$ 层共有 $(k+1)n$ 个点，弧数为 $O((k+1)m)$。建图时间和空间�
     \item 标准库优先队列无法直接减少已有项的键，模板插入新状态并在弹出时丢弃旧状态。
 \end{itemize}
 
-支持单个源点或源点数组。候选距离达到 \texttt{graphInf} 时舍弃，不可达点也用该哨兵表示。
+输入 $n,m,k$、$m$ 条非负权有向边及 $k$ 个源点。单源时令 $k=1$。
+按顶点顺序输出最短距离，不可达时输出 \texttt{INF}。
 
-\cppfile{code/graph/dijkstra.hpp}
+\cppfile{code/graph/dijkstra.cpp}
 
 \paragraph{复杂度}
 设输入源点序列的长度为 $s$。时间为 $O(s+(n+m)\log(n+m+1))$，额外空间为 $O(n+m)$。
@@ -221,7 +222,8 @@ $d[u][v]$ 表示仅允许使用已处理的中间顶点时，$u$ 到 $v$ 的最�
     \item 若 $d[k][k]<0$，则存在从 $k$ 出发并返回 $k$ 的负权闭合游走。对于能到达 $k$ 的 $u$ 和从 $k$ 可达的 $v$，$u$ 到 $v$ 的距离无有限下界。
 \end{itemize}
 
-模板以 \texttt{graphInf} 标记不可达。达到该上界的值舍弃，低于其相反数的值截断。
+输入 $n,m$ 及有向带权边，输出距离矩阵，不可达时输出 \texttt{INF}。
+达到代码中 \texttt{inf} 的值舍弃，低于其相反数的值截断。
 负环影响的点对须按上述可达关系另行判定。
 
 \cppfile{code/graph/Floyd.cpp}
@@ -238,7 +240,7 @@ $d[u][v]$ 表示仅允许使用已处理的中间顶点时，$u$ 到 $v$ 的最�
     \item 出队时跳过不再等于当前最短距离的状态。
 \end{itemize}
 
-输入可以有向或无向。不可达点返回 \texttt{graphInf}。
+输入 $n,m,s$ 及边权为 $0$ 或 $1$ 的有向边。输出最短距离，不可达时输出 \texttt{INF}。
 
 \cppfile{code/graph/01BFS.cpp}
 
@@ -252,7 +254,7 @@ $d[u][v]$ 表示仅允许使用已处理的中间顶点时，$u$ 到 $v$ 的最�
 多源最短路求从源点集合到各顶点的最短距离。将各源点的距离置零，等价于从超级源点连零权弧。
 无权图用 BFS，零一边权图用 0-1 BFS，非负权图可用 Dijkstra。
 
-\texttt{dijkstra(g, sources)} 接收源点数组。有负权边时，可增设超级源点并使用 Bellman-Ford。
+使用本节 Dijkstra 示例的源点初始化循环。有负权边时，可增设超级源点并使用 Bellman-Ford。
 
 \paragraph{复杂度}
 直接初始化时，开销为一次单源算法加上对源点数组的一次扫描。显式建图时还需计入所增顶点与边。
