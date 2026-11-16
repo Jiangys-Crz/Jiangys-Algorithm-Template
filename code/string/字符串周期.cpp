@@ -1,6 +1,3 @@
-#include <string>
-#include <vector>
-
 // 先准备字符串 s。step 为最短周期，block 为最短完整重复块的长度。
 
 int n = static_cast<int>(s.size());

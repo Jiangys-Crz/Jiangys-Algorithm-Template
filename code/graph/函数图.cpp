@@ -1,5 +1,3 @@
-#include <vector>
-
 struct FunctionalGraph {
     vector<int> bel, entry, dist, cycleLen;
 

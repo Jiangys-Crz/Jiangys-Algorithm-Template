@@ -1,9 +1,3 @@
-#include <algorithm>
-#include <numeric>
-#include <random>
-#include <utility>
-#include <vector>
-
 using uint = unsigned int;
 using ll = long long;
 

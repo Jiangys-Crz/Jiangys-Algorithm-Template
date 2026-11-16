@@ -1,5 +1,3 @@
-#include <vector>
-
 using ull = unsigned long long;
 
 // n 为正整数。divisors 从小到大保存约数。

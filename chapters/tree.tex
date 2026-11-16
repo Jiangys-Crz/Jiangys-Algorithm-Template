@@ -149,6 +149,12 @@ DFS 序只记录每个节点第一次进入的时刻。欧拉序在第一次进�
 带权树将权值存到边的子节点，通过 \texttt{edgeSum(u, v, p)} 求和。
 模板见\hyperref[tree:lca]{倍增求 LCA}和\hyperref[tree:prefix]{树上前缀和}。
 
+\begin{pseudocode}
+p = lca(u, v)
+edgeCount = depth[u] + depth[v] - 2 * depth[p]
+weighted = D[u] + D[v] - 2 * D[p]
+\end{pseudocode}
+
 \paragraph{复杂度}
 已知 $p$ 时，求值耗时 $O(1)$。由倍增计算 $p$ 时，单次查询共耗时 $O(\log n)$。
 
@@ -164,6 +170,15 @@ DFS 序只记录每个节点第一次进入的时刻。欧拉序在第一次进�
     \item 欧拉序做法在两点首次出现位置之间查找深度最小的点。
     用稀疏表做区间最小值查询可将单次 LCA 查询降到 $O(1)$。
 \end{itemize}
+
+\begin{pseudocode}
+while depth[u] > depth[v]: u = parent[u]
+while depth[v] > depth[u]: v = parent[v]
+while u != v:
+    u = parent[u]
+    v = parent[v]
+return u
+\end{pseudocode}
 
 \paragraph{复杂度}
 朴素查询最坏耗时 $O(h)$。欧拉序加稀疏表的预处理时间和空间均为
@@ -269,11 +284,32 @@ LCA 依赖根的选择。查询过程中使用的父节点、深度和序列必�
 
 可逆的合并可直接去除一项。合并不可逆时，可维护各孩子贡献的前缀和后缀聚合结果，取得排除指定孩子后的汇总。
 
+\begin{pseudocode}
+for u in 后序:
+    down[u] = 汇总节点 u 与所有孩子的贡献
+up[root] = 单位元
+for u in 前序:
+    ans[u] = 合并(down[u], up[u])
+    for u 的每个孩子 v:
+        rest = 汇总 u、up[u] 以及除 v 以外的孩子贡献
+        up[v] = 将 rest 沿边 u -> v 转移
+\end{pseudocode}
+
 \subsection{树上背包}
 
 树上背包按子树分配资源。每个状态记录某节点已处理的部分子树及其资源使用量。将孩子的状态逐个合入时，枚举两侧的资源分配，以题目的目标函数更新合并结果。
 
 是否必须选择子树根、能否跳过整个子树、是否要求恰用给定资源，都应反映在初值和转移中。合并时用新数组保存结果，以免在同一次合并中重复使用同一孩子。循环上界可按子树大小和总容量截断。
+
+\begin{pseudocode}
+for u in 后序:
+    dp[u] = 只考虑 u 时的初始状态
+    for u 的每个孩子 v:
+        next = 全部不可达
+        for 两侧可达容量 i, j，且 i+j <= V:
+            next[i+j] = 合并(next[i+j], 转移(dp[u][i], dp[v][j]))
+        dp[u] = next
+\end{pseudocode}
 
 \subsection{树链剖分}
 
@@ -304,6 +340,15 @@ LCA 依赖根的选择。查询过程中使用的父节点、深度和序列必�
 树上启发式合并用一个可增删的统计状态回答子树查询。先计算各轻儿子的答案，再清空其统计状态；随后计算重儿子，并保留其状态。将当前节点和所有轻子树加入后，即得到当前子树的完整统计结果。
 
 轻子树的节点可用 DFS 序区间枚举。每个节点经过的轻边数为 $O(\log n)$，因而至多进出统计状态 $O(\log n)$ 次。总开销取决于单次增删和查询的代价。
+
+\begin{pseudocode}
+solve(u, keep):
+    for 轻儿子 v: solve(v, false)
+    if u 有重儿子 h: solve(h, true)
+    将 u 和所有轻子树的节点加入统计状态
+    ans[u] = 读取当前子树的统计结果
+    if !keep: 移除 u 子树的全部节点
+\end{pseudocode}
 
 \section{常考进阶}
 
@@ -338,6 +383,14 @@ LCA 依赖根的选择。查询过程中使用的父节点、深度和序列必�
 可按路径的最近公共祖先对端点对分类。固定祖先后，两端点分属不同孩子子树，或其中一端就是该祖先。逐个合并孩子时，先将新子树与此前汇总的子树配对，再把新子树并入状态，避免重复统计。
 
 统计一批给定路径对每个节点或每条边的贡献时，可使用树上差分统一还原。
+
+\begin{pseudocode}
+for u in 后序:
+    seen = 仅包含端点 u 的状态
+    for u 的每个孩子 v:
+        ans += 统计 v 子树与 seen 之间的合法端点对
+        seen = 合并(seen, v 的子树状态)
+\end{pseudocode}
 
 \subsection{树上异或}
 
@@ -396,11 +449,27 @@ LCA 依赖根的选择。查询过程中使用的父节点、深度和序列必�
 
 子树选择相互影响且无法证明局部选择正确时，可用树形 DP 显式保存这些选择。
 
+\begin{pseudocode}
+按已证明可用的顺序处理节点
+for 当前节点 u:
+    根据已处理的邻接状态选取可行的最优动作
+    更新后续节点要使用的状态
+\end{pseudocode}
+
 \subsection{树上计数}
 
 按子树定义状态，固定当前节点状态后，将各孩子的合法选择组合起来。互斥方案的计数相加，互相独立的选择相乘。由叶子向根计算，最后合并根的合法状态。
 
 空集、是否必须选根以及方案是否按节点区分，均由题目约定。
+
+\begin{pseudocode}
+for u in 后序:
+    for u 的合法状态 s:
+        ways[u][s] = 节点 u 单独取状态 s 的方案数
+        for u 的每个孩子 v:
+            total = 对与 s 相容的子状态 t 求和 ways[v][t]
+            ways[u][s] *= total
+\end{pseudocode}
 
 \paragraph{参考资料}
 \href{https://oi-wiki.org/graph/lca/}{OI Wiki：最近公共祖先}、

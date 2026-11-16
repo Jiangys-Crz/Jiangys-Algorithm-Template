@@ -1,11 +1,3 @@
-#include <algorithm>
-#include <functional>
-#include <limits>
-#include <optional>
-#include <queue>
-#include <utility>
-#include <vector>
-
 using ll = long long;
 
 #if defined(__SIZEOF_INT128__)
@@ -74,14 +66,21 @@ struct MinCostFlow {
             for (int u = t; u != s; u = e[pre[u] ^ 1].v) {
                 pushed = min(pushed, e[pre[u]].cap);
             }
+            lll delta, nextCost;
+            if (__builtin_mul_overflow(lll(pushed), pi[t] - pi[s], &delta) ||
+                __builtin_add_overflow(cost, delta, &nextCost)) {
+                return nullopt;
+            }
             for (int u = t; u != s; u = e[pre[u] ^ 1].v) {
                 int id = pre[u];
                 e[id].cap -= pushed;
                 e[id ^ 1].cap += pushed;
             }
             flow += pushed;
-            cost += pushed * (pi[t] - pi[s]);
+            cost = nextCost;
         }
+        if (cost < numeric_limits<ll>::min() ||
+            cost > numeric_limits<ll>::max()) return nullopt;
         return pair{flow, static_cast<ll>(cost)};
     }
 

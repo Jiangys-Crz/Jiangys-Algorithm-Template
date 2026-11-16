@@ -1,6 +1,3 @@
-#include <cstddef>
-#include <vector>
-
 // adj 为 n 个顶点的无向图邻接表，编号从 1 开始。
 
 vector<int> color(n + 1, -1), q;

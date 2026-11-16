@@ -1,11 +1,3 @@
-#include <algorithm>
-#include <array>
-#include <cmath>
-#include <optional>
-#include <random>
-#include <utility>
-#include <vector>
-
 using ull = unsigned long long;
 
 #ifndef XCPC_GEOMETRY_POINT_HPP

@@ -1,7 +1,3 @@
-#include <algorithm>
-#include <cstddef>
-#include <vector>
-
 using ull = unsigned long long;
 
 // heaps 存放各石子堆的大小。

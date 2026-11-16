@@ -1,9 +1,3 @@
-#include <cstddef>
-#include <functional>
-#include <queue>
-#include <tuple>
-#include <vector>
-
 using ll = long long;
 
 // a 保存若干非递减序列。

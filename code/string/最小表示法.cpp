@@ -1,7 +1,3 @@
-#include <algorithm>
-#include <cstddef>
-#include <string>
-
 // 先准备字符串 s。pos 为字典序最小的轮转中最靠前的起点。
 
 auto n = s.size();

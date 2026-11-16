@@ -1,6 +1,3 @@
-#include <utility>
-#include <vector>
-
 #ifndef XCPC_MATH_LINEAR_SIEVE_HPP
 #define XCPC_MATH_LINEAR_SIEVE_HPP
 

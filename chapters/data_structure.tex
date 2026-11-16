@@ -90,6 +90,17 @@
 \texttt{find} 采用路径折半，将当前节点的父指针指向祖父并继续向上。秩是树高的上界。
 合并时低秩根挂到高秩根下，同秩合并使新根的秩加一。按大小合并则将较小集合的根挂到较大集合的根下。
 
+\begin{pseudocode}
+while parent[x] != x:           // 查找代表元
+    parent[x] = parent[parent[x]]
+    x = parent[x]
+u, v = 两个待合并元素的代表元
+if u != v:
+    if rank[u] < rank[v]: swap(u, v)
+    parent[v] = u
+    if rank[u] == rank[v]: rank[u] += 1
+\end{pseudocode}
+
 \paragraph{复杂度}
 单用按秩或按大小合并时，树高为 $O(\log n)$。配合路径压缩后，操作均摊为 $O(\alpha(n))$。
 
@@ -268,6 +279,16 @@ $q$ 次单点修改最多分配 $O(q\log(U+1))$ 个节点。
 
 用前一节的 \texttt{SparseSumTree} 维护频次。调用 \texttt{kth(root,k)}，若排名不合法则返回空值。
 
+\begin{pseudocode}
+在值 x 处插入或删除：modify(root, x, +1 或 -1)
+求第 k 小（1 <= k <= 根节点频次）：
+    while 当前区间还有多个值:
+        s = 左子树频次
+        if k <= s: 走向左子树
+        else: k -= s，走向右子树
+    return 当前叶子对应的值
+\end{pseudocode}
+
 \paragraph{复杂度}
 单点频次更新、求排名及求第 $k$ 小均为 $O(\log(U+1))$。
 
@@ -301,6 +322,18 @@ $q$ 次单点修改最多分配 $O(q\log(U+1))$ 个节点。
 \end{itemize}
 
 调用 \texttt{SparseSumTree::merge(x,y)}，结果写回根 \texttt{x}，根 \texttt{y} 置零。两棵树须来自同一个节点池，且各自独占其节点。
+
+\begin{pseudocode}
+merge(x, y):
+    if x 为空: return y
+    if y 为空: return x
+    if x 是叶子: sum[x] += sum[y]
+    else:
+        left[x] = merge(left[x], left[y])
+        right[x] = merge(right[x], right[y])
+        sum[x] = sum[left[x]] + sum[right[x]]
+    return x
+\end{pseudocode}
 
 \paragraph{复杂度}
 单次耗时为 $O(1+C)$，$C$ 是两棵树都非空的对应节点数。共分配 $M$ 个节点、做 $q$ 次独占合并时，总合并耗时为 $O(M+q)$。
@@ -339,10 +372,12 @@ Treap 按键保持二叉搜索树顺序，按随机优先级保持堆序。旋�
 \subsection{PBDS 有序树}
 
 GNU libstdc++ 的 PBDS 有序树支持 $O(\log(n+1))$ 时间的增删和排名查询。
-\texttt{order\_of\_key(x)} 返回严格小于 $x$ 的元素数，\texttt{find\_by\_order(k)} 按从 $0$ 开始的排名查找。
-\texttt{OrderMultiset} 以值和唯一编号作为键来支持重复值。
+\texttt{order\_of\_key(x)} 返回小于 $x$ 的元素数。\texttt{find\_by\_order(k)} 的排名从 $0$ 起算。
+\texttt{OrderMultiset} 用值和唯一编号区分重复项。
 
-\cppfile{code/ds/pbds_ordered_tree.hpp}
+相关声明位于 \texttt{ext/pb\_ds} 目录中的 \texttt{assoc\_container.hpp} 和 \texttt{tree\_policy.hpp}。
+
+\cppfile[firstline=4]{code/ds/pbds_ordered_tree.hpp}
 
 \subsection{分块}
 

@@ -1,6 +1,3 @@
-#include <cstddef>
-#include <vector>
-
 using ll = long long;
 
 // 先准备位数 n 和长度为 2^n 的权值数组 values。

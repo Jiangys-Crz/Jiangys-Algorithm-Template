@@ -1,6 +1,3 @@
-#include <algorithm>
-#include <vector>
-
 using ll = long long;
 
 // 先准备数组 a。tails.size() 为最长上升子序列的长度。

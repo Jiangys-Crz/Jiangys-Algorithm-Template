@@ -1,8 +1,3 @@
-#include <algorithm>
-#include <string_view>
-#include <utility>
-#include <vector>
-
 #ifndef XCPC_STRING_MANACHER_HPP
 #define XCPC_STRING_MANACHER_HPP
 

@@ -1,8 +1,3 @@
-#include <cstddef>
-#include <numeric>
-#include <utility>
-#include <vector>
-
 struct RollbackDSU {
     struct Change {
         int u, v, oldSize;

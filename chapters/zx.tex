@@ -46,7 +46,7 @@
 输入为非空数组。暴力解枚举区间，耗时 $O(n^2)$。待测解维护最小前缀和，耗时 $O(n)$。
 编译时定义 \texttt{BRUTE} 以选用暴力解。
 
-\cppfile{code/zx/max_subarray.cpp}
+\cppfile[firstline=7]{code/zx/max_subarray.cpp}
 
 边界用例包括单元素、全负数、最大规模及极端权值。
 
@@ -95,7 +95,7 @@ bash code/zx/stress.sh ./gen ./brute ./sol 1000
 命令 \texttt{./gen 42 > data.in} 将种子 $42$ 对应的输入写入文件。
 首行是长度 $n\in[1,20]$，次行是 $n$ 个取自 $[-10,10]$ 的整数。
 
-\cppfile{code/zx/gen.cpp}
+\cppfile[firstline=8]{code/zx/gen.cpp}
 
 \paragraph{参考资料}
 \href{https://github.com/CWNU-Open-Source-Community/xcpc-algorithm-template/blob/main/chapters/zx.tex}

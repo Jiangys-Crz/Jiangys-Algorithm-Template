@@ -1,7 +1,3 @@
-#include <cassert>
-#include <utility>
-#include <vector>
-
 #ifndef XCPC_MATH_BIT_REVERSE_HPP
 #define XCPC_MATH_BIT_REVERSE_HPP
 

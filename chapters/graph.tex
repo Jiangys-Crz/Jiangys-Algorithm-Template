@@ -86,6 +86,15 @@ DFS 沿当前分支深入后回退。BFS 从起点开始逐层访问，在无权
 
 若每条边只做常数次转移，拓扑排序与状态更新合计耗时 $O(n+m)$。
 
+\begin{pseudocode}
+order = 图的拓扑序
+初始化 dp
+for u in order:
+    if dp[u] 可达:
+        for u 的出边 (u, v, w):
+            dp[v] = 合并(dp[v], 转移(dp[u], w))
+\end{pseudocode}
+
 \subsection{图的判环}
 
 \begin{itemize}
@@ -131,6 +140,14 @@ DFS 沿当前分支深入后回退。BFS 从起点开始逐层访问，在无权
 若可选操作取决于已使用的资源或当前阶段，可将这些信息与原顶点一起作为状态。每个状态对应新图中的一个顶点，每种合法操作对应一条边。
 
 层内边保留资源使用量，跨层边更新资源或阶段。起点由初始状态确定，终点取满足限制的状态集合。使用最短路时，算法与复杂度由新图的边权和规模决定。
+
+\begin{pseudocode}
+for 状态 (u, k):
+    for 从 (u, k) 出发的合法操作:
+        建边 (u, k) -> (v, next_k)，边权为操作代价
+dist = 从初始状态求最短路
+ans = 所有合法终止状态的最小距离
+\end{pseudocode}
 
 \section{最短路}
 
@@ -227,6 +244,14 @@ $d[u][v]$ 表示仅允许使用已处理的中间顶点时，$u$ 到 $v$ 的最�
 无权图用 BFS，零一边权图用 0-1 BFS，非负权图可用 Dijkstra。
 
 使用本节 Dijkstra 示例的源点初始化循环。有负权边时，可增设超级源点并使用 Bellman-Ford。
+
+\begin{pseudocode}
+dist = 全部初始化为无穷
+for s in 源点集合:
+    dist[s] = 0
+    把 s 加入待处理容器
+从该容器继续按 BFS、0-1 BFS 或 Dijkstra 处理
+\end{pseudocode}
 
 \paragraph{复杂度}
 直接初始化时，开销为一次单源算法加上对源点数组的一次扫描。显式建图时还需计入所增顶点与边。
@@ -348,6 +373,14 @@ Prim 从给定起点开始，每次用当前已经加入的点到外部点的最
 查询两个不同点之间的最小瓶颈值时，先用 Kruskal 建树，
 再读取 \texttt{TreePathMax::query(u,v)} 的 \texttt{first}。
 
+\begin{pseudocode}
+T = 一棵最小生成树
+path = T 中新边 (u, v) 两端的路径   // u 与 v 不同
+bottleneck = path 上的最大边权
+for path 上可替换的边 e:
+    weight = T 的权值和 + 新边权 - e 的权值
+\end{pseudocode}
+
 \paragraph{复杂度}
 建树后倍增预处理为 $O(n\log n)$，单次瓶颈查询为 $O(\log n)$。
 
@@ -423,6 +456,12 @@ Prim 从给定起点开始，每次用当前已经加入的点到外部点的最
 
 从 \texttt{UndirectedLowlink} 读 \texttt{bridge[id]}，编号与原图边表一致。
 
+\begin{pseudocode}
+for DFS 树边 (u, v, id):
+    // v 是子节点，low[v] 已计算完毕
+    bridge[id] = (low[v] > dfn[u])
+\end{pseudocode}
+
 \paragraph{复杂度}
 一次 $O(n+m)$ 的预处理后，查询一条边是否为桥是 $O(1)$。
 
@@ -458,6 +497,15 @@ Prim 从给定起点开始，每次用当前已经加入的点到外部点的最
 
 \texttt{UndirectedLowlink::blocks} 返回每个块的顶点表。需要圆方树时，为每个块建立方点，再向块内每个原顶点连边。
 
+\begin{pseudocode}
+DFS 发现树边或指向祖先的边时，将边压栈
+for 每条已完成子树的树边 (u, v):
+    if low[v] >= dfn[u]:
+        弹出边直至弹出 (u, v)
+        将这些边的不同端点记成一个块
+每个孤立点单独记成一个块
+\end{pseudocode}
+
 \paragraph{复杂度}
 记录所有块的总时间和空间均为 $O(n+m)$。
 
@@ -489,6 +537,13 @@ Prim 从给定起点开始，每次用当前已经加入的点到外部点的最
     \item 建流图时，从超级源向各左点、从各右点向超级汇连容量为一的边。每条二分图边从左向右连容量为一的边。
     \item 整数最大流中，从左向右流量为一的边构成最大匹配。
 \end{itemize}
+
+\begin{pseudocode}
+for u in 左部顶点: addEdge(s, u, 1)
+for v in 右部顶点: addEdge(v, t, 1)
+for 二分图边 (u, v): addEdge(u, v, 1)
+answer = maxFlow(s, t)
+\end{pseudocode}
 
 \paragraph{复杂度}
 建网需 $O(n+m)$ 时间及空间，$n$ 为两侧点数之和。使用 Dinic 在这一单位网络上的时间为 $O((n+m)\sqrt n)$。
@@ -546,6 +601,13 @@ Prim 从给定起点开始，每次用当前已经加入的点到外部点的最
 
 完成 \texttt{maxFlow(s,t)} 后调用 \texttt{cutSide(s)}，再检查原有向边的两个端点。
 
+\begin{pseudocode}
+maxFlow(s, t)
+side = cutSide(s)
+for 每条从 u 到 v 的原有向边:
+    if side[u] && !side[v]: 收集这条割边
+\end{pseudocode}
+
 \paragraph{复杂度}
 最大流完成后，提取割两侧和筛选割边各需 $O(n+m)$ 时间。
 
@@ -562,8 +624,8 @@ Prim 从给定起点开始，每次用当前已经加入的点到外部点的最
 \end{itemize}
 
 \texttt{work(s,t,limit)} 返回实际流量和总费用，源汇不同，容量和流量上限均非负。
-允许初始负边，要求初始残量网络没有负费用环。检测到负环时返回空值。
-势能、约化距离和费用累加使用 \texttt{lll}，返回的总费用须能用 \texttt{ll} 表示。
+允许初始负边。初始残量网络有负费用环、单次增广的费用或累加值超出 \texttt{lll}，以及最终总费用超出 \texttt{ll} 时，返回空值。
+费用超出范围前已经完成的增广仍保留在残量网络中。
 
 \cppfile{code/graph/费用流.cpp}
 
@@ -654,11 +716,27 @@ DAG 的最小点不交路径覆盖要求以尽量少的有向路径覆盖每个�
 
 若选择后候选值会改变，应及时更新维护候选的数据结构。
 
+\begin{pseudocode}
+建立候选集合并按优先级排序
+while 仍有候选:
+    取出当前优先级最高的可行候选
+    执行选择，更新受影响的候选及其优先级
+\end{pseudocode}
+
 \subsection{图上状态压缩 DP}
 
 若后续转移取决于已访问的顶点集合，可用掩码表示该集合，并用当前位置等附加信息区分状态。从合法初态出发，沿允许的边更新下一状态。
 
 若每次恰加入一个未访问顶点，则可按掩码递增计算。以掩码和终点构成状态时，状态表占 $O(n2^n)$ 空间，转移时间取决于边数及可达状态数。
+
+\begin{pseudocode}
+dp[1 << s][s] = 初值
+for mask 按升序:
+    for 可达状态 (mask, u):
+        for u 的未访问邻点 v:
+            next = mask | (1 << v)
+            dp[next][v] = 合并(dp[next][v], 转移(dp[mask][u], u, v))
+\end{pseudocode}
 
 \paragraph{参考资料}
 \href{https://oi-wiki.org/graph/mst/}{OI Wiki：最小生成树}、

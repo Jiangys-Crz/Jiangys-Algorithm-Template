@@ -1,7 +1,3 @@
-#include <cassert>
-#include <utility>
-#include <vector>
-
 #ifndef XCPC_DS_SPARSE_TABLE_HPP
 #define XCPC_DS_SPARSE_TABLE_HPP
 

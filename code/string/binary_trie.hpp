@@ -1,8 +1,3 @@
-#include <array>
-#include <cstdint>
-#include <optional>
-#include <vector>
-
 #ifndef XCPC_STRING_BINARY_TRIE_HPP
 #define XCPC_STRING_BINARY_TRIE_HPP
 

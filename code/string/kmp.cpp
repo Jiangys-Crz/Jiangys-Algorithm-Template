@@ -1,7 +1,3 @@
-#include <numeric>
-#include <string_view>
-#include <vector>
-
 // 先准备文本 s 和模式串 t。ans 保存从 0 开始的匹配起点。
 int n = static_cast<int>(s.size()), m = static_cast<int>(t.size());
 vector<int> nxt(m), ans;

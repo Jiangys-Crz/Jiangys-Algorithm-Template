@@ -1,6 +1,3 @@
-#include <utility>
-#include <vector>
-
 // 先准备根节点 root 以及左右子节点数组 lc 和 rc。编号 0 表示空节点。
 
 vector<int> pre, in, post;

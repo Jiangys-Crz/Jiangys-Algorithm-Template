@@ -1,9 +1,3 @@
-#include <functional>
-#include <limits>
-#include <queue>
-#include <utility>
-#include <vector>
-
 using ll = long long;
 
 // 邻接表 adj[u] 保存 (v, w)，边权非负。n 为顶点数，sources 为源点集合，编号从 1 开始。

@@ -1,6 +1,3 @@
-#include <cstddef>
-#include <vector>
-
 // 先准备 n 个节点的树的邻接表 adj 和根节点 root，编号从 1 开始。
 
 vector<int> fa(n + 1), order, stk{root};

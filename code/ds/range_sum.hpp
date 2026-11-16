@@ -1,6 +1,3 @@
-#include <cassert>
-#include <vector>
-
 using ll = long long;
 
 #ifndef XCPC_DS_LAZY_SEGMENT_TREE_HPP

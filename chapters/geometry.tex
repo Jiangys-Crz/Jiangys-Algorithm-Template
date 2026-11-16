@@ -30,6 +30,11 @@
 
 调用 \texttt{dot(u,v)} 或用 \texttt{square(u)} 取得长度平方。
 
+\begin{pseudocode}
+dot = u.x * v.x + u.y * v.y
+len2 = u.x * u.x + u.y * u.y
+\end{pseudocode}
+
 \paragraph{复杂度}
 点积、长度平方与投影均为 $O(1)$。
 
@@ -45,6 +50,12 @@
 
 两向量使用 \texttt{cross(u,v)}，三点转向使用 \texttt{cross(a,b,c)}。
 
+\begin{pseudocode}
+u = b - a
+v = c - a
+turn = u.x * v.y - u.y * v.x
+\end{pseudocode}
+
 \paragraph{复杂度}
 时间与额外空间均为 $O(1)$。
 
@@ -58,6 +69,12 @@
     \item 距离平方可用 \texttt{dist2(a,b)}，返回点坐标类型 $T$。
     \item 需要实数距离时用 \texttt{dist(a,b)}。先做坐标差，再把差值转换为实数并用 \texttt{hypot} 计算长度。
 \end{itemize}
+
+\begin{pseudocode}
+d = a - b
+d2 = dot(d, d)
+distance = hypot(d.x, d.y)
+\end{pseudocode}
 
 \paragraph{复杂度}
 每次计算为 $O(1)$。
@@ -106,6 +123,15 @@ $t=((b-a)\times v)/(u\times v)$。
 
 用两个 \texttt{Line<Real>} 调用 \texttt{lineIntersection}。
 返回唯一交点、平行、重合或退化。\texttt{angleTol} 是正弦容差，\texttt{distTol} 是距离容差。
+
+\begin{pseudocode}
+u, v = 两条直线的单位方向  // 退化直线先单独处理
+den = cross(u, v)
+if den 在角度容差内:
+    用 cross(u, b-a) 区分平行与重合
+else:
+    return a + u * (cross(b-a, v) / den)
+\end{pseudocode}
 
 \paragraph{复杂度}
 时间和额外空间均为 $O(1)$。
@@ -163,6 +189,16 @@ $\sum_{i=0}^{n-1}(x_i y_{i+1}-y_i x_{i+1})$。
 \texttt{pointInPolygon(q,p)} 返回 \texttt{outside}、\texttt{boundary} 或 \texttt{inside}。
 输入可按顺时针或逆时针排列。
 
+\begin{pseudocode}
+inside = false
+for 多边形的每条边 (a, b):
+    if q 在线段 [a, b] 上: return 边界
+    if a.y > b.y: swap(a, b)
+    if a.y <= q.y < b.y 且 cross(b-a, q-a) > 0:
+        inside = !inside
+return inside
+\end{pseudocode}
+
 \paragraph{复杂度}
 单次查询耗时 $O(n)$，额外空间为 $O(1)$。
 
@@ -213,6 +249,11 @@ $\sum_{i=0}^{n-1}(x_i y_{i+1}-y_i x_{i+1})$。
 
 调用 \texttt{convexDiameter(convexHullAndrew(p))}。
 返回端点和距离平方。单点的直径为零，空点集返回空值。
+
+\begin{pseudocode}
+h = convexHullAndrew(p)
+result = convexDiameter(h)
+\end{pseudocode}
 
 \paragraph{复杂度}
 散点求凸包再取直径共 $O(n\log n)$ 时间。已知凸包时仅需 $O(h)$。
@@ -302,6 +343,17 @@ $m$ 个端点占 $O(m)$ 空间，单次区间操作为 $O(\log m)$，读取总�
 
 调用 \texttt{circleIntersection(a,b)}。
 返回无交、单点、双点或重合。两个重合的零半径圆仅有一个公共点。
+
+\begin{pseudocode}
+d = 两圆心之间的距离
+先处理零半径圆与同心圆
+if d > r1+r2 或 d < abs(r1-r2): return 无交点
+t = (d*d + r1*r1 - r2*r2) / (2*d)
+mid = 圆心一 + t * 圆心连线单位向量
+if 两圆相切: return mid
+delta = sqrt(max(0, r1*r1 - t*t)) * 连线的单位垂向量
+return mid - delta, mid + delta
+\end{pseudocode}
 
 \paragraph{复杂度}
 时间和额外空间均为 $O(1)$。

@@ -1,7 +1,3 @@
-#include <cassert>
-#include <utility>
-#include <vector>
-
 using ull = unsigned long long;
 
 #ifndef XCPC_MATH_POWER_HPP

@@ -1,8 +1,3 @@
-#include <cassert>
-#include <cstddef>
-#include <utility>
-#include <vector>
-
 using ll = long long;
 
 #ifndef XCPC_DS_FENWICK_HPP

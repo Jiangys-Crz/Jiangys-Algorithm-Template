@@ -1,6 +1,3 @@
-#include <algorithm>
-#include <cmath>
-
 #ifndef XCPC_GEOMETRY_POINT_HPP
 #define XCPC_GEOMETRY_POINT_HPP
 

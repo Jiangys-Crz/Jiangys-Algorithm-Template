@@ -1,7 +1,3 @@
-#include <numeric>
-#include <utility>
-#include <vector>
-
 #ifndef XCPC_DS_DSU_HPP
 #define XCPC_DS_DSU_HPP
 

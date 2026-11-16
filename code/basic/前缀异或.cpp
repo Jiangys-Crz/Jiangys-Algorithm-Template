@@ -1,6 +1,3 @@
-#include <cstddef>
-#include <vector>
-
 using ull = unsigned long long;
 
 // 先准备数组 a 和查询区间 [l, r)，下标从 0 开始。

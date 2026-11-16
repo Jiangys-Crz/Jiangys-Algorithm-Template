@@ -1,7 +1,3 @@
-#include <cassert>
-#include <cstddef>
-#include <vector>
-
 #ifndef XCPC_DS_FENWICK_HPP
 #define XCPC_DS_FENWICK_HPP
 

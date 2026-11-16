@@ -1,7 +1,3 @@
-#include <algorithm>
-#include <optional>
-#include <vector>
-
 using ll = long long;
 
 struct PersistentKth {

@@ -1,9 +1,3 @@
-#include <algorithm>
-#include <bitset>
-#include <cmath>
-#include <utility>
-#include <vector>
-
 #ifndef XCPC_MATH_GAUSS_HPP
 #define XCPC_MATH_GAUSS_HPP
 

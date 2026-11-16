@@ -1,8 +1,3 @@
-#include <algorithm>
-#include <cmath>
-#include <utility>
-#include <vector>
-
 using ll = long long;
 
 class RangeBlocks {

@@ -1,7 +1,3 @@
-#include <cstddef>
-#include <utility>
-#include <vector>
-
 // 先准备 n 个顶点的邻接表 adj 和起点 s，编号从 1 开始。
 
 vector<char> vis(n + 1);

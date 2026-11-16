@@ -1,5 +1,3 @@
-#include <ostream>
-
 using ll = long long;
 
 #ifndef XCPC_ZX_OPERATOR_OVERLOAD_HPP

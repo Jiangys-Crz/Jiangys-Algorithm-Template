@@ -1,8 +1,3 @@
-#include <deque>
-#include <limits>
-#include <utility>
-#include <vector>
-
 using ll = long long;
 
 // 邻接表 adj[u] 保存 (v, w)，边权为 0 或 1。n 为顶点数，s 为起点，编号从 1 开始。

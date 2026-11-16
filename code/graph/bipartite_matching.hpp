@@ -1,6 +1,3 @@
-#include <algorithm>
-#include <vector>
-
 #ifndef XCPC_GRAPH_BIPARTITE_MATCHING_HPP
 #define XCPC_GRAPH_BIPARTITE_MATCHING_HPP
 

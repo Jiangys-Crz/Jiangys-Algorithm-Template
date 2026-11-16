@@ -1,5 +1,3 @@
-#include <algorithm>
-
 using ll = long long;
 
 // a 为非空整数数组。

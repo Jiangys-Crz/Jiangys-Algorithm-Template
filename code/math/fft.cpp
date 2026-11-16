@@ -1,9 +1,3 @@
-#include <cassert>
-#include <cmath>
-#include <complex>
-#include <utility>
-#include <vector>
-
 using ll = long long;
 
 #ifndef XCPC_MATH_BIT_REVERSE_HPP

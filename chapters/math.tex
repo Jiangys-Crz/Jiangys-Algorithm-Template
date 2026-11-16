@@ -45,6 +45,13 @@
 
 后文欧几里得模板中的 \texttt{lcmChecked(a,b)} 返回无符号结果，超出 \texttt{ull} 范围时返回空值。
 
+\begin{pseudocode}
+if a == 0 或 b == 0: return 0
+q = a / gcd(a, b)              // a, b 为非负幅值
+if q > 上限 / b: return 溢出
+return q * b
+\end{pseudocode}
+
 \paragraph{复杂度}
 耗时主要来自 GCD，乘法检查为 $O(1)$。
 
@@ -56,6 +63,12 @@
 反复应用该变换，直至 $b=0$，返回此时的 $a$。
 
 迭代实现见本节最大公约数示例。
+
+\begin{pseudocode}
+while b != 0:
+    (a, b) = (b, a % b)        // 右侧使用原来的 a 和 b
+return a
+\end{pseudocode}
 
 \paragraph{复杂度}
 较小参数每两步至少减半，耗时 $O(\log(\min(a,b)+1)+1)$。
@@ -260,6 +273,12 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
 中国剩余定理模板中的 \texttt{invMod(a,m)} 接收 $m>1$，不可逆时返回空值。
 质数模的 \texttt{MInt} 提供 \texttt{inv()}。
 
+\begin{pseudocode}
+d, x, y = 扩展欧几里得(a, m)
+if d != 1: return 无逆元
+return x 在 [0, m) 中的标准余数
+\end{pseudocode}
+
 \paragraph{复杂度}
 扩展欧几里得求逆耗时 $O(\log m)$，空间为 $O(\log m)$ 的递归栈。
 
@@ -274,6 +293,12 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
 
 先将底数规约为非零余数，再按快速幂示例求 $a^{p-2}\bmod p$。也可使用 \texttt{MInt<p>::inv()}。
 
+\begin{pseudocode}
+a = a 在 [0, p) 中的标准余数
+if a == 0: return 无逆元
+return 快速幂(a, p - 2, p)
+\end{pseudocode}
+
 \paragraph{复杂度}
 需要 $O(\log p)$ 次模乘，实际耗时取决于模乘实现。
 
@@ -287,6 +312,12 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
 \end{itemize}
 
 先按前述试除循环或筛表求 $\varphi(m)$，再按快速幂模板计算。取 $m>1$。
+
+\begin{pseudocode}
+if gcd(a, m) == 1:
+    return 快速幂(a, e % phi(m), m)
+return 快速幂(a, e, m)
+\end{pseudocode}
 
 \paragraph{复杂度}
 试除求 $\varphi$ 最坏为 $O(\sqrt m)$，快速幂另需 $O(\log m)$ 次模乘。
@@ -326,6 +357,14 @@ $\varphi(n)$ 统计 $1$ 到 $n$ 中与 $n$ 互质的整数个数。约定 $\varp
 
 调用前一节的 \texttt{exCRT}。返回状态区分与当前同余式矛盾和合并模数超出范围。
 
+\begin{pseudocode}
+d, p, q = 扩展欧几里得(m, n)
+if (b - a) % d != 0: return 无解
+k = p * ((b - a) / d) 在模 n/d 下的标准余数
+M = m * (n / d)
+return (a + m*k 在模 M 下的标准余数, M)
+\end{pseudocode}
+
 \paragraph{复杂度}
 设 $U=\max(m,n)$，一次合并耗时 $O(\log(U+1))$，递归栈占 $O(\log(U+1))$ 空间。
 
@@ -356,6 +395,12 @@ Lucas 定理给出 $\binom nk\equiv\prod_i\binom{n_i}{k_i}\pmod p$。
 \end{itemize}
 
 本章的 \texttt{Comb} 分别用 \texttt{A(n,k)} 和 \texttt{C(n,k)} 查询模质数的排列数与组合数。
+
+\begin{pseudocode}
+if k < 0 或 k > n: return 0
+排列数 = fac[n] * invfac[n-k]
+组合数 = 排列数 * invfac[k]
+\end{pseudocode}
 
 \paragraph{复杂度}
 阶乘表预处理后，两种查询均为 $O(1)$。
@@ -389,9 +434,24 @@ Lucas 定理给出 $\binom nk\equiv\prod_i\binom{n_i}{k_i}\pmod p$。
 \]
 满足恰好 $t$ 个条件的元素，净贡献为 $1-(1-1)^t=1$。实现时按题目计算交集大小，能判定为空的交集可连同其扩展一并跳过。
 
+\begin{pseudocode}
+ans = 0
+for 非空条件子集 S:
+    cnt = 同时满足 S 内所有条件的对象数
+    if |S| 为奇数: ans += cnt
+    else: ans -= cnt
+\end{pseudocode}
+
 \subsection{鸽巢原理}
 
 将多于 $k$ 个对象分入 $k$ 类，至少一类含两个对象。使用时应明确对象及分类规则，再说明同类对象如何构造所求结果。常见分类依据包括余数、前缀状态和离散后的取值。
+
+\begin{pseudocode}
+for 对象 x:
+    k = x 的类别
+    if 类别 k 已有代表: return (代表[k], x)
+    代表[k] = x
+\end{pseudocode}
 
 \subsection{插板法}
 
@@ -441,6 +501,10 @@ Lucas 定理给出 $\binom nk\equiv\prod_i\binom{n_i}{k_i}\pmod p$。
 
 调用 \texttt{catalan(n,comb)}，组合数表须覆盖 $2n$，且 $2n$ 小于模数。
 
+\begin{pseudocode}
+ans = C(2*n, n) - C(2*n, n-1) // 第二项在 n == 0 时为零
+\end{pseudocode}
+
 \paragraph{复杂度}
 阶乘表准备好后查询为 $O(1)$。
 
@@ -449,6 +513,15 @@ Lucas 定理给出 $\binom nk\equiv\prod_i\binom{n_i}{k_i}\pmod p$。
 从所选对象及其顺序出发建模。可先求不受约束的方案数，再按首次遇到的限制分类扣除，或把每个方案映射为一个易计数的结构。
 
 同一类内可用乘法原理合并独立选择，类别之间用加法原理合并互斥结果。复杂度由所需的状态数及组合数预处理决定。
+
+\begin{pseudocode}
+ans = 0
+for 每类互斥方案:
+    ways = 1
+    for 类内每项独立选择:
+        ways *= 该项选择数
+    ans += ways
+\end{pseudocode}
 
 \section{线性代数}
 
@@ -472,6 +545,15 @@ Lucas 定理给出 $\binom nk\equiv\prod_i\binom{n_i}{k_i}\pmod p$。
 \subsection{矩阵快速幂}
 
 若 $v_{t+1}=Av_t$，则 $v_t=A^t v_0$。\texttt{matrixPower(a,k)} 以二进制快速幂求方阵的非负整数次幂。
+
+\begin{pseudocode}
+res = 与 A 同阶的单位矩阵
+while k > 0:
+    if k & 1: res = res * A
+    k >>= 1
+    if k > 0: A = A * A
+return res
+\end{pseudocode}
 
 \paragraph{复杂度}
 $d$ 阶方阵取幂耗时 $O(d^2+d^3\log(k+1))$，额外空间为 $O(d^2)$。
@@ -513,6 +595,17 @@ $d$ 阶方阵取幂耗时 $O(d^2+d^3\log(k+1))$，额外空间为 $O(d^2)$。
 
 调用 \texttt{xorGauss<M>(a)}。位 $0$ 到 $M-1$ 存系数，第 $M$ 位存右端。
 返回的位集使用相同的变量编号。
+
+\begin{pseudocode}
+r = 0
+for 系数列 c:
+    找 r 行及以下在 c 列为 1 的主元行 x
+    if 找不到: continue
+    swap(第 r 行, 第 x 行)
+    for i != r 且第 i 行的 c 列为 1: a[i] ^= a[r]
+    r += 1
+若存在系数全零而右端为 1 的行，则无解
+\end{pseudocode}
 
 \paragraph{复杂度}
 设机器字宽为 $w$，按字实现位集时，消元耗时
@@ -680,6 +773,12 @@ Nim 扫描为 $O(n)$。给定拓扑序后，时间戳 mex 求全部 SG 需 $O(n+
 离散随机变量的期望为 $\mathbb E[X]=\sum_x x\Pr(X=x)$。将总量拆成若干随机变量之和时，可分别求期望再相加，各变量无需相互独立。
 
 独立事件至少发生一次的概率为 $1$ 减去所有事件均不发生的概率。分阶段计算随机过程时，可对每个阶段分别求等待时间，或按状态列出期望转移方程。
+
+\begin{pseudocode}
+E = 0
+for 随机变量 X 的每个可能取值 x:
+    E += x * P(X == x)
+\end{pseudocode}
 
 \paragraph{参考资料}
 \href{https://oi-wiki.org/math/number-theory/crt/}{OI Wiki：中国剩余定理}、

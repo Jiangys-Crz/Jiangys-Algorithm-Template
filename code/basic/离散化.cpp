@@ -1,6 +1,3 @@
-#include <algorithm>
-#include <vector>
-
 using ll = long long;
 
 // vals 保存全部待离散化的数值，x 为待查值。

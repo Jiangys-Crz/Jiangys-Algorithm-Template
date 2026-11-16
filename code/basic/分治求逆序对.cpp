@@ -1,5 +1,3 @@
-#include <vector>
-
 using ll = long long;
 
 // 先准备数组 a，计算过程中将对其原地排序。

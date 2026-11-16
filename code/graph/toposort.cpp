@@ -1,6 +1,3 @@
-#include <cstddef>
-#include <vector>
-
 // 先准备 n 个顶点的有向图邻接表 adj，顶点编号从 1 开始。
 
 vector<int> deg(n + 1), order;

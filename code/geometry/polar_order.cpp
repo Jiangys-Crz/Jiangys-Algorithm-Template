@@ -1,5 +1,3 @@
-#include <algorithm>
-
 using ll = long long;
 
 // 先准备点集 points 和极点 o，点类型采用 Point<ll>。

@@ -1,6 +1,3 @@
-#include <tuple>
-#include <vector>
-
 using ll = long long;
 
 // 原数组下标为 1 至 n，令 a[0] = 0。

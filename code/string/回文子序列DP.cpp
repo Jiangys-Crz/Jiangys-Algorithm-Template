@@ -1,7 +1,3 @@
-#include <algorithm>
-#include <string>
-#include <vector>
-
 // 先准备字符串 s。ans 为最长回文子序列的长度。
 
 int n = static_cast<int>(s.size());

@@ -1,8 +1,3 @@
-#include <algorithm>
-#include <cmath>
-#include <utility>
-#include <vector>
-
 using ll = long long;
 
 // n 为序列长度且 n >= 1。ranges 中的闭区间下标从 1 开始。

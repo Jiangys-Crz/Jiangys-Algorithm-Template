@@ -1,6 +1,3 @@
-#include <string>
-#include <vector>
-
 // 先准备字符串 s。nxt[i] 为位置 i 的前缀函数值。
 
 int n = static_cast<int>(s.size());

@@ -1,8 +1,3 @@
-#include <array>
-#include <cassert>
-#include <string_view>
-#include <vector>
-
 #ifndef XCPC_STRING_ALPHABET_HPP
 #define XCPC_STRING_ALPHABET_HPP
 

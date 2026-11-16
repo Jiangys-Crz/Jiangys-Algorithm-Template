@@ -1,7 +1,3 @@
-#include <algorithm>
-#include <utility>
-#include <vector>
-
 using ll = long long;
 
 #ifndef XCPC_MATH_LINEAR_SIEVE_HPP

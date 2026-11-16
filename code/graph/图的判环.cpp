@@ -1,10 +1,3 @@
-#include <cstddef>
-#include <limits>
-#include <numeric>
-#include <optional>
-#include <utility>
-#include <vector>
-
 using ll = long long;
 
 #ifndef XCPC_GRAPH_GRAPH_DSU_HPP

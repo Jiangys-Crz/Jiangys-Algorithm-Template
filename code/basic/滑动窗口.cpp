@@ -1,5 +1,3 @@
-#include <algorithm>
-
 // n 为序列长度。
 // 待填写：初始化空窗口的状态。
 auto add = [&](int i) {

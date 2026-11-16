@@ -1,7 +1,3 @@
-#include <algorithm>
-#include <string_view>
-#include <vector>
-
 // 先准备模式串 t 和文本 s。z 为 t 的 Z 函数，ext 为各位置与 t 的最长公共前缀长度。
 int n = static_cast<int>(s.size()), m = static_cast<int>(t.size());
 vector<int> z(m), ext(n);

@@ -1,8 +1,3 @@
-#include <algorithm>
-#include <cstddef>
-#include <string>
-#include <vector>
-
 // 先准备字符串 a 和 b，以较短的串为列。
 
 if (a.size() < b.size()) a.swap(b);

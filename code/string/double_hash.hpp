@@ -1,9 +1,3 @@
-#include <cstddef>
-#include <cstdint>
-#include <string_view>
-#include <utility>
-#include <vector>
-
 #ifndef XCPC_STRING_ROLLING_HASH_HPP
 #define XCPC_STRING_ROLLING_HASH_HPP
 

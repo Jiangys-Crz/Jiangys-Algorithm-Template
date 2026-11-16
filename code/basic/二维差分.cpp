@@ -1,5 +1,3 @@
-#include <vector>
-
 using ll = long long;
 
 // 先准备 n 行 m 列的矩阵 a 及区间更新 updates，矩阵坐标从 1 开始。

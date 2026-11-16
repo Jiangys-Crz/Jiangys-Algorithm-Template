@@ -1,6 +1,3 @@
-#include <algorithm>
-#include <vector>
-
 using ll = long long;
 
 // capacity 为容量，groups 按组保存物品的重量和价值。

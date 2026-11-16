@@ -1,5 +1,3 @@
-#include <vector>
-
 using ll = long long;
 
 // a 为长度为 n 的数组。

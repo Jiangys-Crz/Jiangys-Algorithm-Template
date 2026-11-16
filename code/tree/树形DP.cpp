@@ -1,6 +1,3 @@
-#include <array>
-#include <vector>
-
 using ll = long long;
 
 // 先预处理树 tr，并按题目定义动态规划状态。

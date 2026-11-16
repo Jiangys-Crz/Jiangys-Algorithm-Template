@@ -1,5 +1,3 @@
-#include <vector>
-
 using ll = long long;
 
 // a 为 n 行 m 列的矩阵，行列下标从 1 开始。

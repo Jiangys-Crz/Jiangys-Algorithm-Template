@@ -157,18 +157,14 @@
     xrightmargin=0.4em
 }
 
-% 引入外部代码文件，例如 \cppfile{code/math/xxx.cpp}。
-\newtcbinputlisting{\cppfile}[2][]{
+\tcbset{template listing/.style={
     enhanced,
     breakable,
     listing only,
-    listing file={#2},
-    listing options={style=cpplist,#1},
     colback=CodeBg,
     colframe=CodeFrame,
     boxrule=0.45pt,
     arc=2.2mm,
-    outer arc=2.2mm,
     left=5.5mm,
     right=2mm,
     top=1.5mm,
@@ -176,25 +172,22 @@
     before skip=8pt,
     after skip=10pt,
     borderline west={2pt}{0pt}{MainBlue}
+}}
+
+\newtcbinputlisting{\cppfile}[2][]{
+    template listing,
+    listing file={#2},
+    listing options={style=cpplist,#1}
 }
 
-% 正文代码块使用 \begin{cppcode} 和 \end{cppcode}。
 \newtcblisting{cppcode}{
-    enhanced,
-    breakable,
-    listing only,
-    listing options={style=cpplist},
-    colback=CodeBg,
-    colframe=CodeFrame,
-    boxrule=0.45pt,
-    arc=2.2mm,
-    left=5.5mm,
-    right=2mm,
-    top=1.5mm,
-    bottom=1.5mm,
-    before skip=8pt,
-    after skip=10pt,
-    borderline west={2pt}{0pt}{MainBlue}
+    template listing,
+    listing options={style=cpplist}
+}
+
+\newtcblisting{pseudocode}{
+    template listing,
+    listing options={style=cpplist,language={},numbers=none}
 }
 
 % 为 \lstinputlisting 设置相同的代码样式。

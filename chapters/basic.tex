@@ -339,6 +339,15 @@ mid_2=r-\frac{r-l}{3}
     \item 按题目的组合条件合并两组结果。等值匹配可用哈希或排序后二分，有序的范围条件也可用双指针。
 \end{enumerate}
 
+\begin{pseudocode}
+mid = n / 2
+A = 枚举下标区间 [0, mid) 的子集状态
+B = 枚举下标区间 [mid, n) 的子集状态
+预处理 B，支持按组合条件查找
+for x in A:
+    将 x 与 B 中满足条件的状态组合，更新答案
+\end{pseudocode}
+
 \paragraph{复杂度}
 若 $n$ 个元素各有选或不选两种选择，较大一组最多产生 $2^{\lceil n/2\rceil}$ 个状态。总时间还取决于生成状态和合并结果的代价。
 
@@ -349,6 +358,14 @@ mid_2=r-\frac{r-l}{3}
 线性动态规划按序列位置或处理步数定义状态。先规定初始状态，再按依赖顺序枚举位置，并从可达的前驱更新当前状态。
 
 状态应保留影响后续转移的信息。转移只依赖固定数量的最近状态时，可用滚动变量保存它们。时间由状态数和单个状态的转移数决定。
+
+\begin{pseudocode}
+dp[0] = 初始状态
+for i = 1 .. n:
+    dp[i] = 不可达
+    for j in i 的合法且可达的前驱:
+        dp[i] = 合并(dp[i], 转移(dp[j], j, i))
+\end{pseudocode}
 
 \subsection{最长公共子序列 (LCS)}
 
@@ -544,11 +561,28 @@ dp[l][r]=\min_{l\le k<r}\bigl(dp[l][k]+dp[k+1][r]+c(l,k,r)\bigr).
 单元素区间的初值为 $0$。若题目限制划分，转移时只枚举合法分界点，并将不可达状态与有效代价区分。
 全量枚举分界点且单次转移为 $O(1)$ 时，时间为 $O(n^3)$，空间为 $O(n^2)$。
 
+\begin{pseudocode}
+dp[i][i] = 0
+for len = 2 .. n:
+    for 每个长度为 len 的区间 [l, r]:
+        dp[l][r] = 无穷
+        for k in [l, r) 中使两侧都可达的合法分界点:
+            dp[l][r] = min(dp[l][r], dp[l][k] + dp[k+1][r] + cost(l,k,r))
+\end{pseudocode}
+
 \subsection{状态压缩DP}
 
 用二进制掩码表示较小的集合。状态除掩码外，还可记录当前位置、最后一个元素或已使用的资源。初始状态和合法转移由问题的约束确定。
 
 若每次转移恰加入一个元素，可按掩码递增处理。对于 $n$ 个元素，仅按集合存储需 $O(2^n)$ 空间，枚举每个集合的所有可加入元素需 $O(n2^n)$ 时间。
+
+\begin{pseudocode}
+dp[初始掩码] = 初值
+for mask 按升序枚举可达状态:
+    for 未选且允许加入的元素 i:
+        next = mask | (1 << i)
+        dp[next] = 合并(dp[next], 转移(dp[mask], i))
+\end{pseudocode}
 
 \subsection{数位DP}
 
@@ -567,7 +601,8 @@ dp[l][r]=\min_{l\le k<r}\bigl(dp[l][k]+dp[k+1][r]+c(l,k,r)\bigr).
     \item 填完全部数位得到一种方案。仅记录前缀已经小于上界的状态。
 \end{itemize}
 
-按题目填写相邻有效数位的合法性判定。数字 $0$ 计为一种方案，前导零不参与判定。
+按题目填写相邻有效数位的合法性判定。上界为 \texttt{ll}，方案数用 \texttt{ull} 保存。
+数字 $0$ 计为一种方案，前导零不参与判定。
 
 \cppfile{code/basic/数位DP相邻数字.cpp}
 
@@ -587,11 +622,25 @@ dp[l][r]=\min_{l\le k<r}\bigl(dp[l][k]+dp[k+1][r]+c(l,k,r)\bigr).
 
 对同一状态的转移须覆盖所有合法方案，各类方案互不重叠。需要取模计数时，每次累加按题目给定的模数规约。
 
+\begin{pseudocode}
+ways[起点] = 1                 // 其余状态为零
+for u in 依赖顺序:
+    for u 到 v 的每种合法转移:
+        ways[v] += ways[u]
+\end{pseudocode}
+
 \subsection{概率DP、期望DP}
 
 \subsubsection{概率 DP}
 
 对互斥来源求和。若从状态 $u$ 到 $v$ 的转移概率为 $p_{uv}$，则将 $P(u)p_{uv}$ 加入 $P(v)$。状态应包含确定后续转移概率所需的信息。
+
+\begin{pseudocode}
+prob[起点] = 1                 // 其余状态为零
+for u in 依赖顺序:
+    for u 到 v 的每条转移:
+        prob[v] += prob[u] * p[u][v]
+\end{pseudocode}
 
 \subsubsection{带自环的期望 DP}
 
@@ -600,6 +649,16 @@ dp[l][r]=\min_{l\le k<r}\bigl(dp[l][k]+dp[k+1][r]+c(l,k,r)\bigr).
 E(u)=\frac{c(u)+\sum_{v\ne u}p_{uv}E(v)}{1-p_{uu}}.
 \]
 其余转移无环时可逆拓扑计算。若有正概率进入无法终止的状态，达到终止所需的期望步数为正无穷。
+
+\begin{pseudocode}
+E[终止状态] = 0
+for 非终止状态 u in 逆拓扑序:  // 拓扑序忽略自环
+    if p[u][u] == 1: E[u] = 无穷
+    else:
+        sum = c[u]
+        for v != u 且 p[u][v] > 0: sum += p[u][v] * E[v]
+        E[u] = sum / (1 - p[u][u])
+\end{pseudocode}
 
 \section{位运算技巧}
 
@@ -745,3 +804,10 @@ $F[m]=\sum_{s\subseteq m}a[s]$，其中 $s\subseteq m$ 表示 $s$ 为 $m$ 的子
 构造最大无符号整数时，按从高位到低位的顺序尝试置位。每次检验目前选定的所有位能否同时满足题目约束，可行才保留新位。
 
 该方法依赖可行性判定能够覆盖全部已选位。设位宽为 $B$，若单次判定耗时 $T$，总耗时为 $O(BT)$。
+\begin{pseudocode}
+ans = 0
+for b = B - 1 .. 0:
+    next = ans | (1ULL << b)
+    if 存在满足约束且包含 next 全部置位的方案:
+        ans = next
+\end{pseudocode}

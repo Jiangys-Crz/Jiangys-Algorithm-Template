@@ -1,6 +1,3 @@
-#include <array>
-#include <cstdint>
-
 class XorBasis {
 public:
     bool insert(uint64_t value) {

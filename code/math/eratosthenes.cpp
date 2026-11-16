@@ -1,5 +1,3 @@
-#include <vector>
-
 using ll = long long;
 
 // n 为非负整数。primes 保存不超过 n 的全部质数。

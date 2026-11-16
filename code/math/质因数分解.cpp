@@ -1,6 +1,3 @@
-#include <utility>
-#include <vector>
-
 using ull = unsigned long long;
 
 // n 为正整数。factors 保存各质因子及其指数。

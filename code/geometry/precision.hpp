@@ -1,6 +1,3 @@
-#include <algorithm>
-#include <cmath>
-
 using Real = long double;
 
 #ifndef XCPC_GEOMETRY_PRECISION_HPP

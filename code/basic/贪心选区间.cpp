@@ -1,8 +1,3 @@
-#include <algorithm>
-#include <limits>
-#include <utility>
-#include <vector>
-
 using ll = long long;
 
 // a 保存半开区间 [l, r)，且 l < r。

@@ -1,6 +1,3 @@
-#include <algorithm>
-#include <vector>
-
 using ll = long long;
 
 // capacity 为容量，items 保存各物品的重量、价值和数量。

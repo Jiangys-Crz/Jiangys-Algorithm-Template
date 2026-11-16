@@ -1,5 +1,3 @@
-#include <bitset>
-
 // 数组 a 存放非负重量。
 // 仅保留 [0, maxSum] 内的可达和。
 

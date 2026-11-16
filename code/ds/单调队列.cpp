@@ -1,6 +1,3 @@
-#include <deque>
-#include <vector>
-
 using ll = long long;
 
 // 先准备长度为 n 的数组 a，窗口宽度满足 1 <= k <= n。
