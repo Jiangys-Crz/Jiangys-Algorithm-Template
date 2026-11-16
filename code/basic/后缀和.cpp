@@ -1,16 +1,18 @@
+#include <iostream>
 #include <vector>
 
 using ll = long long;
 
-std::vector<ll> suffixSums(const std::vector<int>& a) {
-    int n = static_cast<int>(a.size());
-    std::vector<ll> suf(n + 2, 0);
-    for (int i = n; i >= 1; --i) {
-        suf[i] = a[i - 1] + suf[i + 1];
-    }
-    return suf;
-}
+int main() {
+    int n, q;
+    if (!(std::cin >> n >> q)) return 0;
+    std::vector<ll> a(n + 1), suf(n + 2);
+    for (int i = 1; i <= n; ++i) std::cin >> a[i];
+    for (int i = n; i >= 1; --i) suf[i] = a[i] + suf[i + 1];
 
-ll suffixRangeSum(const std::vector<ll>& suf, int l, int r) {
-    return suf[l] - suf[r + 1];
+    while (q--) {
+        int l, r;
+        std::cin >> l >> r;
+        std::cout << suf[l] - suf[r + 1] << '\n';
+    }
 }

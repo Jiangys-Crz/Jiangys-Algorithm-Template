@@ -1,14 +1,18 @@
 #include <algorithm>
-#include <vector>
+#include <iostream>
 
 using ll = long long;
 
-ll maxNonAdjacentSum(const std::vector<ll>& a) {
+int main() {
+    int n;
+    if (!(std::cin >> n)) return 0;
     ll twoBack = 0, oneBack = 0;
-    for (ll value : a) {
-        ll current = std::max(oneBack, twoBack + value);
+    for (int i = 0; i < n; ++i) {
+        ll x;
+        std::cin >> x;
+        ll cur = std::max(oneBack, twoBack + x);
         twoBack = oneBack;
-        oneBack = current;
+        oneBack = cur;
     }
-    return oneBack;
+    std::cout << oneBack << '\n';
 }

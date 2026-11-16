@@ -1,32 +1,28 @@
+#include <iostream>
 #include <iterator>
-#include <optional>
 #include <set>
 
 using ll = long long;
 
-struct OrderedMultiset {
+int main() {
+    int n;
+    ll x;
+    if (!(std::cin >> n >> x)) return 0;
     std::multiset<ll> s;
-
-    void insert(ll x) {
-        s.insert(x);
+    for (int i = 0; i < n; ++i) {
+        ll v;
+        std::cin >> v;
+        s.insert(v);
     }
 
-    bool erase(ll x) {
-        auto it = s.find(x);
-        if (it == s.end()) return false;
-        s.erase(it);
-        return true;
-    }
+    auto it = s.find(x);
+    if (it != s.end()) s.erase(it);
 
-    std::optional<ll> get_prev(ll x) const {
-        auto it = s.lower_bound(x);
-        if (it == s.begin()) return std::nullopt;
-        return *std::prev(it);
-    }
-
-    std::optional<ll> get_next(ll x) const {
-        auto it = s.upper_bound(x);
-        if (it == s.end()) return std::nullopt;
-        return *it;
-    }
-};
+    auto l = s.lower_bound(x);
+    auto r = s.upper_bound(x);
+    if (l == s.begin()) std::cout << "NONE";
+    else std::cout << *std::prev(l);
+    std::cout << ' ';
+    if (r == s.end()) std::cout << "NONE\n";
+    else std::cout << *r << '\n';
+}

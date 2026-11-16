@@ -1,12 +1,20 @@
+#include <iostream>
 #include <vector>
 
-template<class T>
-int lastAtMost(const std::vector<T>& a, const T& x) {
-    int l = 0, r = static_cast<int>(a.size()) - 1;
+using ll = long long;
+
+int main() {
+    int n;
+    ll x;
+    if (!(std::cin >> n >> x)) return 0;
+    std::vector<ll> a(n + 1);
+    for (int i = 1; i <= n; ++i) std::cin >> a[i];
+
+    int l = 0, r = n;
     while (l < r) {
         int mid = r - (r - l) / 2;
         if (a[mid] <= x) l = mid;
         else r = mid - 1;
     }
-    return l;
+    std::cout << l << '\n';
 }

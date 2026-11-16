@@ -434,10 +434,9 @@ C++17 中有足够辅助内存时为 $O(n\log n)$ 次比较，否则为 $O(n\log
 
 \paragraph{求某个值出现的下标半开区间}
 
-传入非递减数组，返回 \texttt{[l,r)}。
-值缺失时两个边界相等，表示空区间。
+输入 $n,x$ 及非递减数组，输出 $x$ 出现的半开区间端点 $l,r$。未找到时两个边界相等。
 
-\cppfile{code/stl/sorted_search.hpp}
+\cppfile{code/stl/sorted_search.cpp}
 
 \paragraph{复杂度}
 随机访问区间的比较与推进合计为 $O(\log(n+1))$。
@@ -506,12 +505,12 @@ void exampleBinarySearch() {
 
 \paragraph{查询第 $k$ 小并检查越界}
 
-按值接收数组，允许重复元素，排名从一开始，非法排名返回空值。
+输入 $n,k$ 及数组。允许重复元素，排名从 $1$ 开始，越界时输出 \texttt{NONE}。
 
-\cppfile{code/stl/kth_smallest.hpp}
+\cppfile{code/stl/kth_smallest.cpp}
 
 \paragraph{复杂度}
-不带执行策略的重载平均耗时 $O(n)$。此封装按值接收数组。
+不带执行策略的重载平均耗时 $O(n)$。
 
 \subsection{\texttt{unique}}
 
@@ -932,9 +931,9 @@ void exampleStructuredBinding() {
 
 \paragraph{闭区间随机整数与洗牌}
 
-可传固定的 \texttt{uint} 种子用于对拍。区间应满足 $l\le r$。
+输入 \texttt{uint} 种子，输出 $[1,10]$ 内的随机整数和一个长度为 $5$ 的排列。
 
-\cppfile{code/stl/random_engine.hpp}
+\cppfile{code/stl/random_engine.cpp}
 
 \paragraph{复杂度}
 固定字宽下，均匀整数取样通常为期望 $O(1)$，洗牌 $n$ 项为 $O(n)$。

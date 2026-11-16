@@ -1,21 +1,21 @@
-#include <cstddef>
-#include <cstdint>
+#include <iostream>
 #include <vector>
 
-class PrefixXor {
-public:
-    explicit PrefixXor(const std::vector<std::uint64_t>& values)
-        : prefix_(values.size() + 1, 0) {
-        for (std::size_t i = 0; i < values.size(); ++i) {
-            prefix_[i + 1] = prefix_[i] ^ values[i];
-        }
+using ull = unsigned long long;
+
+int main() {
+    int n, q;
+    if (!(std::cin >> n >> q)) return 0;
+    std::vector<ull> p(n + 1);
+    for (int i = 0; i < n; ++i) {
+        ull x;
+        std::cin >> x;
+        p[i + 1] = p[i] ^ x;
     }
 
-    // Returns the XOR of the 0-based half-open range [left, right).
-    std::uint64_t query(std::size_t left, std::size_t right) const {
-        return prefix_[right] ^ prefix_[left];
+    while (q--) {
+        int l, r;
+        std::cin >> l >> r;
+        std::cout << (p[r] ^ p[l]) << '\n';
     }
-
-private:
-    std::vector<std::uint64_t> prefix_;
-};
+}

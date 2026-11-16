@@ -1,8 +1,10 @@
 #include <charconv>
 #include <iostream>
+#include <random>
 #include <string_view>
 
-#include "random_cases.hpp"
+using uint = unsigned int;
+using ll = long long;
 
 int main(int argc, char** argv) {
     if (argc != 2) {
@@ -18,11 +20,11 @@ int main(int argc, char** argv) {
         return 2;
     }
 
-    RandomEngine rng(seed);
-    int n = static_cast<int>(rng.next(1, 20));
-    auto a = randomArray(rng, n, -10, 10);
+    std::mt19937 rng(seed);
+    int n = static_cast<int>(std::uniform_int_distribution<ll>(1, 20)(rng));
+    std::uniform_int_distribution<ll> pick(-10, 10);
     std::cout << n << '\n';
     for (int i = 0; i < n; ++i) {
-        std::cout << a[i] << (i + 1 == n ? '\n' : ' ');
+        std::cout << pick(rng) << (i + 1 == n ? '\n' : ' ');
     }
 }

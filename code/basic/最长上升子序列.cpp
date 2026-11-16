@@ -1,15 +1,19 @@
 #include <algorithm>
-#include <cstddef>
+#include <iostream>
 #include <vector>
 
 using ll = long long;
 
-std::size_t lisLength(const std::vector<ll>& a) {
+int main() {
+    int n;
+    if (!(std::cin >> n)) return 0;
     std::vector<ll> tails;
-    for (ll value : a) {
-        auto it = std::lower_bound(tails.begin(), tails.end(), value);
-        if (it == tails.end()) tails.push_back(value);
-        else *it = value;
+    for (int i = 0; i < n; ++i) {
+        ll x;
+        std::cin >> x;
+        auto it = std::lower_bound(tails.begin(), tails.end(), x);
+        if (it == tails.end()) tails.push_back(x);
+        else *it = x;
     }
-    return tails.size();
+    std::cout << tails.size() << '\n';
 }

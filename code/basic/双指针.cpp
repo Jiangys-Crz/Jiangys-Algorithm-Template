@@ -1,20 +1,23 @@
-#include <utility>
+#include <iostream>
 #include <vector>
 
 using ll = long long;
+using lll = __int128;
 
-std::pair<int, int> findPairSum(const std::vector<int>& a, ll target) {
-    int l = 0, r = static_cast<int>(a.size()) - 1;
+int main() {
+    int n;
+    ll target;
+    if (!(std::cin >> n >> target)) return 0;
+    std::vector<ll> a(n);
+    for (ll& x : a) std::cin >> x;
+
+    int l = 0, r = n - 1;
     while (l < r) {
-        ll sum = static_cast<ll>(a[l]) + a[r];
-        if (sum == target) {
-            return {l, r};
-        }
-        if (sum < target) {
-            ++l;
-        } else {
-            --r;
-        }
+        lll sum = lll(a[l]) + a[r];
+        if (sum == target) break;
+        if (sum < target) ++l;
+        else --r;
     }
-    return {-1, -1};
+    if (l < r) std::cout << l << ' ' << r << '\n';
+    else std::cout << "-1 -1\n";
 }

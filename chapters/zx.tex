@@ -75,20 +75,19 @@ bash code/zx/stress.sh ./gen ./brute ./sol 1000
 
 \subsection{整数、排列和树}
 
-\texttt{rng.next(l,r)} 在 $[l,r]$ 中均匀取整数。同一实现环境下，固定种子可重现数据。
+输入种子、规模 $n$ 及取样区间 $[l,r]$。同一实现环境下，固定种子可重现数据。
 
 \begin{itemize}
     \item 数组逐项取样，允许重复。排列先填 $1$ 到 $n$，再打乱顺序。
-    \item 造树时打乱点号，每个新点连向一个较早的点，得到连通、无环的 $n-1$ 条边。
-    \item 多次造数时复用同一个随机引擎。
+    \item 树沿用打乱后的点号，每个新点连向一个较早的点，共输出 $n-1$ 条边。
 \end{itemize}
 
-\cppfile{code/zx/random_cases.hpp}
+\cppfile{code/zx/random_cases.cpp}
 
 \paragraph{复杂度}
 生成 $n$ 项数组、排列或 $n$ 节点树的期望时间为 $O(n)$，空间为 $O(n)$。
 
-数组和排列允许为空，整数区间要求 $l\le r$，树至少有一个点。
+本例要求 $n\ge 1$ 且 $l\le r$。
 此方法生成不同带标号树的概率可能不同，可另测链和星形树。
 
 \subsection{接收种子的 C++ 生成器}

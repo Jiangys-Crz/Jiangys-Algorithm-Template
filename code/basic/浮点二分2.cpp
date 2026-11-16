@@ -1,11 +1,17 @@
-template<class Check>
-long double maxFeasibleReal(long double l, long double r, Check check,
-                           long double eps = 1e-8L) {
+#include <algorithm>
+#include <iomanip>
+#include <iostream>
+
+int main() {
+    long double n;
+    if (!(std::cin >> n)) return 0;
+    long double l = 0, r = std::max(1.0L, n);
+    constexpr long double eps = 1e-8L;
     while (r - l > eps) {
         long double mid = l + (r - l) / 2;
         if (mid == l || mid == r) break;
-        if (check(mid)) l = mid;
+        if (mid * mid <= n) l = mid;
         else r = mid;
     }
-    return l;
+    std::cout << std::fixed << std::setprecision(10) << l << '\n';
 }

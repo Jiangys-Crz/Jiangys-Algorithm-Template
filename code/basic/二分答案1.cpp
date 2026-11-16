@@ -1,13 +1,16 @@
-using ll = long long;
-using ull = unsigned long long;
+#include <iostream>
 
-template<class Check>
-ll minFeasible(ll l, ll r, Check check) {
+using ll = long long;
+using lll = __int128;
+
+int main() {
+    ll n;
+    if (!(std::cin >> n)) return 0;
+    ll l = 0, r = n;
     while (l < r) {
-        ull width = ull(r) - ull(l);
-        ll mid = l + static_cast<ll>(width / 2);
-        if (check(mid)) r = mid;
+        ll mid = l + (r - l) / 2;
+        if (lll(mid) * mid >= n) r = mid;
         else l = mid + 1;
     }
-    return l;
+    std::cout << l << '\n';
 }

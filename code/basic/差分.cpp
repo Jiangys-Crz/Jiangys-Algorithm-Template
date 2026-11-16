@@ -1,30 +1,30 @@
+#include <iostream>
 #include <vector>
 
 using ll = long long;
 
-std::vector<ll> buildDifference(const std::vector<int>& a) {
-    int n = static_cast<int>(a.size());
-    std::vector<ll> diff(n + 2, 0);
+int main() {
+    int n, q;
+    if (!(std::cin >> n >> q)) return 0;
+    std::vector<ll> d(n + 2);
     ll prev = 0;
     for (int i = 1; i <= n; ++i) {
-        diff[i] = a[i - 1] - prev;
-        prev = a[i - 1];
+        ll x;
+        std::cin >> x;
+        d[i] = x - prev;
+        prev = x;
     }
-    return diff;
-}
 
-void addRange(std::vector<ll>& diff, int l, int r, ll delta) {
-    diff[l] += delta;
-    diff[r + 1] -= delta;
-}
+    while (q--) {
+        int l, r;
+        ll v;
+        std::cin >> l >> r >> v;
+        d[l] += v;
+        d[r + 1] -= v;
+    }
 
-std::vector<ll> restoreArray(const std::vector<ll>& diff) {
-    int n = static_cast<int>(diff.size()) - 2;
-    std::vector<ll> a(n);
-    ll sum = 0;
     for (int i = 1; i <= n; ++i) {
-        sum += diff[i];
-        a[i - 1] = sum;
+        d[i] += d[i - 1];
+        std::cout << d[i] << (i == n ? '\n' : ' ');
     }
-    return a;
 }

@@ -1,20 +1,27 @@
 #include <algorithm>
+#include <iostream>
 #include <limits>
 #include <utility>
 #include <vector>
 
-int maxDisjointIntervals(std::vector<std::pair<int, int>> intervals) {
-    std::sort(intervals.begin(), intervals.end(), [](const auto& a, const auto& b) {
-        return a.second < b.second;
+using ll = long long;
+
+int main() {
+    int n;
+    if (!(std::cin >> n)) return 0;
+    std::vector<std::pair<ll, ll>> a(n);
+    for (auto& [l, r] : a) std::cin >> l >> r;
+    std::sort(a.begin(), a.end(), [](const auto& x, const auto& y) {
+        return x.second < y.second;
     });
 
-    int count = 0;
-    int lastEnd = std::numeric_limits<int>::min();
-    for (auto [left, right] : intervals) {
-        if (left >= lastEnd) {
-            ++count;
-            lastEnd = right;
+    int ans = 0;
+    ll last = std::numeric_limits<ll>::min();
+    for (auto [l, r] : a) {
+        if (l >= last) {
+            ++ans;
+            last = r;
         }
     }
-    return count;
+    std::cout << ans << '\n';
 }

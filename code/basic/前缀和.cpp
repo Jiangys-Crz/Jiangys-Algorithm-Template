@@ -1,16 +1,21 @@
+#include <iostream>
 #include <vector>
 
 using ll = long long;
 
-std::vector<ll> prefixSums(const std::vector<int>& a) {
-    int n = static_cast<int>(a.size());
-    std::vector<ll> pre(n + 1, 0);
+int main() {
+    int n, q;
+    if (!(std::cin >> n >> q)) return 0;
+    std::vector<ll> pre(n + 1);
     for (int i = 1; i <= n; ++i) {
-        pre[i] = pre[i - 1] + a[i - 1];
+        ll x;
+        std::cin >> x;
+        pre[i] = pre[i - 1] + x;
     }
-    return pre;
-}
 
-ll prefixRangeSum(const std::vector<ll>& pre, int l, int r) {
-    return pre[r] - pre[l - 1];
+    while (q--) {
+        int l, r;
+        std::cin >> l >> r;
+        std::cout << pre[r] - pre[l - 1] << '\n';
+    }
 }

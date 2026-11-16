@@ -1,13 +1,16 @@
-using ll = long long;
-using ull = unsigned long long;
+#include <iostream>
 
-template<class Check>
-ll maxFeasible(ll l, ll r, Check check) {
+using ll = long long;
+using lll = __int128;
+
+int main() {
+    ll n;
+    if (!(std::cin >> n)) return 0;
+    ll l = 0, r = n;
     while (l < r) {
-        ull width = ull(r) - ull(l);
-        ll mid = r - static_cast<ll>(width / 2);
-        if (check(mid)) l = mid;
+        ll mid = r - (r - l) / 2;
+        if (lll(mid) * mid <= n) l = mid;
         else r = mid - 1;
     }
-    return l;
+    std::cout << l << '\n';
 }
