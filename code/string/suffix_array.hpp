@@ -7,16 +7,16 @@
 #define XCPC_STRING_SUFFIX_ARRAY_HPP
 
 struct SuffixArray {
-    std::vector<int> sa, rk, height;
+    vector<int> sa, rk, height;
 
-    explicit SuffixArray(std::string_view s)
+    explicit SuffixArray(string_view s)
         : sa(s.size()), rk(s.size()), height(s.size()) {
         int n = static_cast<int>(s.size());
         if (!n) return;
 
-        std::vector<int> ord(n), id(n), nxt(n), cnt(std::max(n, 256) + 1);
+        vector<int> ord(n), id(n), nxt(n), cnt(max(n, 256) + 1);
         auto sortByFirst = [&](int classes) {
-            std::fill(cnt.begin(), cnt.begin() + classes + 1, 0);
+            fill(cnt.begin(), cnt.begin() + classes + 1, 0);
             for (int x : ord) ++cnt[id[x]];
             for (int i = 1; i <= classes; ++i) cnt[i] += cnt[i - 1];
             for (int i = n - 1; i >= 0; --i) {
@@ -24,7 +24,7 @@ struct SuffixArray {
                 sa[--cnt[id[u]]] = u;
             }
         };
-        std::iota(ord.begin(), ord.end(), 0);
+        iota(ord.begin(), ord.end(), 0);
         for (int i = 0; i < n; ++i) id[i] = static_cast<unsigned char>(s[i]) + 1;
         int classes = 256;
         sortByFirst(classes);

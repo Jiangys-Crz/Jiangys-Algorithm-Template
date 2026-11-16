@@ -6,14 +6,14 @@
 
 using ll = long long;
 
-// In solve: 1-based adj[u] of (v, w), w >= 0, int n and sources.
-// dist[u] is the minimum distance from any source; inf means unreachable.
+// 邻接表 adj[u] 保存 (v, w)，边权非负。n 为顶点数，sources 为源点集合，编号从 1 开始。
+// dist[u] 为各源点到 u 的最短距离的最小值，inf 表示不可达。
 
-constexpr ll inf = std::numeric_limits<ll>::max() / 4;
-std::vector<ll> dist(n + 1, inf);
+constexpr ll inf = numeric_limits<ll>::max() / 4;
+vector<ll> dist(n + 1, inf);
 
-using State = std::pair<ll, int>;
-std::priority_queue<State, std::vector<State>, std::greater<>> pq;
+using State = pair<ll, int>;
+priority_queue<State, vector<State>, greater<>> pq;
 for (int s : sources) {
     if (dist[s] == 0) continue;
     dist[s] = 0;

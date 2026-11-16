@@ -9,9 +9,9 @@ struct Record {
     ll score, penalty;
 };
 
-// In solve: vector<Record> a. Sort descending score, then ascending penalty and id.
+// 先准备记录数组 a，按分数降序、罚时升序、编号升序排序。
 
-std::sort(a.begin(), a.end(), [](const Record& x, const Record& y) {
+sort(a.begin(), a.end(), [](const Record& x, const Record& y) {
     if (x.score != y.score) return x.score > y.score;
-    return std::tie(x.penalty, x.id) < std::tie(y.penalty, y.id);
+    return tie(x.penalty, x.id) < tie(y.penalty, y.id);
 });

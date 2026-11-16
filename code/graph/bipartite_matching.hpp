@@ -6,8 +6,8 @@
 
 struct BipartiteMatching {
     int n, m;
-    std::vector<std::vector<int>> adj;
-    std::vector<int> match, vis;
+    vector<vector<int>> adj;
+    vector<int> match, vis;
 
     BipartiteMatching(int n, int m)
         : n(n), m(m), adj(n + 1), match(m + 1), vis(m + 1) {}
@@ -17,8 +17,8 @@ struct BipartiteMatching {
     }
 
     int work() {
-        std::fill(match.begin(), match.end(), 0);
-        std::fill(vis.begin(), vis.end(), 0);
+        fill(match.begin(), match.end(), 0);
+        fill(vis.begin(), vis.end(), 0);
         int ans = 0;
         for (int u = 1; u <= n; ++u) ans += dfs(u, u);
         return ans;

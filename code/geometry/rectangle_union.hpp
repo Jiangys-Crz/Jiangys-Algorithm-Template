@@ -8,8 +8,8 @@
 template<class T>
 class CoveredLength {
 public:
-    explicit CoveredLength(std::vector<T> y)
-        : y(std::move(y)), n(static_cast<int>(this->y.size()) - 1),
+    explicit CoveredLength(vector<T> y)
+        : y(move(y)), n(static_cast<int>(this->y.size()) - 1),
           cnt(4 * n), len(4 * n) {}
 
     void modify(int l, int r, int delta) {
@@ -21,10 +21,10 @@ public:
     }
 
 private:
-    std::vector<T> y;
+    vector<T> y;
     int n;
-    std::vector<int> cnt;
-    std::vector<T> len;
+    vector<int> cnt;
+    vector<T> len;
 
     void pushup(int u, int l, int r) {
         if (cnt[u] > 0) len[u] = y[r] - y[l];
@@ -57,16 +57,16 @@ struct Rectangle {
 };
 
 template<class T>
-T rectangleUnionArea(const std::vector<Rectangle<T>>& rect) {
+T rectangleUnionArea(const vector<Rectangle<T>>& rect) {
     struct Event {
         T x, lo, hi;
         int delta;
     };
-    std::vector<Event> ev;
-    std::vector<T> y;
+    vector<Event> ev;
+    vector<T> y;
     for (auto [x1, y1, x2, y2] : rect) {
-        if (x2 < x1) std::swap(x1, x2);
-        if (y2 < y1) std::swap(y1, y2);
+        if (x2 < x1) swap(x1, x2);
+        if (y2 < y1) swap(y1, y2);
         if (x1 == x2 || y1 == y2) continue;
         ev.push_back({x1, y1, y2, 1});
         ev.push_back({x2, y1, y2, -1});
@@ -75,22 +75,22 @@ T rectangleUnionArea(const std::vector<Rectangle<T>>& rect) {
     }
     if (ev.empty()) return T{};
 
-    std::sort(y.begin(), y.end());
-    y.erase(std::unique(y.begin(), y.end()), y.end());
-    std::sort(ev.begin(), ev.end(), [](const Event& a, const Event& b) {
+    sort(y.begin(), y.end());
+    y.erase(unique(y.begin(), y.end()), y.end());
+    sort(ev.begin(), ev.end(), [](const Event& a, const Event& b) {
         return a.x < b.x;
     });
 
     CoveredLength<T> cover(y);
     T ans{}, last = ev.front().x;
-    for (std::size_t i = 0; i < ev.size(); ) {
+    for (size_t i = 0; i < ev.size(); ) {
         T x = ev[i].x;
         ans += (x - last) * cover.length();
         do {
             const auto& e = ev[i++];
-            int l = static_cast<int>(std::lower_bound(y.begin(), y.end(), e.lo) -
+            int l = static_cast<int>(lower_bound(y.begin(), y.end(), e.lo) -
                                      y.begin());
-            int r = static_cast<int>(std::lower_bound(y.begin(), y.end(), e.hi) -
+            int r = static_cast<int>(lower_bound(y.begin(), y.end(), e.hi) -
                                      y.begin());
             cover.modify(l, r, e.delta);
         } while (i < ev.size() && ev[i].x == x);

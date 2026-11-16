@@ -40,8 +40,8 @@ public:
         return ans;
     }
 
-    std::optional<ll> get_val_by_rank(int k) const {
-        if (k <= 0 || k > tr[root].siz) return std::nullopt;
+    optional<ll> get_val_by_rank(int k) const {
+        if (k <= 0 || k > tr[root].siz) return nullopt;
         int u = root;
         while (true) {
             int left = tr[tr[u].l].siz;
@@ -54,8 +54,8 @@ public:
         }
     }
 
-    std::optional<ll> get_prev(ll val) const {
-        std::optional<ll> res;
+    optional<ll> get_prev(ll val) const {
+        optional<ll> res;
         for (int u = root; u; ) {
             if (tr[u].val < val) {
                 res = tr[u].val;
@@ -67,8 +67,8 @@ public:
         return res;
     }
 
-    std::optional<ll> get_next(ll val) const {
-        std::optional<ll> res;
+    optional<ll> get_next(ll val) const {
+        optional<ll> res;
         for (int u = root; u; ) {
             if (tr[u].val > val) {
                 res = tr[u].val;
@@ -84,19 +84,19 @@ private:
     struct Node {
         int l = 0, r = 0, siz = 0;
         ll val = 0;
-        std::uint64_t key = 0;
+        uint64_t key = 0;
     };
 
-    std::vector<Node> tr{Node{}};
+    vector<Node> tr{Node{}};
     int root = 0;
-    std::mt19937_64 rnd{std::random_device{}()};
+    mt19937_64 rnd{random_device{}()};
 
     void pushup(int u) {
         tr[u].siz = tr[tr[u].l].siz + tr[tr[u].r].siz + 1;
     }
 
     template<class F>
-    std::pair<int, int> split(int u, const F& left) {
+    pair<int, int> split(int u, const F& left) {
         if (!u) return {0, 0};
         if (left(tr[u].val)) {
             auto [x, y] = split(tr[u].r, left);

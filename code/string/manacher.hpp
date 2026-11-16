@@ -7,12 +7,12 @@
 #define XCPC_STRING_MANACHER_HPP
 
 struct Manacher {
-    std::vector<int> odd, even;
+    vector<int> odd, even;
 
-    explicit Manacher(std::string_view s) : odd(s.size()), even(s.size()) {
+    explicit Manacher(string_view s) : odd(s.size()), even(s.size()) {
         int n = static_cast<int>(s.size());
         for (int i = 0, l = 0, r = -1; i < n; ++i) {
-            int k = i > r ? 1 : std::min(odd[l + (r - i)], r - i + 1);
+            int k = i > r ? 1 : min(odd[l + (r - i)], r - i + 1);
             while (k <= i && k < n - i && s[i - k] == s[i + k]) ++k;
             odd[i] = k;
             if (i + k - 1 > r) {
@@ -21,7 +21,7 @@ struct Manacher {
             }
         }
         for (int i = 0, l = 0, r = -1; i < n; ++i) {
-            int k = i > r ? 0 : std::min(even[l + (r - i) + 1], r - i + 1);
+            int k = i > r ? 0 : min(even[l + (r - i) + 1], r - i + 1);
             while (k < i && k < n - i && s[i - k - 1] == s[i + k]) ++k;
             even[i] = k;
             if (i + k - 1 > r) {
@@ -37,7 +37,7 @@ struct Manacher {
         return (r - l) % 2 ? odd[mid] >= k + 1 : even[mid] >= k;
     }
 
-    std::pair<int, int> longest() const {
+    pair<int, int> longest() const {
         int l = 0, r = 0;
         auto consider = [&](int x, int y) {
             if (y - x > r - l || (y - x == r - l && x < l)) {

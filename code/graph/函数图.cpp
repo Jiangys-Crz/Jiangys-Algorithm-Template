@@ -1,17 +1,17 @@
 #include <vector>
 
 struct FunctionalGraph {
-    std::vector<int> bel, entry, dist, cycleLen;
+    vector<int> bel, entry, dist, cycleLen;
 
-    explicit FunctionalGraph(const std::vector<int>& next)
+    explicit FunctionalGraph(const vector<int>& next)
         : bel(next.size()), entry(next.size()), dist(next.size()), cycleLen{0} {
         int n = static_cast<int>(next.size()) - 1;
-        std::vector<int> deg(n + 1), q;
+        vector<int> deg(n + 1), q;
         for (int u = 1; u <= n; ++u) ++deg[next[u]];
         for (int u = 1; u <= n; ++u) {
             if (!deg[u]) q.push_back(u);
         }
-        for (std::size_t i = 0; i < q.size(); ++i) {
+        for (size_t i = 0; i < q.size(); ++i) {
             int v = next[q[i]];
             if (--deg[v] == 0) q.push_back(v);
         }
@@ -28,7 +28,7 @@ struct FunctionalGraph {
             } while (v != u);
             cycleLen.push_back(len);
         }
-        for (std::size_t i = q.size(); i > 0; --i) {
+        for (size_t i = q.size(); i > 0; --i) {
             int u = q[i - 1], v = next[u];
             bel[u] = bel[v];
             entry[u] = entry[v];

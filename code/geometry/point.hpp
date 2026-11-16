@@ -71,7 +71,7 @@ constexpr T dist2(Point<T> a, Point<T> b) {
 
 template<class T>
 Real length(Point<T> p) {
-    return std::hypot(static_cast<Real>(p.x), static_cast<Real>(p.y));
+    return hypot(static_cast<Real>(p.x), static_cast<Real>(p.y));
 }
 
 template<class T>

@@ -3,7 +3,7 @@
 
 class XorBasis {
 public:
-    bool insert(std::uint64_t value) {
+    bool insert(uint64_t value) {
         for (int bit = 63; bit >= 0; --bit) {
             if (((value >> bit) & 1) == 0) {
                 continue;
@@ -17,7 +17,7 @@ public:
         return false;
     }
 
-    bool contains(std::uint64_t value) const {
+    bool contains(uint64_t value) const {
         for (int bit = 63; bit >= 0; --bit) {
             if (((value >> bit) & 1) == 0) {
                 continue;
@@ -30,10 +30,10 @@ public:
         return true;
     }
 
-    std::uint64_t maximum() const {
-        std::uint64_t answer = 0;
+    uint64_t maximum() const {
+        uint64_t answer = 0;
         for (int bit = 63; bit >= 0; --bit) {
-            const std::uint64_t candidate = answer ^ pivot_[bit];
+            const uint64_t candidate = answer ^ pivot_[bit];
             if (candidate > answer) {
                 answer = candidate;
             }
@@ -42,5 +42,5 @@ public:
     }
 
 private:
-    std::array<std::uint64_t, 64> pivot_{};
+    array<uint64_t, 64> pivot_{};
 };

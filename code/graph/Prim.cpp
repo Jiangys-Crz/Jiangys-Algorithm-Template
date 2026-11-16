@@ -15,7 +15,7 @@ __extension__ using lll = __int128;
 #ifndef XCPC_GRAPH_GRAPH_HPP
 #define XCPC_GRAPH_GRAPH_HPP
 
-inline constexpr ll graphInf = std::numeric_limits<ll>::max() / 4;
+inline constexpr ll graphInf = numeric_limits<ll>::max() / 4;
 
 struct Graph {
     struct Edge {
@@ -28,8 +28,8 @@ struct Graph {
 
     int n;
     bool directed;
-    std::vector<Edge> edges;
-    std::vector<std::vector<Arc>> adj;
+    vector<Edge> edges;
+    vector<vector<Arc>> adj;
 
     explicit Graph(int n, bool directed = true)
         : n(n), directed(directed), adj(n + 1) {}
@@ -50,16 +50,16 @@ struct Graph {
 
 struct MSTResult {
     ll weight = 0;
-    std::vector<int> edges;
+    vector<int> edges;
 };
 
 #endif
 
-std::optional<MSTResult> prim(const Graph& g, int s = 1) {
-    if (!g.n) return std::nullopt;
-    using State = std::tuple<ll, int, int>;
-    std::priority_queue<State, std::vector<State>, std::greater<>> pq;
-    std::vector<char> vis(g.n + 1);
+optional<MSTResult> prim(const Graph& g, int s = 1) {
+    if (!g.n) return nullopt;
+    using State = tuple<ll, int, int>;
+    priority_queue<State, vector<State>, greater<>> pq;
+    vector<char> vis(g.n + 1);
     MSTResult res;
     lll weight = 0;
     pq.push({0, -1, s});
@@ -76,7 +76,7 @@ std::optional<MSTResult> prim(const Graph& g, int s = 1) {
             if (!vis[v]) pq.push({g.edges[e].w, e, v});
         }
     }
-    if (static_cast<int>(res.edges.size()) != g.n - 1) return std::nullopt;
+    if (static_cast<int>(res.edges.size()) != g.n - 1) return nullopt;
     res.weight = static_cast<ll>(weight);
     return res;
 }

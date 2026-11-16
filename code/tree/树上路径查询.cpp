@@ -11,13 +11,13 @@ using ll = long long;
 template<class T>
 struct Fenwick {
     int n;
-    std::vector<T> f;
+    vector<T> f;
 
     explicit Fenwick(int n) : n(n), f(n + 1) {}
 
     void add(int x, T val) {
         assert(1 <= x && x <= n);
-        for (std::size_t i = x; i < f.size(); i += i & -i) f[i] += val;
+        for (size_t i = x; i < f.size(); i += i & -i) f[i] += val;
     }
 
     T query(int x) const {
@@ -50,8 +50,8 @@ struct Fenwick {
 
 struct Tree {
     int n, root = 0;
-    std::vector<std::vector<int>> adj;
-    std::vector<int> fa, dep, siz, dfn, id;
+    vector<vector<int>> adj;
+    vector<int> fa, dep, siz, dfn, id;
 
     explicit Tree(int n)
         : n(n), adj(n + 1), fa(n + 1), dep(n + 1),
@@ -65,7 +65,7 @@ struct Tree {
     void work(int rt = 1) {
         root = rt;
         fa[root] = dep[root] = 0;
-        std::vector<int> stk{root};
+        vector<int> stk{root};
         int cnt = 0;
         while (!stk.empty()) {
             int u = stk.back();
@@ -87,7 +87,7 @@ struct Tree {
         }
     }
 
-    std::pair<int, int> subtree(int u) const {
+    pair<int, int> subtree(int u) const {
         return {dfn[u], dfn[u] + siz[u] - 1};
     }
 
@@ -103,7 +103,7 @@ struct Tree {
 #define XCPC_TREE_HLD_HPP
 
 struct HLD : Tree {
-    std::vector<int> top, son;
+    vector<int> top, son;
 
     explicit HLD(int n) : Tree(n), top(n + 1), son(n + 1) {}
 
@@ -116,7 +116,7 @@ struct HLD : Tree {
             }
         }
 
-        std::vector<int> stk{root};
+        vector<int> stk{root};
         int cnt = 0;
         while (!stk.empty()) {
             int t = stk.back();
@@ -134,7 +134,7 @@ struct HLD : Tree {
 
     int lca(int u, int v) const {
         while (top[u] != top[v]) {
-            if (dep[top[u]] < dep[top[v]]) std::swap(u, v);
+            if (dep[top[u]] < dep[top[v]]) swap(u, v);
             u = fa[top[u]];
         }
         return dep[u] < dep[v] ? u : v;
@@ -143,11 +143,11 @@ struct HLD : Tree {
     template<class F>
     void for_path(int u, int v, F visit, bool edge = false) const {
         while (top[u] != top[v]) {
-            if (dep[top[u]] < dep[top[v]]) std::swap(u, v);
+            if (dep[top[u]] < dep[top[v]]) swap(u, v);
             visit(dfn[top[u]], dfn[u]);
             u = fa[top[u]];
         }
-        if (dep[u] > dep[v]) std::swap(u, v);
+        if (dep[u] > dep[v]) swap(u, v);
         int l = dfn[u] + edge, r = dfn[v];
         if (l <= r) visit(l, r);
     }
@@ -184,7 +184,7 @@ struct TreePathSum {
     const HLD& tr;
     RangeFenwick bit;
 
-    TreePathSum(const HLD& tr, const std::vector<ll>& a)
+    TreePathSum(const HLD& tr, const vector<ll>& a)
         : tr(tr), bit(tr.n) {
         for (int u = 1; u <= tr.n; ++u) {
             bit.modify(tr.dfn[u], tr.dfn[u], a[u]);

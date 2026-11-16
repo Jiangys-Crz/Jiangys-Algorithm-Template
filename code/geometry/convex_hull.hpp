@@ -73,7 +73,7 @@ constexpr T dist2(Point<T> a, Point<T> b) {
 
 template<class T>
 Real length(Point<T> p) {
-    return std::hypot(static_cast<Real>(p.x), static_cast<Real>(p.y));
+    return hypot(static_cast<Real>(p.x), static_cast<Real>(p.y));
 }
 
 template<class T>
@@ -121,7 +121,7 @@ private:
 
 namespace geometry_detail {
 template<class T>
-void hullPush(std::vector<Point<T>>& h, Point<T> p) {
+void hullPush(vector<Point<T>>& h, Point<T> p) {
     while (h.size() >= 2 && cross(h[h.size() - 2], h.back(), p) <= T{}) {
         h.pop_back();
     }
@@ -130,12 +130,12 @@ void hullPush(std::vector<Point<T>>& h, Point<T> p) {
 }
 
 template<class T>
-std::vector<Point<T>> convexHullAndrew(std::vector<Point<T>> p) {
-    std::sort(p.begin(), p.end());
-    p.erase(std::unique(p.begin(), p.end()), p.end());
+vector<Point<T>> convexHullAndrew(vector<Point<T>> p) {
+    sort(p.begin(), p.end());
+    p.erase(unique(p.begin(), p.end()), p.end());
     if (p.size() <= 1) return p;
 
-    std::vector<Point<T>> lo, hi;
+    vector<Point<T>> lo, hi;
     for (auto q : p) geometry_detail::hullPush(lo, q);
     for (auto it = p.rbegin(); it != p.rend(); ++it) {
         geometry_detail::hullPush(hi, *it);
@@ -147,19 +147,19 @@ std::vector<Point<T>> convexHullAndrew(std::vector<Point<T>> p) {
 }
 
 template<class T>
-std::vector<Point<T>> convexHullGraham(std::vector<Point<T>> p) {
+vector<Point<T>> convexHullGraham(vector<Point<T>> p) {
     if (p.size() <= 1) return p;
-    auto first = std::min_element(p.begin(), p.end(), [](auto a, auto b) {
+    auto first = min_element(p.begin(), p.end(), [](auto a, auto b) {
         return a.y < b.y || (a.y == b.y && a.x < b.x);
     });
-    std::iter_swap(p.begin(), first);
+    iter_swap(p.begin(), first);
     auto o = p.front();
-    std::sort(p.begin() + 1, p.end(), [o](auto a, auto b) {
+    sort(p.begin() + 1, p.end(), [o](auto a, auto b) {
         return PolarLess<T>{}(a - o, b - o);
     });
-    p.erase(std::unique(p.begin(), p.end()), p.end());
+    p.erase(unique(p.begin(), p.end()), p.end());
 
-    std::vector<Point<T>> h;
+    vector<Point<T>> h;
     for (auto q : p) geometry_detail::hullPush(h, q);
     return h;
 }

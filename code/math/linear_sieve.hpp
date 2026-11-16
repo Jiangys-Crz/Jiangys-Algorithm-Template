@@ -5,7 +5,7 @@
 #define XCPC_MATH_LINEAR_SIEVE_HPP
 
 struct LinearSieve {
-    std::vector<int> primes, lp, phi, mu;
+    vector<int> primes, lp, phi, mu;
 
     explicit LinearSieve(int n) : lp(n + 1), phi(n + 1), mu(n + 1) {
         if (n >= 1) phi[1] = mu[1] = 1;
@@ -31,8 +31,8 @@ struct LinearSieve {
         }
     }
 
-    std::vector<std::pair<int, int>> factor(int x) const {
-        std::vector<std::pair<int, int>> res;
+    vector<pair<int, int>> factor(int x) const {
+        vector<pair<int, int>> res;
         while (x > 1) {
             int p = lp[x], e = 0;
             do {

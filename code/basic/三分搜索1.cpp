@@ -1,8 +1,8 @@
-// In solve: long double l, r and eps (l <= r, r - l finite, eps > 0).
+// 先给定实数闭区间 [l, r] 和容差 eps，要求区间宽度有限且 eps > 0。
 auto calc = [&](long double x) -> long double {
-    // Return the objective value at x. To maximize, its shape on [l, r]
-    // must be strictly increasing, then strictly decreasing.
-    return /* TODO: objective value at x */;
+    // 返回候选位置 x 的目标函数值。
+    // 求最大值时，目标函数在 [l, r] 上先严格递增，后严格递减。
+    return /* 待填写：x 处的目标函数值 */;
 };
 
 while (r - l > eps) {

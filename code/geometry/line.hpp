@@ -73,7 +73,7 @@ constexpr T dist2(Point<T> a, Point<T> b) {
 
 template<class T>
 Real length(Point<T> p) {
-    return std::hypot(static_cast<Real>(p.x), static_cast<Real>(p.y));
+    return hypot(static_cast<Real>(p.x), static_cast<Real>(p.y));
 }
 
 template<class T>
@@ -108,8 +108,8 @@ inline int sign(Real x, Real tol = eps) {
 }
 
 inline int dcmp(Real a, Real b, Real absTol = eps, Real relTol = eps) {
-    Real scale = std::max(std::abs(a), std::abs(b));
-    return sign(a - b, std::max(absTol, relTol * scale));
+    Real scale = max(abs(a), abs(b));
+    return sign(a - b, max(absTol, relTol * scale));
 }
 
 #endif
@@ -118,11 +118,11 @@ inline int dcmp(Real a, Real b, Real absTol = eps, Real relTol = eps) {
 #define XCPC_GEOMETRY_LINE_HPP
 
 template<class T>
-std::optional<Real> pointLineDistance(Point<T> p, Line<T> l) {
+optional<Real> pointLineDistance(Point<T> p, Line<T> l) {
     auto d = static_cast<RealPoint>(l.b - l.a);
     Real len = length(d);
-    if (len == 0) return std::nullopt;
-    return std::abs(cross(d / len, static_cast<RealPoint>(p - l.a)));
+    if (len == 0) return nullopt;
+    return abs(cross(d / len, static_cast<RealPoint>(p - l.a)));
 }
 
 enum class LineRelation { point, parallel, coincident, degenerate };

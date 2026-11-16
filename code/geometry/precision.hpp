@@ -18,8 +18,8 @@ inline int sign(Real x, Real tol = eps) {
 }
 
 inline int dcmp(Real a, Real b, Real absTol = eps, Real relTol = eps) {
-    Real scale = std::max(std::abs(a), std::abs(b));
-    return sign(a - b, std::max(absTol, relTol * scale));
+    Real scale = max(abs(a), abs(b));
+    return sign(a - b, max(absTol, relTol * scale));
 }
 
 #endif

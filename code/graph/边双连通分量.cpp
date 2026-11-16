@@ -8,7 +8,7 @@ using ll = long long;
 #ifndef XCPC_GRAPH_GRAPH_HPP
 #define XCPC_GRAPH_GRAPH_HPP
 
-inline constexpr ll graphInf = std::numeric_limits<ll>::max() / 4;
+inline constexpr ll graphInf = numeric_limits<ll>::max() / 4;
 
 struct Graph {
     struct Edge {
@@ -21,8 +21,8 @@ struct Graph {
 
     int n;
     bool directed;
-    std::vector<Edge> edges;
-    std::vector<std::vector<Arc>> adj;
+    vector<Edge> edges;
+    vector<vector<Arc>> adj;
 
     explicit Graph(int n, bool directed = true)
         : n(n), directed(directed), adj(n + 1) {}
@@ -42,16 +42,16 @@ struct Graph {
 #define XCPC_GRAPH_UNDIRECTED_LOWLINK_HPP
 
 struct UndirectedLowlink {
-    std::vector<int> dfn, low;
-    std::vector<char> cut, bridge;
-    std::vector<std::vector<int>> blocks;
+    vector<int> dfn, low;
+    vector<char> cut, bridge;
+    vector<vector<int>> blocks;
 
     explicit UndirectedLowlink(const Graph& g)
         : dfn(g.n + 1), low(g.n + 1), cut(g.n + 1), bridge(g.edges.size()) {
         int timer = 0;
-        std::vector<int> fa(g.n + 1), pe(g.n + 1, -1), children(g.n + 1);
-        std::vector<int> call, stk, seen(g.n + 1, -1);
-        std::vector<std::size_t> next(g.n + 1);
+        vector<int> fa(g.n + 1), pe(g.n + 1, -1), children(g.n + 1);
+        vector<int> call, stk, seen(g.n + 1, -1);
+        vector<size_t> next(g.n + 1);
         auto popBlock = [&](int last) {
             int mark = static_cast<int>(blocks.size()), id;
             auto& block = blocks.emplace_back();
@@ -85,7 +85,7 @@ struct UndirectedLowlink {
                         stk.push_back(id);
                         call.push_back(v);
                     } else if (dfn[v] < dfn[u]) {
-                        low[u] = std::min(low[u], dfn[v]);
+                        low[u] = min(low[u], dfn[v]);
                         stk.push_back(id);
                     }
                     continue;
@@ -96,7 +96,7 @@ struct UndirectedLowlink {
                     cut[u] = children[u] > 1;
                     continue;
                 }
-                low[p] = std::min(low[p], low[u]);
+                low[p] = min(low[p], low[u]);
                 if (low[u] > dfn[p]) bridge[pe[u]] = true;
                 if (low[u] >= dfn[p]) {
                     if (fa[p]) cut[p] = true;
@@ -109,9 +109,9 @@ struct UndirectedLowlink {
 
 #endif
 
-std::vector<int> edgeBiconnectedComponents(const Graph& g,
+vector<int> edgeBiconnectedComponents(const Graph& g,
                                           const UndirectedLowlink& lowlink) {
-    std::vector<int> bel(g.n + 1), stk;
+    vector<int> bel(g.n + 1), stk;
     int cnt = 0;
     for (int s = 1; s <= g.n; ++s) {
         if (bel[s]) continue;

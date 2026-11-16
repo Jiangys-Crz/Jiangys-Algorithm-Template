@@ -8,13 +8,13 @@
 template<class T>
 struct Fenwick {
     int n;
-    std::vector<T> f;
+    vector<T> f;
 
     explicit Fenwick(int n) : n(n), f(n + 1) {}
 
     void add(int x, T val) {
         assert(1 <= x && x <= n);
-        for (std::size_t i = x; i < f.size(); i += i & -i) f[i] += val;
+        for (size_t i = x; i < f.size(); i += i & -i) f[i] += val;
     }
 
     T query(int x) const {

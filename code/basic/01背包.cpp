@@ -3,12 +3,12 @@
 
 using ll = long long;
 
-// In solve: int V is the capacity; items contains pairs (weight, value).
-// All weights are positive. dp[V] is the maximum value within capacity V.
+// V 为容量，items 保存各物品的重量和价值。
+// 重量均为正整数。dp[V] 为总重量不超过 V 时的最大价值。
 
-std::vector<ll> dp(V + 1);
+vector<ll> dp(V + 1);
 for (auto [w, v] : items) {
     for (int c = V; c >= w; --c) {
-        dp[c] = std::max(dp[c], dp[c - w] + v);
+        dp[c] = max(dp[c], dp[c - w] + v);
     }
 }

@@ -36,7 +36,7 @@ struct AlnumAlphabet {
 template<class Alphabet = LowercaseAlphabet>
 class ACAutomaton {
 public:
-    int insert(std::string_view s) {
+    int insert(string_view s) {
         assert(!built);
         int u = 0;
         for (unsigned char c : s) {
@@ -55,7 +55,7 @@ public:
         for (int v : tr[0].ch) {
             if (v) order.push_back(v);
         }
-        for (std::size_t i = 0; i < order.size(); ++i) {
+        for (size_t i = 0; i < order.size(); ++i) {
             int u = order[i], p = tr[u].fail;
             for (int x = 0; x < Alphabet::size; ++x) {
                 int& v = tr[u].ch[x];
@@ -70,9 +70,9 @@ public:
         built = true;
     }
 
-    std::vector<ll> query(std::string_view s) const {
+    vector<ll> query(string_view s) const {
         assert(built);
-        std::vector<ll> cnt(tr.size());
+        vector<ll> cnt(tr.size());
         int u = 0;
         cnt[0] = 1;
         for (unsigned char c : s) {
@@ -88,13 +88,13 @@ public:
 
 private:
     struct Node {
-        std::array<int, Alphabet::size> ch{};
+        array<int, Alphabet::size> ch{};
         int fail = 0;
     };
 
     bool built = false;
-    std::vector<Node> tr{Node{}};
-    std::vector<int> order;
+    vector<Node> tr{Node{}};
+    vector<int> order;
 
     static int digit(unsigned char c) {
         int x = Alphabet::id(c);

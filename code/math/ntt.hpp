@@ -10,17 +10,17 @@ using ull = unsigned long long;
 #define XCPC_MATH_BIT_REVERSE_HPP
 
 template<class T>
-void bitReverse(std::vector<T>& a) {
+void bitReverse(vector<T>& a) {
     auto n = a.size();
     assert(n && !(n & (n - 1)));
-    for (std::size_t i = 1, j = 0; i < n; ++i) {
-        std::size_t bit = n / 2;
+    for (size_t i = 1, j = 0; i < n; ++i) {
+        size_t bit = n / 2;
         while (j & bit) {
             j ^= bit;
             bit >>= 1;
         }
         j ^= bit;
-        if (i < j) std::swap(a[i], a[j]);
+        if (i < j) swap(a[i], a[j]);
     }
 }
 
@@ -97,16 +97,16 @@ private:
 struct NTT {
     using Z = MInt<998244353>;
 
-    static void dft(std::vector<Z>& a, bool inverse = false) {
+    static void dft(vector<Z>& a, bool inverse = false) {
         auto n = a.size();
         assert(n && (Z::mod() - 1) % n == 0);
         bitReverse(a);
-        for (std::size_t len = 2; len <= n; len *= 2) {
+        for (size_t len = 2; len <= n; len *= 2) {
             Z wn = power(Z{3}, (Z::mod() - 1) / len);
             if (inverse) wn = wn.inv();
-            for (std::size_t i = 0; i < n; i += len) {
+            for (size_t i = 0; i < n; i += len) {
                 Z w = 1;
-                for (std::size_t j = 0; j < len / 2; ++j) {
+                for (size_t j = 0; j < len / 2; ++j) {
                     Z x = a[i + j], y = a[i + j + len / 2] * w;
                     a[i + j] = x + y;
                     a[i + j + len / 2] = x - y;
@@ -120,16 +120,16 @@ struct NTT {
         }
     }
 
-    static std::vector<Z> convolution(std::vector<Z> a, std::vector<Z> b) {
+    static vector<Z> convolution(vector<Z> a, vector<Z> b) {
         if (a.empty() || b.empty()) return {};
-        std::size_t need = a.size() + b.size() - 1, n = 1;
-        assert(need <= (std::size_t{1} << 23));
+        size_t need = a.size() + b.size() - 1, n = 1;
+        assert(need <= (size_t{1} << 23));
         while (n < need) n *= 2;
         a.resize(n);
         b.resize(n);
         dft(a);
         dft(b);
-        for (std::size_t i = 0; i < n; ++i) a[i] *= b[i];
+        for (size_t i = 0; i < n; ++i) a[i] *= b[i];
         dft(a, true);
         a.resize(need);
         return a;

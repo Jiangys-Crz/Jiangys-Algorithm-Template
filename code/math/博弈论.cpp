@@ -4,7 +4,7 @@
 
 using ull = unsigned long long;
 
-// In solve: heaps contains the Nim heap sizes.
+// heaps 存放各石子堆的大小。
 ull x = 0;
 for (ull h : heaps) x ^= h;
 int heap = -1;
@@ -19,10 +19,10 @@ if (x) {
     }
 }
 
-// For DAG games: adj is 0-based, order is a topological order.
-std::size_t maxDegree = 0;
-for (const auto& edges : adj) maxDegree = std::max(maxDegree, edges.size());
-std::vector<int> seen(maxDegree + 1, -1), sg(adj.size());
+// 有向无环图上的博弈使用邻接表 adj 和拓扑序 order，编号从 0 开始。
+size_t maxDegree = 0;
+for (const auto& edges : adj) maxDegree = max(maxDegree, edges.size());
+vector<int> seen(maxDegree + 1, -1), sg(adj.size());
 for (auto it = order.rbegin(); it != order.rend(); ++it) {
     int u = *it;
     for (int v : adj[u]) seen[sg[v]] = u;

@@ -12,7 +12,7 @@ using ll = long long;
 #ifndef XCPC_GRAPH_GRAPH_HPP
 #define XCPC_GRAPH_GRAPH_HPP
 
-inline constexpr ll graphInf = std::numeric_limits<ll>::max() / 4;
+inline constexpr ll graphInf = numeric_limits<ll>::max() / 4;
 
 struct Graph {
     struct Edge {
@@ -25,8 +25,8 @@ struct Graph {
 
     int n;
     bool directed;
-    std::vector<Edge> edges;
-    std::vector<std::vector<Arc>> adj;
+    vector<Edge> edges;
+    vector<vector<Arc>> adj;
 
     explicit Graph(int n, bool directed = true)
         : n(n), directed(directed), adj(n + 1) {}
@@ -45,11 +45,11 @@ struct Graph {
 #ifndef XCPC_GRAPH_DIJKSTRA_HPP
 #define XCPC_GRAPH_DIJKSTRA_HPP
 
-inline std::vector<ll> dijkstra(const Graph& g,
-                                 const std::vector<int>& sources) {
-    using State = std::pair<ll, int>;
-    std::priority_queue<State, std::vector<State>, std::greater<>> pq;
-    std::vector<ll> dist(g.n + 1, graphInf);
+inline vector<ll> dijkstra(const Graph& g,
+                                 const vector<int>& sources) {
+    using State = pair<ll, int>;
+    priority_queue<State, vector<State>, greater<>> pq;
+    vector<ll> dist(g.n + 1, graphInf);
     for (int s : sources) {
         if (dist[s] == 0) continue;
         dist[s] = 0;
@@ -71,18 +71,18 @@ inline std::vector<ll> dijkstra(const Graph& g,
     return dist;
 }
 
-inline std::vector<ll> dijkstra(const Graph& g, int s) {
-    return dijkstra(g, std::vector<int>{s});
+inline vector<ll> dijkstra(const Graph& g, int s) {
+    return dijkstra(g, vector<int>{s});
 }
 
 #endif
 
-std::vector<int> countShortestPaths(const Graph& g, int s) {
+vector<int> countShortestPaths(const Graph& g, int s) {
     constexpr int mod = 1000000007;
     auto dist = dijkstra(g, s);
-    std::vector<int> ord(g.n), ways(g.n + 1);
-    std::iota(ord.begin(), ord.end(), 1);
-    std::sort(ord.begin(), ord.end(), [&](int u, int v) {
+    vector<int> ord(g.n), ways(g.n + 1);
+    iota(ord.begin(), ord.end(), 1);
+    sort(ord.begin(), ord.end(), [&](int u, int v) {
         return dist[u] < dist[v];
     });
     ways[s] = 1;

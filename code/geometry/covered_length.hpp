@@ -7,8 +7,8 @@
 template<class T>
 class CoveredLength {
 public:
-    explicit CoveredLength(std::vector<T> y)
-        : y(std::move(y)), n(static_cast<int>(this->y.size()) - 1),
+    explicit CoveredLength(vector<T> y)
+        : y(move(y)), n(static_cast<int>(this->y.size()) - 1),
           cnt(4 * n), len(4 * n) {}
 
     void modify(int l, int r, int delta) {
@@ -20,10 +20,10 @@ public:
     }
 
 private:
-    std::vector<T> y;
+    vector<T> y;
     int n;
-    std::vector<int> cnt;
-    std::vector<T> len;
+    vector<int> cnt;
+    vector<T> len;
 
     void pushup(int u, int l, int r) {
         if (cnt[u] > 0) len[u] = y[r] - y[l];

@@ -1,15 +1,15 @@
 #include <cstddef>
 #include <vector>
 
-// In solve: 1-based undirected adjacency list adj with n vertices.
+// adj 为 n 个顶点的无向图邻接表，编号从 1 开始。
 
-std::vector<int> color(n + 1, -1), q;
+vector<int> color(n + 1, -1), q;
 bool bipartite = true;
 for (int s = 1; s <= n && bipartite; ++s) {
     if (color[s] != -1) continue;
     color[s] = 0;
     q.assign(1, s);
-    for (std::size_t i = 0; i < q.size() && bipartite; ++i) {
+    for (size_t i = 0; i < q.size() && bipartite; ++i) {
         int u = q[i];
         for (int v : adj[u]) {
             if (color[v] == color[u]) {

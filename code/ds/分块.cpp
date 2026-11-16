@@ -7,17 +7,17 @@ using ll = long long;
 
 class RangeBlocks {
 public:
-    explicit RangeBlocks(std::vector<ll> a)
+    explicit RangeBlocks(vector<ll> a)
         : n(static_cast<int>(a.size()) - 1),
-          len(std::max(1, static_cast<int>(std::sqrt(n)))),
-          a(std::move(a)), sum((n - 1) / len + 1), tag(sum.size()) {
+          len(max(1, static_cast<int>(sqrt(n)))),
+          a(move(a)), sum((n - 1) / len + 1), tag(sum.size()) {
         for (int i = 1; i <= n; ++i) sum[bel(i)] += this->a[i];
     }
 
     void modify(int l, int r, ll val) {
         for (int b = bel(l); b <= bel(r); ++b) {
             auto [lo, hi] = bounds(b);
-            int x = std::max(lo, l), y = std::min(hi, r);
+            int x = max(lo, l), y = min(hi, r);
             if (x == lo && y == hi) {
                 tag[b] += val;
             } else {
@@ -31,7 +31,7 @@ public:
         ll ans = 0;
         for (int b = bel(l); b <= bel(r); ++b) {
             auto [lo, hi] = bounds(b);
-            int x = std::max(lo, l), y = std::min(hi, r);
+            int x = max(lo, l), y = min(hi, r);
             if (x == lo && y == hi) ans += sum[b];
             else for (int i = x; i <= y; ++i) ans += a[i];
             ans += (y - x + 1) * tag[b];
@@ -41,14 +41,14 @@ public:
 
 private:
     int n, len;
-    std::vector<ll> a, sum, tag;
+    vector<ll> a, sum, tag;
 
     int bel(int i) const {
         return (i - 1) / len;
     }
 
-    std::pair<int, int> bounds(int b) const {
+    pair<int, int> bounds(int b) const {
         int l = b * len + 1;
-        return {l, l + std::min(n - l, len - 1)};
+        return {l, l + min(n - l, len - 1)};
     }
 };

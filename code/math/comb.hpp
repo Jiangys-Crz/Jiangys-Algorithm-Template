@@ -76,7 +76,7 @@ private:
 template<class Z>
 struct Comb {
     int n = 0;
-    std::vector<Z> _fac{1}, _invfac{1};
+    vector<Z> _fac{1}, _invfac{1};
 
     explicit Comb(int m = 0) { init(m); }
 

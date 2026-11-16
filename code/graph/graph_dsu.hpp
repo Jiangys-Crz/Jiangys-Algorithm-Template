@@ -6,10 +6,10 @@
 #define XCPC_GRAPH_GRAPH_DSU_HPP
 
 struct GraphDSU {
-    std::vector<int> fa, siz;
+    vector<int> fa, siz;
 
     explicit GraphDSU(int n) : fa(n + 1), siz(n + 1, 1) {
-        std::iota(fa.begin(), fa.end(), 0);
+        iota(fa.begin(), fa.end(), 0);
     }
 
     int find(int u) {
@@ -24,7 +24,7 @@ struct GraphDSU {
         u = find(u);
         v = find(v);
         if (u == v) return false;
-        if (siz[u] < siz[v]) std::swap(u, v);
+        if (siz[u] < siz[v]) swap(u, v);
         fa[v] = u;
         siz[u] += siz[v];
         return true;

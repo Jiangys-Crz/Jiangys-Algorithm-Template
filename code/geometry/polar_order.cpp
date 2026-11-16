@@ -2,11 +2,11 @@
 
 using ll = long long;
 
-// In solve: vector<Point<ll>> points and origin o. Use the Point template.
+// 先准备点集 points 和极点 o，点类型采用 Point<ll>。
 auto half = [](Point<ll> p) {
     return p.y > 0 || (p.y == 0 && p.x > 0) ? 0 : 1;
 };
-std::sort(points.begin(), points.end(), [&](Point<ll> a, Point<ll> b) {
+sort(points.begin(), points.end(), [&](Point<ll> a, Point<ll> b) {
     a = a - o;
     b = b - o;
     bool za = a == Point<ll>{}, zb = b == Point<ll>{};

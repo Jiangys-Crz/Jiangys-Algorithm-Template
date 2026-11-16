@@ -31,7 +31,7 @@ struct Score {
         return lhs += rhs;
     }
 
-    friend std::ostream& operator<<(std::ostream& out, const Score& score) {
+    friend ostream& operator<<(ostream& out, const Score& score) {
         return out << score.points << ' ' << score.penalty;
     }
 };

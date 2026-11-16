@@ -9,7 +9,7 @@ using ll = long long;
 #ifndef XCPC_GRAPH_GRAPH_HPP
 #define XCPC_GRAPH_GRAPH_HPP
 
-inline constexpr ll graphInf = std::numeric_limits<ll>::max() / 4;
+inline constexpr ll graphInf = numeric_limits<ll>::max() / 4;
 
 struct Graph {
     struct Edge {
@@ -22,8 +22,8 @@ struct Graph {
 
     int n;
     bool directed;
-    std::vector<Edge> edges;
-    std::vector<std::vector<Arc>> adj;
+    vector<Edge> edges;
+    vector<vector<Arc>> adj;
 
     explicit Graph(int n, bool directed = true)
         : n(n), directed(directed), adj(n + 1) {}
@@ -43,7 +43,7 @@ struct Graph {
 #define XCPC_GRAPH_PATH_MAX_HPP
 
 struct MaxTwo {
-    std::optional<ll> first, second;
+    optional<ll> first, second;
 
     void add(ll w) {
         if (!first || w > *first) {
@@ -61,17 +61,17 @@ struct MaxTwo {
 };
 
 struct TreePathMax {
-    std::vector<int> dep;
-    std::vector<std::vector<int>> up;
-    std::vector<std::vector<MaxTwo>> mx;
+    vector<int> dep;
+    vector<vector<int>> up;
+    vector<vector<MaxTwo>> mx;
 
     explicit TreePathMax(const Graph& tr, int root = 1) : dep(tr.n + 1) {
         int lg = 1;
         while ((1LL << lg) <= tr.n) ++lg;
-        up.assign(lg, std::vector<int>(tr.n + 1));
-        mx.assign(lg, std::vector<MaxTwo>(tr.n + 1));
-        std::vector<int> order{root};
-        for (std::size_t i = 0; i < order.size(); ++i) {
+        up.assign(lg, vector<int>(tr.n + 1));
+        mx.assign(lg, vector<MaxTwo>(tr.n + 1));
+        vector<int> order{root};
+        for (size_t i = 0; i < order.size(); ++i) {
             int u = order[i];
             for (auto [v, id] : tr.adj[u]) {
                 if (v == up[0][u]) continue;
@@ -93,7 +93,7 @@ struct TreePathMax {
 
     MaxTwo query(int u, int v) const {
         MaxTwo res;
-        if (dep[u] < dep[v]) std::swap(u, v);
+        if (dep[u] < dep[v]) swap(u, v);
         int delta = dep[u] - dep[v];
         for (int j = 0; delta; ++j, delta >>= 1) {
             if (!(delta & 1)) continue;

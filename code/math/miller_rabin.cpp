@@ -16,10 +16,10 @@ constexpr ull gcd(ull a, ull b) {
     return a;
 }
 
-inline std::optional<ull> lcmChecked(ull a, ull b) {
+inline optional<ull> lcmChecked(ull a, ull b) {
     if (!a || !b) return 0;
     a /= gcd(a, b);
-    if (a > std::numeric_limits<ull>::max() / b) return std::nullopt;
+    if (a > numeric_limits<ull>::max() / b) return nullopt;
     return a * b;
 }
 
@@ -44,7 +44,7 @@ constexpr ll safeMod(ll x, ll m) {
     return r < 0 ? r + m : r;
 }
 
-// a and b are reduced residues modulo m.
+// a 和 b 已规约至 [0, m)。
 constexpr ull addMod(ull a, ull b, ull m) {
     return a >= m - b ? a - (m - b) : a + b;
 }
@@ -73,9 +73,9 @@ constexpr ull powMod(ull a, ull b, ull m) {
     return res;
 }
 
-inline std::optional<ll> invMod(ll a, ll m) {
+inline optional<ll> invMod(ll a, ll m) {
     ll x, y;
-    if (exgcd(safeMod(a, m), m, x, y) != 1) return std::nullopt;
+    if (exgcd(safeMod(a, m), m, x, y) != 1) return nullopt;
     return safeMod(x, m);
 }
 

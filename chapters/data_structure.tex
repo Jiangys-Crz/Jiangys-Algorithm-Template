@@ -7,48 +7,22 @@
 
 \subsection{栈}
 
-栈遵循后进先出。括号匹配时，左括号入栈，右括号须与栈顶配对并弹出栈顶。
-\texttt{matched} 表示圆括号、方括号和花括号组成的序列是否匹配。空串合法。
-
-\cppfile{code/ds/栈.cpp}
-
-\paragraph{复杂度}
-对长度为 $n$ 的括号串，时间和额外空间均为 $O(n)$。
+栈遵循后进先出。用 \texttt{push} 压入元素，\texttt{top} 读取栈顶，\texttt{pop} 弹出栈顶。括号匹配、表达式求值及撤销操作都可用栈保存尚未处理的状态。读取和弹出前须确认栈非空。
 
 \subsection{队列}
 
-队列遵循先进先出。以下示例将编号 $1$ 至 $n$ 的牌依次入队，每轮丢弃队首，再将新的队首移至队尾。
-$n\ge1$。\texttt{last} 保存最后一张牌的编号。
-
-\cppfile{code/ds/队列.cpp}
-
-\paragraph{复杂度}
-总时间和额外空间均为 $O(n)$。
+队列遵循先进先出。用 \texttt{push} 在队尾加入元素，\texttt{front} 读取队首，\texttt{pop} 移除队首。广度优先搜索利用队列维持逐层访问顺序。
 
 \subsection{双端队列}
 
-双端队列支持在首尾插入和删除元素。
-
-\begin{itemize}
-    \item \texttt{push\_front}、\texttt{push\_back} 分别从首尾插入，删除用对应的 \texttt{pop} 操作。
-    \item 第三章的 0-1 BFS 同时利用两端入队，零权松弛到队首，一权松弛到队尾。
-\end{itemize}
-
-\texttt{ops} 保存端点标志和数值，标志为真时插入首端，否则插入尾端。
-
-\cppfile{code/ds/双端队列.cpp}
-
-\paragraph{复杂度}
-端点操作耗时 $O(1)$。执行 $n$ 条插入的时间和空间均为 $O(n)$。
-
-中间位置的插入和删除最坏耗时 $O(n)$，并可能使迭代器失效。
+双端队列支持在首尾插入及删除元素。常用接口为 \texttt{push\_front}、\texttt{push\_back}、\texttt{pop\_front} 和 \texttt{pop\_back}。两端的单次操作耗时为 $O(1)$。
 
 \subsection{优先队列（堆）}
 
 优先队列支持插入元素和取出堆顶。标准库默认采用大根堆。
 
 \begin{itemize}
-    \item 用 \texttt{std::greater<>} 可以得到小根堆。读取堆顶后再弹出。
+    \item 用 \texttt{greater<>} 可以得到小根堆。读取堆顶后再弹出。
     \item 合并非递减序列时，堆保存各序列的首个未输出元素。元素出堆后，将其后继入堆。
 \end{itemize}
 
@@ -61,22 +35,9 @@ $n\ge1$。\texttt{last} 保存最后一张牌的编号。
 
 \subsection{哈希表}
 
-哈希表支持按键查找及频次统计。结合前缀和可统计和为指定值的连续子数组。
+哈希表支持按键查找、去重和频次统计。用 \texttt{find} 查找时保持映射不变，下标运算符会在键缺失时插入该键并对映射值进行值初始化。
 
-\begin{itemize}
-    \item 令当前前缀和为 $S$，目标为 $x$，此前每次出现 $S-x$ 都对应一段合法子数组。
-    \item 查询前缀频次后再加入当前前缀，并预先加入一次空前缀。
-    \item \texttt{find} 仅查找。\texttt{operator[]} 在键缺失时插入该键，并对映射值进行值初始化。
-\end{itemize}
-
-\texttt{ans} 为元素和等于目标值的子数组数。前缀和、频次及答案须能用 \texttt{ll} 表示。
-
-\cppfile{code/ds/哈希表.cpp}
-
-\paragraph{复杂度}
-通常耗时 $O(n)$，额外空间为 $O(n)$。若哈希碰撞集中，最坏时间可达 $O(n^2)$。
-
-预留容量可减少重哈希。有序映射的单次查找为 $O(\log(n+1))$。
+通常增删查均为平均 $O(1)$，集中碰撞时单次可达 $O(n)$。可通过 \texttt{reserve} 预留容量，减少重哈希。
 
 \subsection{有序集合}
 
@@ -214,7 +175,7 @@ $n\ge1$。\texttt{last} 保存最后一张牌的编号。
 
 \section{区间数据结构}
 
-\subsection{ST 表}
+\subsection{ST 表（RMQ）}
 
 ST 表预处理所有长度为二的幂的区间。若合并操作满足结合律和幂等性，查询可用两个允许重叠的区间覆盖。
 
@@ -227,6 +188,13 @@ ST 表预处理所有长度为二的幂的区间。若合并操作满足结合�
 输入为从 $1$ 开始的非空数组。用 \texttt{SparseTable st(a, op)} 构造，\texttt{op} 需可在常量上下文调用，元素类型须可默认构造。
 
 \cppfile{code/ds/sparse_table.hpp}
+
+静态区间最小值查询可用较小值作为合并运算。数组 $a$ 及查询端点 $l,r$ 均从 $1$ 编号。
+
+\begin{cppcode}
+SparseTable rmq(a, [](int x, int y) { return min(x, y); });
+int ans = rmq.query(l, r);
+\end{cppcode}
 
 \paragraph{复杂度}
 合并耗时为常数时，预处理时间和空间为 $O(n\log n)$，查询时间为 $O(1)$。
@@ -488,7 +456,7 @@ Treap 按键保持二叉搜索树顺序，按随机优先级保持堆序。旋�
 \paragraph{复杂度}
 设位集长度为 $S$、机器字宽为 $w$。按字实现时，$n$ 次转移需 $O(n\lceil S/w\rceil)$ 字操作，位集占 $O(\lceil S/w\rceil)$ 个机器字。
 
-\texttt{std::bitset} 的长度在编译期指定。移位丢弃超出范围的位，负权输入需要另行设计状态。
+\texttt{bitset} 的长度在编译期指定。移位丢弃超出范围的位，负权输入需要另行设计状态。
 
 \paragraph{参考资料}
 \href{https://oi-wiki.org/ds/seg/}{OI Wiki：线段树基础}和

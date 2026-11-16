@@ -72,7 +72,7 @@ constexpr T dist2(Point<T> a, Point<T> b) {
 
 template<class T>
 Real length(Point<T> p) {
-    return std::hypot(static_cast<Real>(p.x), static_cast<Real>(p.y));
+    return hypot(static_cast<Real>(p.x), static_cast<Real>(p.y));
 }
 
 template<class T>
@@ -107,8 +107,8 @@ inline int sign(Real x, Real tol = eps) {
 }
 
 inline int dcmp(Real a, Real b, Real absTol = eps, Real relTol = eps) {
-    Real scale = std::max(std::abs(a), std::abs(b));
-    return sign(a - b, std::max(absTol, relTol * scale));
+    Real scale = max(abs(a), abs(b));
+    return sign(a - b, max(absTol, relTol * scale));
 }
 
 #endif
@@ -119,7 +119,7 @@ inline int dcmp(Real a, Real b, Real absTol = eps, Real relTol = eps) {
 template<class T>
 bool pointOnSegment(Point<T> p, Line<T> s) {
     return cross(s.a, s.b, p) == T{} &&
-           !(p < std::min(s.a, s.b)) && !(std::max(s.a, s.b) < p);
+           !(p < min(s.a, s.b)) && !(max(s.a, s.b) < p);
 }
 
 enum class SegmentRelation { disjoint, proper, touch, overlap };
@@ -135,8 +135,8 @@ SegmentHit<T> segmentIntersection(Line<T> s, Line<T> t) {
     int a = sgn(cross(s.a, s.b, t.a)), b = sgn(cross(s.a, s.b, t.b));
     int c = sgn(cross(t.a, t.b, s.a)), d = sgn(cross(t.a, t.b, s.b));
     if (!a && !b && !c && !d) {
-        auto l = std::max(std::min(s.a, s.b), std::min(t.a, t.b));
-        auto r = std::min(std::max(s.a, s.b), std::max(t.a, t.b));
+        auto l = max(min(s.a, s.b), min(t.a, t.b));
+        auto r = min(max(s.a, s.b), max(t.a, t.b));
         if (r < l) return {SegmentRelation::disjoint};
         return {l == r ? SegmentRelation::touch : SegmentRelation::overlap, l, r};
     }

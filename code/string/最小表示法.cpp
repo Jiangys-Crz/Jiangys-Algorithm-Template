@@ -2,10 +2,10 @@
 #include <cstddef>
 #include <string>
 
-// In solve: string or string_view s. pos is the first minimum rotation index.
+// 先准备字符串 s。pos 为字典序最小的轮转中最靠前的起点。
 
 auto n = s.size();
-std::size_t i = 0, j = 1, k = 0;
+size_t i = 0, j = 1, k = 0;
 while (i < n && j < n && k < n) {
     unsigned char a = s[(i + k) % n], b = s[(j + k) % n];
     if (a == b) {
@@ -17,4 +17,4 @@ while (i < n && j < n && k < n) {
         k = 0;
     }
 }
-auto pos = std::min(i, j);
+auto pos = min(i, j);

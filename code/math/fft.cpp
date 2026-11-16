@@ -10,34 +10,34 @@ using ll = long long;
 #define XCPC_MATH_BIT_REVERSE_HPP
 
 template<class T>
-void bitReverse(std::vector<T>& a) {
+void bitReverse(vector<T>& a) {
     auto n = a.size();
     assert(n && !(n & (n - 1)));
-    for (std::size_t i = 1, j = 0; i < n; ++i) {
-        std::size_t bit = n / 2;
+    for (size_t i = 1, j = 0; i < n; ++i) {
+        size_t bit = n / 2;
         while (j & bit) {
             j ^= bit;
             bit >>= 1;
         }
         j ^= bit;
-        if (i < j) std::swap(a[i], a[j]);
+        if (i < j) swap(a[i], a[j]);
     }
 }
 
 #endif
 
-using Complex = std::complex<long double>;
+using Complex = complex<long double>;
 
-void fft(std::vector<Complex>& a, bool inverse = false) {
+void fft(vector<Complex>& a, bool inverse = false) {
     bitReverse(a);
-    const long double pi = std::acos(-1.0L);
+    const long double pi = acos(-1.0L);
     auto n = a.size();
-    for (std::size_t len = 2; len <= n; len *= 2) {
+    for (size_t len = 2; len <= n; len *= 2) {
         long double angle = (inverse ? -2.0L : 2.0L) * pi / len;
-        Complex wn = std::polar(1.0L, angle);
-        for (std::size_t i = 0; i < n; i += len) {
+        Complex wn = polar(1.0L, angle);
+        for (size_t i = 0; i < n; i += len) {
             Complex w = 1;
-            for (std::size_t j = 0; j < len / 2; ++j) {
+            for (size_t j = 0; j < len / 2; ++j) {
                 auto x = a[i + j], y = a[i + j + len / 2] * w;
                 a[i + j] = x + y;
                 a[i + j + len / 2] = x - y;
@@ -50,19 +50,19 @@ void fft(std::vector<Complex>& a, bool inverse = false) {
     }
 }
 
-std::vector<ll> convolutionFFT(const std::vector<ll>& a,
-                                const std::vector<ll>& b) {
+vector<ll> convolutionFFT(const vector<ll>& a,
+                                const vector<ll>& b) {
     if (a.empty() || b.empty()) return {};
-    std::size_t need = a.size() + b.size() - 1, n = 1;
+    size_t need = a.size() + b.size() - 1, n = 1;
     while (n < need) n *= 2;
-    std::vector<Complex> f(a.begin(), a.end()), g(b.begin(), b.end());
+    vector<Complex> f(a.begin(), a.end()), g(b.begin(), b.end());
     f.resize(n);
     g.resize(n);
     fft(f);
     fft(g);
-    for (std::size_t i = 0; i < n; ++i) f[i] *= g[i];
+    for (size_t i = 0; i < n; ++i) f[i] *= g[i];
     fft(f, true);
-    std::vector<ll> res(need);
-    for (std::size_t i = 0; i < need; ++i) res[i] = std::llround(f[i].real());
+    vector<ll> res(need);
+    for (size_t i = 0; i < need; ++i) res[i] = llround(f[i].real());
     return res;
 }

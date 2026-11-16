@@ -1,6 +1,6 @@
 using ull = unsigned long long;
 
-// In solve: ull a, b, m with m > 0. ans is a*b mod m.
+// a、b、m 为无符号整数，且 m > 0。ans 为 a 与 b 的乘积模 m。
 
 a %= m;
 b %= m;

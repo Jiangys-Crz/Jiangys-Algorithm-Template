@@ -9,23 +9,23 @@ struct PersistentKth {
         int l = 0, r = 0, cnt = 0;
     };
 
-    std::vector<ll> val;
-    std::vector<Node> tr{Node{}};
-    std::vector<int> root;
+    vector<ll> val;
+    vector<Node> tr{Node{}};
+    vector<int> root;
 
-    explicit PersistentKth(const std::vector<ll>& a)
+    explicit PersistentKth(const vector<ll>& a)
         : val(a.begin() + 1, a.end()), root(a.size()) {
-        std::sort(val.begin(), val.end());
-        val.erase(std::unique(val.begin(), val.end()), val.end());
+        sort(val.begin(), val.end());
+        val.erase(unique(val.begin(), val.end()), val.end());
         for (int i = 1; i < static_cast<int>(a.size()); ++i) {
             int pos = static_cast<int>(
-                std::lower_bound(val.begin(), val.end(), a[i]) - val.begin());
+                lower_bound(val.begin(), val.end(), a[i]) - val.begin());
             root[i] = insert(root[i - 1], 0, static_cast<int>(val.size()) - 1, pos);
         }
     }
 
-    std::optional<ll> kth(int l, int r, int k) const {
-        if (k <= 0 || k > r - l + 1) return std::nullopt;
+    optional<ll> kth(int l, int r, int k) const {
+        if (k <= 0 || k > r - l + 1) return nullopt;
         int x = root[l - 1], y = root[r];
         int lo = 0, hi = static_cast<int>(val.size()) - 1;
         while (lo < hi) {

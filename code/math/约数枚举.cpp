@@ -2,9 +2,9 @@
 
 using ull = unsigned long long;
 
-// In solve: ull n >= 1. divisors is in increasing order.
+// n 为正整数。divisors 从小到大保存约数。
 
-std::vector<ull> small, large;
+vector<ull> small, large;
 for (ull d = 1; d <= n / d; ++d) {
     if (n % d != 0) continue;
     small.push_back(d);

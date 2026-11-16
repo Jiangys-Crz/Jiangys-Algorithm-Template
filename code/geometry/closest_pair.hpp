@@ -74,7 +74,7 @@ constexpr T dist2(Point<T> a, Point<T> b) {
 
 template<class T>
 Real length(Point<T> p) {
-    return std::hypot(static_cast<Real>(p.x), static_cast<Real>(p.y));
+    return hypot(static_cast<Real>(p.x), static_cast<Real>(p.y));
 }
 
 template<class T>
@@ -104,11 +104,11 @@ struct ClosestPair {
 };
 
 template<class T>
-std::optional<ClosestPair<T>> closestPair(std::vector<Point<T>> a) {
+optional<ClosestPair<T>> closestPair(vector<Point<T>> a) {
     int n = static_cast<int>(a.size());
-    if (n < 2) return std::nullopt;
-    std::sort(a.begin(), a.end());
-    std::vector<Point<T>> tmp(n);
+    if (n < 2) return nullopt;
+    sort(a.begin(), a.end());
+    vector<Point<T>> tmp(n);
 
     auto byY = [](Point<T> p, Point<T> q) {
         return p.y < q.y || (p.y == q.y && p.x < q.x);
@@ -124,7 +124,7 @@ std::optional<ClosestPair<T>> closestPair(std::vector<Point<T>> a) {
                 relax(ans, a[l], a[l + 2]);
                 relax(ans, a[l + 1], a[l + 2]);
             }
-            std::sort(a.begin() + l, a.begin() + r, byY);
+            sort(a.begin() + l, a.begin() + r, byY);
             return ans;
         }
 
@@ -132,9 +132,9 @@ std::optional<ClosestPair<T>> closestPair(std::vector<Point<T>> a) {
         T x = a[mid].x;
         auto ans = self(self, l, mid), right = self(self, mid, r);
         if (right.dist2 < ans.dist2) ans = right;
-        std::merge(a.begin() + l, a.begin() + mid, a.begin() + mid,
+        merge(a.begin() + l, a.begin() + mid, a.begin() + mid,
                    a.begin() + r, tmp.begin() + l, byY);
-        std::copy(tmp.begin() + l, tmp.begin() + r, a.begin() + l);
+        copy(tmp.begin() + l, tmp.begin() + r, a.begin() + l);
 
         int k = l;
         for (int i = l; i < r; ++i) {

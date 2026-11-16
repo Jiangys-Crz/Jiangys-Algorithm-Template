@@ -25,12 +25,12 @@ constexpr T power(T a, ull b, T res = T{1}) {
 template<class T>
 struct Matrix {
     int n, m;
-    std::vector<std::vector<T>> a;
+    vector<vector<T>> a;
 
-    Matrix(int n, int m) : n(n), m(m), a(n, std::vector<T>(m)) {}
+    Matrix(int n, int m) : n(n), m(m), a(n, vector<T>(m)) {}
 
-    std::vector<T>& operator[](int i) { return a[i]; }
-    const std::vector<T>& operator[](int i) const { return a[i]; }
+    vector<T>& operator[](int i) { return a[i]; }
+    const vector<T>& operator[](int i) const { return a[i]; }
 
     static Matrix getIdentity(int n) {
         Matrix res(n, n);
@@ -56,7 +56,7 @@ template<class T>
 Matrix<T> matrixPower(Matrix<T> a, ull k) {
     assert(a.n == a.m);
     auto id = Matrix<T>::getIdentity(a.n);
-    return power(std::move(a), k, std::move(id));
+    return power(move(a), k, move(id));
 }
 
 #endif
@@ -65,15 +65,15 @@ Matrix<T> matrixPower(Matrix<T> a, ull k) {
 #define XCPC_MATH_LINEAR_RECURRENCE_HPP
 
 template<class T>
-T linearRecurrence(const std::vector<T>& initial,
-                   const std::vector<T>& coeff, ull k) {
+T linearRecurrence(const vector<T>& initial,
+                   const vector<T>& coeff, ull k) {
     int d = static_cast<int>(initial.size());
     if (k < initial.size()) return initial[k];
 
     Matrix<T> tr(d, d);
     for (int i = 0; i < d; ++i) tr[0][i] = coeff[i];
     for (int i = 1; i < d; ++i) tr[i][i - 1] = T{1};
-    auto p = matrixPower(std::move(tr), k - (d - 1));
+    auto p = matrixPower(move(tr), k - (d - 1));
     T ans{};
     for (int i = 0; i < d; ++i) ans = ans + p[0][i] * initial[d - 1 - i];
     return ans;

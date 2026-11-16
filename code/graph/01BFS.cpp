@@ -5,13 +5,13 @@
 
 using ll = long long;
 
-// In solve: 1-based adj[u] of (v, w), w in {0, 1}, int n and source s.
-// dist[u] is the shortest distance; inf means unreachable.
+// 邻接表 adj[u] 保存 (v, w)，边权为 0 或 1。n 为顶点数，s 为起点，编号从 1 开始。
+// dist[u] 为到 u 的最短距离，inf 表示不可达。
 
-constexpr ll inf = std::numeric_limits<ll>::max() / 4;
-std::vector<ll> dist(n + 1, inf);
+constexpr ll inf = numeric_limits<ll>::max() / 4;
+vector<ll> dist(n + 1, inf);
 
-std::deque<std::pair<ll, int>> q{{0, s}};
+deque<pair<ll, int>> q{{0, s}};
 dist[s] = 0;
 while (!q.empty()) {
     auto [d, u] = q.front();

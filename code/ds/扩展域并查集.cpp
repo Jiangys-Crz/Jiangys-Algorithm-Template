@@ -7,11 +7,11 @@
 #define XCPC_DS_DSU_HPP
 
 struct DSU {
-    std::vector<int> fa, siz, rk;
+    vector<int> fa, siz, rk;
 
     explicit DSU(int n)
         : fa(n + 1), siz(n + 1, 1), rk(n + 1) {
-        std::iota(fa.begin(), fa.end(), 0);
+        iota(fa.begin(), fa.end(), 0);
     }
 
     int find(int u) {
@@ -27,7 +27,7 @@ struct DSU {
         u = find(u);
         v = find(v);
         if (u == v) return false;
-        if (rk[u] < rk[v]) std::swap(u, v);
+        if (rk[u] < rk[v]) swap(u, v);
         fa[v] = u;
         siz[u] += siz[v];
         if (rk[u] == rk[v]) ++rk[u];
@@ -60,9 +60,9 @@ struct ParityConstraints {
         return true;
     }
 
-    std::optional<bool> relation(int u, int v) {
+    optional<bool> relation(int u, int v) {
         if (dsu.same(u, v)) return false;
         if (dsu.same(u, v + n)) return true;
-        return std::nullopt;
+        return nullopt;
     }
 };

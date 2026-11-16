@@ -12,7 +12,7 @@ __extension__ using lll = __int128;
 #ifndef XCPC_GRAPH_GRAPH_HPP
 #define XCPC_GRAPH_GRAPH_HPP
 
-inline constexpr ll graphInf = std::numeric_limits<ll>::max() / 4;
+inline constexpr ll graphInf = numeric_limits<ll>::max() / 4;
 
 struct Graph {
     struct Edge {
@@ -25,8 +25,8 @@ struct Graph {
 
     int n;
     bool directed;
-    std::vector<Edge> edges;
-    std::vector<std::vector<Arc>> adj;
+    vector<Edge> edges;
+    vector<vector<Arc>> adj;
 
     explicit Graph(int n, bool directed = true)
         : n(n), directed(directed), adj(n + 1) {}
@@ -46,16 +46,16 @@ struct Graph {
 #define XCPC_GRAPH_BELLMAN_FORD_HPP
 
 struct RelaxResult {
-    std::vector<ll> dist;
+    vector<ll> dist;
     bool negativeCycle = false;
 };
 
 namespace graph_detail {
 inline constexpr lll wideInf = lll{1} << 126;
 
-inline RelaxResult finishRelaxation(const std::vector<lll>& d, bool cycle) {
-    RelaxResult res{std::vector<ll>(d.size()), cycle};
-    for (std::size_t u = 0; u < d.size(); ++u) {
+inline RelaxResult finishRelaxation(const vector<lll>& d, bool cycle) {
+    RelaxResult res{vector<ll>(d.size()), cycle};
+    for (size_t u = 0; u < d.size(); ++u) {
         if (d[u] >= graphInf) res.dist[u] = graphInf;
         else if (d[u] < -graphInf) res.dist[u] = -graphInf;
         else res.dist[u] = static_cast<ll>(d[u]);
@@ -65,7 +65,7 @@ inline RelaxResult finishRelaxation(const std::vector<lll>& d, bool cycle) {
 }
 
 inline RelaxResult bellmanFord(const Graph& g, int s) {
-    std::vector<lll> d(g.n + 1, graph_detail::wideInf);
+    vector<lll> d(g.n + 1, graph_detail::wideInf);
     d[s] = 0;
     auto relax = [&](int u, int v, ll w) {
         if (d[u] == graph_detail::wideInf || d[u] + w >= d[v]) return false;
@@ -86,10 +86,10 @@ inline RelaxResult bellmanFord(const Graph& g, int s) {
 #endif
 
 RelaxResult spfa(const Graph& g, int s) {
-    std::vector<lll> d(g.n + 1, graph_detail::wideInf);
-    std::vector<int> len(g.n + 1);
-    std::vector<char> inQueue(g.n + 1);
-    std::queue<int> q;
+    vector<lll> d(g.n + 1, graph_detail::wideInf);
+    vector<int> len(g.n + 1);
+    vector<char> inQueue(g.n + 1);
+    queue<int> q;
     d[s] = 0;
     inQueue[s] = true;
     q.push(s);

@@ -73,7 +73,7 @@ constexpr T dist2(Point<T> a, Point<T> b) {
 
 template<class T>
 Real length(Point<T> p) {
-    return std::hypot(static_cast<Real>(p.x), static_cast<Real>(p.y));
+    return hypot(static_cast<Real>(p.x), static_cast<Real>(p.y));
 }
 
 template<class T>
@@ -103,9 +103,9 @@ struct HullDiameter {
 };
 
 template<class T>
-std::optional<HullDiameter<T>> convexDiameter(const std::vector<Point<T>>& h) {
+optional<HullDiameter<T>> convexDiameter(const vector<Point<T>>& h) {
     int n = static_cast<int>(h.size());
-    if (!n) return std::nullopt;
+    if (!n) return nullopt;
 
     HullDiameter<T> ans{h.front(), h.back(), dist2(h.front(), h.back())};
     if (n <= 2) return ans;

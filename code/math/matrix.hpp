@@ -25,12 +25,12 @@ constexpr T power(T a, ull b, T res = T{1}) {
 template<class T>
 struct Matrix {
     int n, m;
-    std::vector<std::vector<T>> a;
+    vector<vector<T>> a;
 
-    Matrix(int n, int m) : n(n), m(m), a(n, std::vector<T>(m)) {}
+    Matrix(int n, int m) : n(n), m(m), a(n, vector<T>(m)) {}
 
-    std::vector<T>& operator[](int i) { return a[i]; }
-    const std::vector<T>& operator[](int i) const { return a[i]; }
+    vector<T>& operator[](int i) { return a[i]; }
+    const vector<T>& operator[](int i) const { return a[i]; }
 
     static Matrix getIdentity(int n) {
         Matrix res(n, n);
@@ -56,7 +56,7 @@ template<class T>
 Matrix<T> matrixPower(Matrix<T> a, ull k) {
     assert(a.n == a.m);
     auto id = Matrix<T>::getIdentity(a.n);
-    return power(std::move(a), k, std::move(id));
+    return power(move(a), k, move(id));
 }
 
 #endif

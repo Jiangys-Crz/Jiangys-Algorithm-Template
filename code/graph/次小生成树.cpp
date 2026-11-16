@@ -15,7 +15,7 @@ __extension__ using lll = __int128;
 #ifndef XCPC_GRAPH_GRAPH_HPP
 #define XCPC_GRAPH_GRAPH_HPP
 
-inline constexpr ll graphInf = std::numeric_limits<ll>::max() / 4;
+inline constexpr ll graphInf = numeric_limits<ll>::max() / 4;
 
 struct Graph {
     struct Edge {
@@ -28,8 +28,8 @@ struct Graph {
 
     int n;
     bool directed;
-    std::vector<Edge> edges;
-    std::vector<std::vector<Arc>> adj;
+    vector<Edge> edges;
+    vector<vector<Arc>> adj;
 
     explicit Graph(int n, bool directed = true)
         : n(n), directed(directed), adj(n + 1) {}
@@ -49,10 +49,10 @@ struct Graph {
 #define XCPC_GRAPH_GRAPH_DSU_HPP
 
 struct GraphDSU {
-    std::vector<int> fa, siz;
+    vector<int> fa, siz;
 
     explicit GraphDSU(int n) : fa(n + 1), siz(n + 1, 1) {
-        std::iota(fa.begin(), fa.end(), 0);
+        iota(fa.begin(), fa.end(), 0);
     }
 
     int find(int u) {
@@ -67,7 +67,7 @@ struct GraphDSU {
         u = find(u);
         v = find(v);
         if (u == v) return false;
-        if (siz[u] < siz[v]) std::swap(u, v);
+        if (siz[u] < siz[v]) swap(u, v);
         fa[v] = u;
         siz[u] += siz[v];
         return true;
@@ -81,7 +81,7 @@ struct GraphDSU {
 
 struct MSTResult {
     ll weight = 0;
-    std::vector<int> edges;
+    vector<int> edges;
 };
 
 #endif
@@ -89,10 +89,10 @@ struct MSTResult {
 #ifndef XCPC_GRAPH_KRUSKAL_HPP
 #define XCPC_GRAPH_KRUSKAL_HPP
 
-inline std::optional<MSTResult> kruskal(const Graph& g) {
-    std::vector<int> ord(g.edges.size());
-    std::iota(ord.begin(), ord.end(), 0);
-    std::sort(ord.begin(), ord.end(), [&](int x, int y) {
+inline optional<MSTResult> kruskal(const Graph& g) {
+    vector<int> ord(g.edges.size());
+    iota(ord.begin(), ord.end(), 0);
+    sort(ord.begin(), ord.end(), [&](int x, int y) {
         return g.edges[x].w < g.edges[y].w;
     });
     GraphDSU dsu(g.n);
@@ -105,7 +105,7 @@ inline std::optional<MSTResult> kruskal(const Graph& g) {
         res.edges.push_back(id);
         if (static_cast<int>(res.edges.size()) == g.n - 1) break;
     }
-    if (static_cast<int>(res.edges.size()) != g.n - 1) return std::nullopt;
+    if (static_cast<int>(res.edges.size()) != g.n - 1) return nullopt;
     res.weight = static_cast<ll>(weight);
     return res;
 }
@@ -116,7 +116,7 @@ inline std::optional<MSTResult> kruskal(const Graph& g) {
 #define XCPC_GRAPH_PATH_MAX_HPP
 
 struct MaxTwo {
-    std::optional<ll> first, second;
+    optional<ll> first, second;
 
     void add(ll w) {
         if (!first || w > *first) {
@@ -134,17 +134,17 @@ struct MaxTwo {
 };
 
 struct TreePathMax {
-    std::vector<int> dep;
-    std::vector<std::vector<int>> up;
-    std::vector<std::vector<MaxTwo>> mx;
+    vector<int> dep;
+    vector<vector<int>> up;
+    vector<vector<MaxTwo>> mx;
 
     explicit TreePathMax(const Graph& tr, int root = 1) : dep(tr.n + 1) {
         int lg = 1;
         while ((1LL << lg) <= tr.n) ++lg;
-        up.assign(lg, std::vector<int>(tr.n + 1));
-        mx.assign(lg, std::vector<MaxTwo>(tr.n + 1));
-        std::vector<int> order{root};
-        for (std::size_t i = 0; i < order.size(); ++i) {
+        up.assign(lg, vector<int>(tr.n + 1));
+        mx.assign(lg, vector<MaxTwo>(tr.n + 1));
+        vector<int> order{root};
+        for (size_t i = 0; i < order.size(); ++i) {
             int u = order[i];
             for (auto [v, id] : tr.adj[u]) {
                 if (v == up[0][u]) continue;
@@ -166,7 +166,7 @@ struct TreePathMax {
 
     MaxTwo query(int u, int v) const {
         MaxTwo res;
-        if (dep[u] < dep[v]) std::swap(u, v);
+        if (dep[u] < dep[v]) swap(u, v);
         int delta = dep[u] - dep[v];
         for (int j = 0; delta; ++j, delta >>= 1) {
             if (!(delta & 1)) continue;
@@ -189,12 +189,12 @@ struct TreePathMax {
 
 #endif
 
-std::optional<ll> strictSecondMST(const Graph& g) {
+optional<ll> strictSecondMST(const Graph& g) {
     auto mst = kruskal(g);
-    if (!mst) return std::nullopt;
+    if (!mst) return nullopt;
 
     Graph tr(g.n, false);
-    std::vector<char> used(g.edges.size());
+    vector<char> used(g.edges.size());
     for (int id : mst->edges) {
         auto [u, v, w] = g.edges[id];
         tr.addEdge(u, v, w);
@@ -202,8 +202,8 @@ std::optional<ll> strictSecondMST(const Graph& g) {
     }
 
     TreePathMax path(tr);
-    std::optional<lll> ans;
-    for (std::size_t id = 0; id < g.edges.size(); ++id) {
+    optional<lll> ans;
+    for (size_t id = 0; id < g.edges.size(); ++id) {
         auto [u, v, w] = g.edges[id];
         if (used[id] || u == v) continue;
         auto [first, second] = path.query(u, v);
@@ -212,6 +212,6 @@ std::optional<ll> strictSecondMST(const Graph& g) {
         lll weight = lll(mst->weight) + w - *removed;
         if (!ans || weight < *ans) ans = weight;
     }
-    if (!ans) return std::nullopt;
+    if (!ans) return nullopt;
     return static_cast<ll>(*ans);
 }

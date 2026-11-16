@@ -38,7 +38,7 @@ class SAM {
 public:
     SAM() = default;
 
-    explicit SAM(std::string_view s) {
+    explicit SAM(string_view s) {
         for (unsigned char c : s) extend(c);
     }
 
@@ -76,7 +76,7 @@ public:
         last = cur;
     }
 
-    int state(std::string_view s) const {
+    int state(string_view s) const {
         int u = 0;
         for (unsigned char c : s) {
             int x = Alphabet::id(c);
@@ -88,17 +88,17 @@ public:
 
     ll distinctSubstrings() const {
         ll ans = 0;
-        for (std::size_t u = 1; u < tr.size(); ++u) {
+        for (size_t u = 1; u < tr.size(); ++u) {
             ans += tr[u].len - tr[tr[u].link].len;
         }
         return ans;
     }
 
-    std::vector<ll> occurrenceCounts() const {
-        std::vector<int> bucket(tr[last].len + 1), ord(tr.size());
-        std::vector<ll> cnt(tr.size());
+    vector<ll> occurrenceCounts() const {
+        vector<int> bucket(tr[last].len + 1), ord(tr.size());
+        vector<ll> cnt(tr.size());
         for (const Node& node : tr) ++bucket[node.len];
-        for (std::size_t i = 1; i < bucket.size(); ++i) bucket[i] += bucket[i - 1];
+        for (size_t i = 1; i < bucket.size(); ++i) bucket[i] += bucket[i - 1];
         for (int u = static_cast<int>(tr.size()) - 1; u >= 0; --u) {
             ord[--bucket[tr[u].len]] = u;
             cnt[u] = tr[u].cnt;
@@ -113,11 +113,11 @@ public:
 
 private:
     struct Node {
-        std::array<int, Alphabet::size> ch{};
+        array<int, Alphabet::size> ch{};
         int len = 0, link = -1, cnt = 0;
     };
 
-    std::vector<Node> tr{Node{}};
+    vector<Node> tr{Node{}};
     int last = 0;
 };
 

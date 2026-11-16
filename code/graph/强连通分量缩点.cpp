@@ -8,7 +8,7 @@ using ll = long long;
 #ifndef XCPC_GRAPH_GRAPH_HPP
 #define XCPC_GRAPH_GRAPH_HPP
 
-inline constexpr ll graphInf = std::numeric_limits<ll>::max() / 4;
+inline constexpr ll graphInf = numeric_limits<ll>::max() / 4;
 
 struct Graph {
     struct Edge {
@@ -21,8 +21,8 @@ struct Graph {
 
     int n;
     bool directed;
-    std::vector<Edge> edges;
-    std::vector<std::vector<Arc>> adj;
+    vector<Edge> edges;
+    vector<vector<Arc>> adj;
 
     explicit Graph(int n, bool directed = true)
         : n(n), directed(directed), adj(n + 1) {}
@@ -43,13 +43,13 @@ struct Graph {
 
 struct SCC {
     int cnt = 0;
-    std::vector<int> dfn, low, bel;
+    vector<int> dfn, low, bel;
 
     explicit SCC(const Graph& g)
         : dfn(g.n + 1), low(g.n + 1), bel(g.n + 1) {
         int timer = 0;
-        std::vector<int> fa(g.n + 1), stk, call;
-        std::vector<std::size_t> next(g.n + 1);
+        vector<int> fa(g.n + 1), stk, call;
+        vector<size_t> next(g.n + 1);
         auto enter = [&](int u) {
             dfn[u] = low[u] = ++timer;
             stk.push_back(u);
@@ -67,12 +67,12 @@ struct SCC {
                         fa[v] = u;
                         enter(v);
                     } else if (!bel[v]) {
-                        low[u] = std::min(low[u], dfn[v]);
+                        low[u] = min(low[u], dfn[v]);
                     }
                     continue;
                 }
                 call.pop_back();
-                if (fa[u]) low[fa[u]] = std::min(low[fa[u]], low[u]);
+                if (fa[u]) low[fa[u]] = min(low[fa[u]], low[u]);
                 if (low[u] != dfn[u]) continue;
 
                 ++cnt;
@@ -91,8 +91,8 @@ struct SCC {
 
 Graph condensation(const Graph& g, const SCC& scc) {
     Graph dag(scc.cnt);
-    std::vector<std::vector<int>> nodes(scc.cnt + 1);
-    std::vector<int> seen(scc.cnt + 1);
+    vector<vector<int>> nodes(scc.cnt + 1);
+    vector<int> seen(scc.cnt + 1);
     for (int u = 1; u <= g.n; ++u) nodes[scc.bel[u]].push_back(u);
 
     for (int c = 1; c <= scc.cnt; ++c) {

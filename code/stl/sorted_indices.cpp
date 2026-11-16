@@ -4,11 +4,11 @@
 
 using ll = long long;
 
-// In solve: vector<ll> a. id lists the original indices in sorted order.
+// 先准备数组 a。id 按数值从小到大保存原下标。
 
-std::vector<int> id(a.size());
-std::iota(id.begin(), id.end(), 0);
-std::sort(id.begin(), id.end(), [&](int i, int j) {
+vector<int> id(a.size());
+iota(id.begin(), id.end(), 0);
+sort(id.begin(), id.end(), [&](int i, int j) {
     if (a[i] != a[j]) return a[i] < a[j];
     return i < j;
 });

@@ -35,8 +35,8 @@ public:
         return ans;
     }
 
-    std::optional<ll> get_val_by_rank(int k) const {
-        if (k <= 0 || k > tr[root].siz) return std::nullopt;
+    optional<ll> get_val_by_rank(int k) const {
+        if (k <= 0 || k > tr[root].siz) return nullopt;
         int u = root;
         while (true) {
             int l = tr[u].ch[0], left = tr[l].siz;
@@ -51,15 +51,15 @@ public:
 
 private:
     struct Node {
-        std::array<int, 2> ch{};
+        array<int, 2> ch{};
         ll val = 0;
-        std::uint64_t key = 0;
+        uint64_t key = 0;
         int siz = 0, cnt = 0;
     };
 
-    std::vector<Node> tr{Node{}};
+    vector<Node> tr{Node{}};
     int root = 0;
-    std::mt19937_64 rnd{std::random_device{}()};
+    mt19937_64 rnd{random_device{}()};
 
     void pushup(int u) {
         auto [l, r] = tr[u].ch;

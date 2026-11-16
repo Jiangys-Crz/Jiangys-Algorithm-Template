@@ -2,9 +2,9 @@
 
 using ll = long long;
 
-// In solve: 1-based n by m matrix a and updates (x1, y1, x2, y2, delta).
+// 先准备 n 行 m 列的矩阵 a 及区间更新 updates，矩阵坐标从 1 开始。
 
-std::vector<std::vector<ll>> d(n + 2, std::vector<ll>(m + 2));
+vector<vector<ll>> d(n + 2, vector<ll>(m + 2));
 auto add = [&](int x1, int y1, int x2, int y2, ll v) {
     d[x1][y1] += v;
     d[x2 + 1][y1] -= v;
@@ -28,4 +28,4 @@ for (int i = 1; i <= n; ++i) {
         d[i][j] = d[i - 1][j] + row;
     }
 }
-// d[1..n][1..m] now contains the updated matrix.
+// d[1..n][1..m] 保存更新后的矩阵。

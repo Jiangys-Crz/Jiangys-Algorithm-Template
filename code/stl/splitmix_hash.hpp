@@ -14,10 +14,10 @@ struct SplitMix64Hash {
         return x ^ (x >> 31);
     }
 
-    std::size_t operator()(ull x) const {
+    size_t operator()(ull x) const {
         static const ull seed = static_cast<ull>(
-            std::chrono::steady_clock::now().time_since_epoch().count());
-        return static_cast<std::size_t>(mix(x + seed));
+            chrono::steady_clock::now().time_since_epoch().count());
+        return static_cast<size_t>(mix(x + seed));
     }
 };
 

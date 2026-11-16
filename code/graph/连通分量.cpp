@@ -1,9 +1,9 @@
 #include <vector>
 
-// In solve: undirected 1-based graph adj with n vertices.
-// cnt is the component count; bel[u] is the component of u.
+// adj 为 n 个顶点的无向图邻接表，编号从 1 开始。
+// cnt 为连通分量数，bel[u] 为 u 所属的分量编号。
 
-std::vector<int> bel(n + 1), stk;
+vector<int> bel(n + 1), stk;
 int cnt = 0;
 for (int s = 1; s <= n; ++s) {
     if (bel[s]) continue;

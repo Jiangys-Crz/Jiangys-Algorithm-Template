@@ -3,9 +3,9 @@
 
 using ull = unsigned long long;
 
-// In solve: ull n >= 1. factors stores (prime, exponent).
+// n 为正整数。factors 保存各质因子及其指数。
 ull x = n;
-std::vector<std::pair<ull, int>> factors;
+vector<pair<ull, int>> factors;
 for (ull p = 2; p <= x / p; p += p == 2 ? 1 : 2) {
     if (x % p) continue;
     int e = 0;

@@ -15,7 +15,7 @@ __extension__ using lll = __int128;
 #ifndef XCPC_GRAPH_GRAPH_HPP
 #define XCPC_GRAPH_GRAPH_HPP
 
-inline constexpr ll graphInf = std::numeric_limits<ll>::max() / 4;
+inline constexpr ll graphInf = numeric_limits<ll>::max() / 4;
 
 struct Graph {
     struct Edge {
@@ -28,8 +28,8 @@ struct Graph {
 
     int n;
     bool directed;
-    std::vector<Edge> edges;
-    std::vector<std::vector<Arc>> adj;
+    vector<Edge> edges;
+    vector<vector<Arc>> adj;
 
     explicit Graph(int n, bool directed = true)
         : n(n), directed(directed), adj(n + 1) {}
@@ -49,10 +49,10 @@ struct Graph {
 #define XCPC_GRAPH_GRAPH_DSU_HPP
 
 struct GraphDSU {
-    std::vector<int> fa, siz;
+    vector<int> fa, siz;
 
     explicit GraphDSU(int n) : fa(n + 1), siz(n + 1, 1) {
-        std::iota(fa.begin(), fa.end(), 0);
+        iota(fa.begin(), fa.end(), 0);
     }
 
     int find(int u) {
@@ -67,7 +67,7 @@ struct GraphDSU {
         u = find(u);
         v = find(v);
         if (u == v) return false;
-        if (siz[u] < siz[v]) std::swap(u, v);
+        if (siz[u] < siz[v]) swap(u, v);
         fa[v] = u;
         siz[u] += siz[v];
         return true;
@@ -81,7 +81,7 @@ struct GraphDSU {
 
 struct MSTResult {
     ll weight = 0;
-    std::vector<int> edges;
+    vector<int> edges;
 };
 
 #endif
@@ -89,10 +89,10 @@ struct MSTResult {
 #ifndef XCPC_GRAPH_KRUSKAL_HPP
 #define XCPC_GRAPH_KRUSKAL_HPP
 
-inline std::optional<MSTResult> kruskal(const Graph& g) {
-    std::vector<int> ord(g.edges.size());
-    std::iota(ord.begin(), ord.end(), 0);
-    std::sort(ord.begin(), ord.end(), [&](int x, int y) {
+inline optional<MSTResult> kruskal(const Graph& g) {
+    vector<int> ord(g.edges.size());
+    iota(ord.begin(), ord.end(), 0);
+    sort(ord.begin(), ord.end(), [&](int x, int y) {
         return g.edges[x].w < g.edges[y].w;
     });
     GraphDSU dsu(g.n);
@@ -105,7 +105,7 @@ inline std::optional<MSTResult> kruskal(const Graph& g) {
         res.edges.push_back(id);
         if (static_cast<int>(res.edges.size()) == g.n - 1) break;
     }
-    if (static_cast<int>(res.edges.size()) != g.n - 1) return std::nullopt;
+    if (static_cast<int>(res.edges.size()) != g.n - 1) return nullopt;
     res.weight = static_cast<ll>(weight);
     return res;
 }

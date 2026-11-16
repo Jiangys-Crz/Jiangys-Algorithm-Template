@@ -8,8 +8,8 @@ using ll = long long;
 
 struct Tree {
     int n, root = 0;
-    std::vector<std::vector<int>> adj;
-    std::vector<int> fa, dep, siz, dfn, id;
+    vector<vector<int>> adj;
+    vector<int> fa, dep, siz, dfn, id;
 
     explicit Tree(int n)
         : n(n), adj(n + 1), fa(n + 1), dep(n + 1),
@@ -23,7 +23,7 @@ struct Tree {
     void work(int rt = 1) {
         root = rt;
         fa[root] = dep[root] = 0;
-        std::vector<int> stk{root};
+        vector<int> stk{root};
         int cnt = 0;
         while (!stk.empty()) {
             int u = stk.back();
@@ -45,7 +45,7 @@ struct Tree {
         }
     }
 
-    std::pair<int, int> subtree(int u) const {
+    pair<int, int> subtree(int u) const {
         return {dfn[u], dfn[u] + siz[u] - 1};
     }
 
@@ -59,7 +59,7 @@ struct Tree {
 
 struct TreeDifference {
     const Tree& tr;
-    std::vector<ll> d;
+    vector<ll> d;
 
     explicit TreeDifference(const Tree& tr) : tr(tr), d(tr.n + 1) {}
 
@@ -76,7 +76,7 @@ struct TreeDifference {
         d[p] -= 2 * val;
     }
 
-    std::vector<ll> collect() const {
+    vector<ll> collect() const {
         auto res = d;
         for (int i = tr.n; i >= 2; --i) {
             int u = tr.id[i];

@@ -1,10 +1,10 @@
 #include <utility>
 #include <vector>
 
-// In solve: root, lc[] and rc[]; index 0 denotes a missing node.
+// 先准备根节点 root 以及左右子节点数组 lc 和 rc。编号 0 表示空节点。
 
-std::vector<int> pre, in, post;
-std::vector<std::pair<int, int>> stk;
+vector<int> pre, in, post;
+vector<pair<int, int>> stk;
 if (root) stk.push_back({root, 0});
 while (!stk.empty()) {
     auto [u, stage] = stk.back();

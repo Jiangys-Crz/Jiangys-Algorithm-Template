@@ -2,19 +2,19 @@
 #include <string>
 #include <string_view>
 
-// In solve: string_view s (or a view of the original string).
-for (std::size_t l = 0; l < s.size(); ++l) {
-    for (std::size_t r = l + 1; r <= s.size(); ++r) {
+// 先将待枚举的字符串表示为视图 s。
+for (size_t l = 0; l < s.size(); ++l) {
+    for (size_t r = l + 1; r <= s.size(); ++r) {
         auto part = s.substr(l, r - l);
-        // TODO: Process substring part at [l, r).
+        // 待填写：处理区间 [l, r) 对应的子串 part。
     }
 }
 
-std::string chosen;
+string chosen;
 chosen.reserve(s.size());
-auto dfs = [&](auto&& self, std::size_t i) -> void {
+auto dfs = [&](auto&& self, size_t i) -> void {
     if (i == s.size()) {
-        // TODO: Process the current subsequence chosen, including empty.
+        // 待填写：处理当前子序列 chosen，包含空序列。
         return;
     }
     self(self, i + 1);

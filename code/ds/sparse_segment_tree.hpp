@@ -19,8 +19,8 @@ public:
         return query(root, lo, hi, l, r);
     }
 
-    std::optional<ll> kth(int root, ll k) const {
-        if (k <= 0 || k > tr[root].sum) return std::nullopt;
+    optional<ll> kth(int root, ll k) const {
+        if (k <= 0 || k > tr[root].sum) return nullopt;
         ll l = lo, r = hi;
         while (l < r) {
             ll mid = midpoint(l, r);
@@ -37,7 +37,7 @@ public:
         return l;
     }
 
-    // Both roots must be independent trees in this pool.
+    // 两个根必须属于同一节点池，且两棵树不得共享节点。
     void merge(int& x, int& y) {
         x = merge(x, y, lo, hi);
         y = 0;
@@ -50,7 +50,7 @@ private:
     };
 
     ll lo, hi;
-    std::vector<Node> tr{Node{}};
+    vector<Node> tr{Node{}};
 
     static ll midpoint(ll l, ll r) {
         return l + static_cast<ll>((ull(r) - ull(l)) / 2);

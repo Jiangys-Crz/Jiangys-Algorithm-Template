@@ -22,7 +22,7 @@
 using ll = long long;
 
 void exampleVector() {
-    std::vector<ll> a;
+    vector<ll> a;
     a.reserve(8);
     a.push_back(5);
     a.resize(3, 0);
@@ -50,9 +50,9 @@ void exampleVector() {
 using ll = long long;
 
 void exampleArray() {
-    constexpr std::array<int, 4> dx{1, 0, -1, 0};
-    constexpr std::array<int, 4> dy{0, 1, 0, -1};
-    std::array<ll, 4> dist{};
+    constexpr array<int, 4> dx{1, 0, -1, 0};
+    constexpr array<int, 4> dy{0, 1, 0, -1};
+    array<ll, 4> dist{};
     dist.fill(-1);
 }
 \end{cppcode}
@@ -96,11 +96,11 @@ void exampleArray() {
 #include <stack>
 
 void exampleStack() {
-    std::stack<int> stk;
+    stack<int> stk;
     stk.push(2);
     stk.push(9);
     if (!stk.empty()) {
-        int x = stk.top();  // 9
+        int x = stk.top();  // 栈顶为 9
         stk.pop();
     }
 }
@@ -126,7 +126,7 @@ void exampleStack() {
 #include <queue>
 
 void exampleQueue() {
-    std::queue<int> q;
+    queue<int> q;
     q.push(3);
     q.push(8);
     while (!q.empty()) {
@@ -156,10 +156,10 @@ void exampleQueue() {
 #include <deque>
 
 void exampleDeque() {
-    std::deque<int> q{6};
+    deque<int> q{6};
     q.push_front(2);
     q.push_back(9);
-    int middle = q[1];  // 6
+    int middle = q[1];  // 中间元素为 6
     q.pop_front();
 }
 \end{cppcode}
@@ -175,7 +175,7 @@ void exampleDeque() {
 
 \begin{itemize}
     \item \texttt{top} 读堆顶，\texttt{push}/\texttt{emplace} 入堆，\texttt{pop} 删除堆顶。
-    \item 可传 \texttt{std::greater<>} 建小根堆，需包含 \texttt{<functional>}。用二元组时会逐字段比较。
+    \item 可传 \texttt{greater<>} 建小根堆，需包含 \texttt{<functional>}。用二元组时会逐字段比较。
 \end{itemize}
 
 \begin{cppcode}
@@ -187,8 +187,8 @@ void exampleDeque() {
 using ll = long long;
 
 void examplePriorityQueue() {
-    using State = std::pair<ll, int>;
-    std::priority_queue<State, std::vector<State>, std::greater<>> pq;
+    using State = pair<ll, int>;
+    priority_queue<State, vector<State>, greater<>> pq;
     pq.emplace(7, 2);
     pq.emplace(3, 8);
     auto [d, u] = pq.top();
@@ -218,11 +218,11 @@ void examplePriorityQueue() {
 using ll = long long;
 
 void exampleOrderedSet() {
-    std::set<ll> distinct{4, 4, 7};
-    std::multiset<ll> bag{4, 4, 7};
+    set<ll> distinct{4, 4, 7};
+    multiset<ll> bag{4, 4, 7};
     auto it = bag.find(4);
     if (it != bag.end()) bag.erase(it);
-    auto r = distinct.lower_bound(5);  // points to 7
+    auto r = distinct.lower_bound(5);  // 指向元素 7
 }
 \end{cppcode}
 
@@ -248,9 +248,9 @@ void exampleOrderedSet() {
 using ll = long long;
 
 void exampleOrderedMap() {
-    std::map<ll, int> cnt;
+    map<ll, int> cnt;
     ++cnt[12];
-    std::multimap<ll, int> jobs{{3, 17}, {3, 21}, {5, 8}};
+    multimap<ll, int> jobs{{3, 17}, {3, 21}, {5, 8}};
     auto [l, r] = jobs.equal_range(3);
     for (auto it = l; it != r; ++it) {
         int id = it->second;
@@ -275,7 +275,7 @@ void exampleOrderedMap() {
 
 \paragraph{整数键的 SplitMix64 哈希器}
 
-例如使用 \texttt{std::unordered\_map<ll,int,SplitMix64Hash>}。
+例如使用 \texttt{unordered\_map<ll,int,SplitMix64Hash>}。
 此哈希器也适用于以整数为键的无序集合。
 
 \cppfile{code/stl/splitmix_hash.hpp}
@@ -300,7 +300,7 @@ void exampleOrderedMap() {
 using ll = long long;
 
 void exampleUnorderedSet() {
-    std::unordered_set<ll> seen;
+    unordered_set<ll> seen;
     seen.reserve(16);
     bool first = seen.insert(23).second;
     bool repeat = !seen.insert(23).second;
@@ -327,7 +327,7 @@ void exampleUnorderedSet() {
 #include <bitset>
 
 void exampleBitset() {
-    std::bitset<8> mask;
+    bitset<8> mask;
     mask.set(2);
     mask |= mask << 3;
     mask.reset(2);
@@ -359,9 +359,9 @@ void exampleBitset() {
 using ll = long long;
 
 void examplePairAndTuple() {
-    std::pair<int, ll> edge{2, 40};
-    std::tuple<ll, int, int> key{7, 2, 9};
-    std::get<2>(key) = 4;
+    pair<int, ll> edge{2, 40};
+    tuple<ll, int, int> key{7, 2, 9};
+    get<2>(key) = 4;
     auto [u, w] = edge;
 }
 \end{cppcode}
@@ -369,7 +369,7 @@ void examplePairAndTuple() {
 \paragraph{复杂度}
 读取固定字段为 $O(1)$。比较最多检查全部字段，另计各字段比较的代价。
 
-\texttt{std::tie} 生成引用元组。若需要独立保存值，可用 \texttt{std::make\_tuple}。
+\texttt{tie} 生成引用元组。若需要独立保存值，可用 \texttt{make\_tuple}。
 
 \section{排序与二分}
 
@@ -381,7 +381,7 @@ void examplePairAndTuple() {
 对区间排序，默认升序。
 
 \begin{itemize}
-    \item 需要降序时，可使用 \texttt{std::greater<>}。
+    \item 需要降序时，可使用 \texttt{greater<>}。
     \item 比较器返回第一个参数是否排在第二个参数前。等价元素的相对顺序未指定。
 \end{itemize}
 
@@ -393,9 +393,9 @@ void examplePairAndTuple() {
 using ll = long long;
 
 void exampleSort() {
-    std::vector<ll> a{7, 3, 3, 9};
-    std::sort(a.begin(), a.end());
-    std::sort(a.begin(), a.end(), std::greater<>{});
+    vector<ll> a{7, 3, 3, 9};
+    sort(a.begin(), a.end());
+    sort(a.begin(), a.end(), greater<>{});
 }
 \end{cppcode}
 
@@ -414,11 +414,11 @@ void exampleSort() {
 #include <vector>
 
 void exampleStableSort() {
-    std::vector<std::pair<int, int>> a{{8, 1}, {9, 2}, {8, 3}};
-    std::stable_sort(a.begin(), a.end(), [](auto x, auto y) {
+    vector<pair<int, int>> a{{8, 1}, {9, 2}, {8, 3}};
+    stable_sort(a.begin(), a.end(), [](auto x, auto y) {
         return x.first > y.first;
     });
-    // (9,2), (8,1), (8,3)
+    // 结果为 (9,2)、(8,1)、(8,3)
 }
 \end{cppcode}
 
@@ -455,10 +455,10 @@ C++17 中有足够辅助内存时为 $O(n\log n)$ 次比较，否则为 $O(n\log
 using ll = long long;
 
 void exampleUpperBound() {
-    std::vector<ll> a{2, 4, 4, 4, 7};
-    auto l = std::lower_bound(a.begin(), a.end(), 4LL);
-    auto r = std::upper_bound(l, a.end(), 4LL);
-    auto copies = r - l;  // 3
+    vector<ll> a{2, 4, 4, 4, 7};
+    auto l = lower_bound(a.begin(), a.end(), 4LL);
+    auto r = upper_bound(l, a.end(), 4LL);
+    auto copies = r - l;  // 共出现 3 次
 }
 \end{cppcode}
 
@@ -484,9 +484,9 @@ void exampleUpperBound() {
 using ll = long long;
 
 void exampleBinarySearch() {
-    std::vector<ll> a{11, 7, 4, 4, 1};
-    bool exists = std::binary_search(a.begin(), a.end(), 4LL,
-                                     std::greater<>{});
+    vector<ll> a{11, 7, 4, 4, 1};
+    bool exists = binary_search(a.begin(), a.end(), 4LL,
+                                     greater<>{});
 }
 \end{cppcode}
 
@@ -524,10 +524,10 @@ void exampleBinarySearch() {
 using ll = long long;
 
 void exampleUnique() {
-    std::vector<ll> a{7, 2, 7, 4, 2};
-    std::sort(a.begin(), a.end());
-    a.erase(std::unique(a.begin(), a.end()), a.end());
-    // a is now {2,4,7}.
+    vector<ll> a{7, 2, 7, 4, 2};
+    sort(a.begin(), a.end());
+    a.erase(unique(a.begin(), a.end()), a.end());
+    // 去重后 a 为 {2,4,7}
 }
 \end{cppcode}
 
@@ -551,8 +551,8 @@ void exampleUnique() {
 using ll = long long;
 
 void exampleGcdAndLcm() {
-    ll d = std::gcd(-36LL, 24LL);  // 12
-    ll m = std::lcm(12LL, 18LL);   // 36
+    ll d = gcd(-36LL, 24LL);  // 最大公约数为 12
+    ll m = lcm(12LL, 18LL);   // 最小公倍数为 36
 }
 \end{cppcode}
 
@@ -577,8 +577,8 @@ void exampleGcdAndLcm() {
 using ll = long long;
 
 void exampleAccumulate() {
-    std::vector<int> a{1000000000, 1000000000, 1000000000};
-    ll sum = std::accumulate(a.begin(), a.end(), ll{0});
+    vector<int> a{1000000000, 1000000000, 1000000000};
+    ll sum = accumulate(a.begin(), a.end(), ll{0});
 }
 \end{cppcode}
 
@@ -623,9 +623,9 @@ void exampleAccumulate() {
 using ll = long long;
 
 void exampleMinAndMaxElement() {
-    std::vector<ll> a{9, 3, 6, 3};
-    auto lo = std::min_element(a.begin(), a.end());
-    auto hi = std::max_element(a.begin(), a.end());
+    vector<ll> a{9, 3, 6, 3};
+    auto lo = min_element(a.begin(), a.end());
+    auto hi = max_element(a.begin(), a.end());
     if (lo != a.end()) {
         auto minIndex = lo - a.begin();
         ll largest = *hi;
@@ -645,9 +645,9 @@ void exampleMinAndMaxElement() {
 #include <string>
 
 void exampleReverse() {
-    std::string s = "abcde";
-    std::reverse(s.begin() + 1, s.begin() + 4);
-    // s == "adcbe"
+    string s = "abcde";
+    reverse(s.begin() + 1, s.begin() + 4);
+    // 翻转后 s 为 "adcbe"
 }
 \end{cppcode}
 
@@ -670,9 +670,9 @@ void exampleReverse() {
 #include <vector>
 
 void exampleRotate() {
-    std::vector<int> a{3, 5, 8, 9, 1};
-    auto p = std::rotate(a.begin(), a.begin() + 2, a.end());
-    // a is {8,9,1,3,5}; p points to 3.
+    vector<int> a{3, 5, 8, 9, 1};
+    auto p = rotate(a.begin(), a.begin() + 2, a.end());
+    // 旋转后 a 为 {8,9,1,3,5}，p 指向元素 3
 }
 \end{cppcode}
 
@@ -733,9 +733,9 @@ void exampleRotate() {
 using ll = long long;
 
 void exampleCount() {
-    std::vector<ll> a{1, 7, 3, 7, 11};
-    auto same = std::count(a.begin(), a.end(), 7LL);
-    auto more = std::count_if(a.begin(), a.end(), [](ll x) {
+    vector<ll> a{1, 7, 3, 7, 11};
+    auto same = count(a.begin(), a.end(), 7LL);
+    auto more = count_if(a.begin(), a.end(), [](ll x) {
         return x > 5;
     });
 }
@@ -762,8 +762,8 @@ void exampleCount() {
 #include <vector>
 
 void exampleFind() {
-    std::vector<int> a{6, 1, 3, 1};
-    auto it = std::find(a.begin(), a.end(), 1);
+    vector<int> a{6, 1, 3, 1};
+    auto it = find(a.begin(), a.end(), 1);
     auto pos = it == a.end() ? -1 : it - a.begin();
 }
 \end{cppcode}
@@ -789,9 +789,9 @@ void exampleFind() {
 using ll = long long;
 
 void exampleFill() {
-    std::vector<ll> dist(6);
-    std::fill(dist.begin() + 1, dist.end(), -1LL);
-    // dist[0] stays 0.
+    vector<ll> dist(6);
+    fill(dist.begin() + 1, dist.end(), -1LL);
+    // dist[0] 仍为 0
 }
 \end{cppcode}
 
@@ -817,8 +817,8 @@ using ll = long long;
 
 void exampleSwap() {
     int l = 9, r = 2;
-    if (l > r) std::swap(l, r);
-    std::vector<ll> a{3, 4}, b{6};
+    if (l > r) swap(l, r);
+    vector<ll> a{3, 4}, b{6};
     a.swap(b);
 }
 \end{cppcode}
@@ -849,12 +849,12 @@ Lambda 可在使用位置定义短函数，常用于排序键、查找条件和�
 using ll = long long;
 
 void exampleLambda() {
-    std::vector<ll> a{1, 7, 3, 10};
+    vector<ll> a{1, 7, 3, 10};
     ll limit = 5, sum = 0;
     auto addIf = [limit, &sum](ll x) {
         if (x >= limit) sum += x;
     };
-    std::for_each(a.begin(), a.end(), addIf);  // sum == 17
+    for_each(a.begin(), a.end(), addIf);  // 累加结果为 17
 }
 \end{cppcode}
 
@@ -901,11 +901,11 @@ void exampleLambda() {
 using ll = long long;
 
 void exampleStructuredBinding() {
-    std::map<int, ll> dist{{1, 8}, {2, 14}};
+    map<int, ll> dist{{1, 8}, {2, 14}};
     for (auto& [u, d] : dist) {
         d += 2;
     }
-    auto [time, node, color] = std::tuple<ll, int, int>{8, 1, 0};
+    auto [time, node, color] = tuple<ll, int, int>{8, 1, 0};
 }
 \end{cppcode}
 
@@ -921,7 +921,7 @@ void exampleStructuredBinding() {
 \begin{itemize}
     \item 给出固定种子可以重现引擎序列。在同一标准库实现下，分布和洗牌结果也便于重现。
     \item \texttt{uniform\_int\_distribution<ll>(l,r)} 在闭区间内取值，避免直接对引擎结果取模带来的偏差。
-    \item \texttt{std::shuffle} 接收随机访问区间和一个引擎。
+    \item \texttt{shuffle} 接收随机访问区间和一个引擎。
 \end{itemize}
 
 \paragraph{闭区间随机整数与洗牌}
@@ -995,7 +995,7 @@ void exampleTrailingZeros() {
     ull x = 40;
     ull mask = 0;
     if (x) {
-        int pos = __builtin_ctzll(x);  // 3
+        int pos = __builtin_ctzll(x);  // 末尾有 3 个零
         mask = ull{1} << pos;
     }
 }
@@ -1024,8 +1024,8 @@ using ull = unsigned long long;
 
 void exampleLeadingZeros() {
     ull x = 40;
-    int width = std::numeric_limits<ull>::digits;
-    int bits = x ? width - __builtin_clzll(x) : 0;  // 6
+    int width = numeric_limits<ull>::digits;
+    int bits = x ? width - __builtin_clzll(x) : 0;  // 有效位数为 6
 }
 \end{cppcode}
 

@@ -3,11 +3,11 @@
 
 using ll = long long;
 
-// In solve: vector<ll> a. tails.size() is the LIS length.
+// 先准备数组 a。tails.size() 为最长上升子序列的长度。
 
-std::vector<ll> tails;
+vector<ll> tails;
 for (ll x : a) {
-    auto it = std::lower_bound(tails.begin(), tails.end(), x);
+    auto it = lower_bound(tails.begin(), tails.end(), x);
     if (it == tails.end()) tails.push_back(x);
     else *it = x;
 }

@@ -8,10 +8,10 @@ using ll = long long;
 template<class Info, class Tag>
 struct LazySegmentTree {
     int n;
-    std::vector<Info> tr;
-    std::vector<Tag> tag;
+    vector<Info> tr;
+    vector<Tag> tag;
 
-    explicit LazySegmentTree(const std::vector<Info>& a)
+    explicit LazySegmentTree(const vector<Info>& a)
         : n(static_cast<int>(a.size()) - 1), tr(4 * n), tag(4 * n) {
         build(1, 1, n, a);
     }
@@ -42,7 +42,7 @@ private:
         tag[u] = Tag{};
     }
 
-    void build(int u, int l, int r, const std::vector<Info>& a) {
+    void build(int u, int l, int r, const vector<Info>& a) {
         if (l == r) {
             tr[u] = a[l];
             return;
@@ -89,7 +89,7 @@ struct RangeTag {
         return !hasSet && add == 0;
     }
 
-    // Appends a newer operation to the existing tag.
+    // 将较新的操作追加到现有标记之后。
     void apply(const RangeTag& v) {
         if (v.hasSet) *this = v;
         else add += v.add;

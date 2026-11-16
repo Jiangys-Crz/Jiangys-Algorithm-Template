@@ -7,8 +7,8 @@
 using ll = long long;
 
 struct MedianHeap {
-    std::priority_queue<ll> lo;
-    std::priority_queue<ll, std::vector<ll>, std::greater<>> hi;
+    priority_queue<ll> lo;
+    priority_queue<ll, vector<ll>, greater<>> hi;
 
     void insert(ll x) {
         if (lo.empty() || x <= lo.top()) lo.push(x);
@@ -23,9 +23,9 @@ struct MedianHeap {
         }
     }
 
-    std::optional<std::pair<ll, ll>> middle() const {
-        if (lo.empty()) return std::nullopt;
+    optional<pair<ll, ll>> middle() const {
+        if (lo.empty()) return nullopt;
         ll left = lo.top();
-        return std::pair{left, lo.size() == hi.size() ? hi.top() : left};
+        return pair{left, lo.size() == hi.size() ? hi.top() : left};
     }
 };

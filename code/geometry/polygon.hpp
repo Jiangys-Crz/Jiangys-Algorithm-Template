@@ -73,7 +73,7 @@ constexpr T dist2(Point<T> a, Point<T> b) {
 
 template<class T>
 Real length(Point<T> p) {
-    return std::hypot(static_cast<Real>(p.x), static_cast<Real>(p.y));
+    return hypot(static_cast<Real>(p.x), static_cast<Real>(p.y));
 }
 
 template<class T>
@@ -108,8 +108,8 @@ inline int sign(Real x, Real tol = eps) {
 }
 
 inline int dcmp(Real a, Real b, Real absTol = eps, Real relTol = eps) {
-    Real scale = std::max(std::abs(a), std::abs(b));
-    return sign(a - b, std::max(absTol, relTol * scale));
+    Real scale = max(abs(a), abs(b));
+    return sign(a - b, max(absTol, relTol * scale));
 }
 
 #endif
@@ -120,7 +120,7 @@ inline int dcmp(Real a, Real b, Real absTol = eps, Real relTol = eps) {
 template<class T>
 bool pointOnSegment(Point<T> p, Line<T> s) {
     return cross(s.a, s.b, p) == T{} &&
-           !(p < std::min(s.a, s.b)) && !(std::max(s.a, s.b) < p);
+           !(p < min(s.a, s.b)) && !(max(s.a, s.b) < p);
 }
 
 enum class SegmentRelation { disjoint, proper, touch, overlap };
@@ -136,8 +136,8 @@ SegmentHit<T> segmentIntersection(Line<T> s, Line<T> t) {
     int a = sgn(cross(s.a, s.b, t.a)), b = sgn(cross(s.a, s.b, t.b));
     int c = sgn(cross(t.a, t.b, s.a)), d = sgn(cross(t.a, t.b, s.b));
     if (!a && !b && !c && !d) {
-        auto l = std::max(std::min(s.a, s.b), std::min(t.a, t.b));
-        auto r = std::min(std::max(s.a, s.b), std::max(t.a, t.b));
+        auto l = max(min(s.a, s.b), min(t.a, t.b));
+        auto r = min(max(s.a, s.b), max(t.a, t.b));
         if (r < l) return {SegmentRelation::disjoint};
         return {l == r ? SegmentRelation::touch : SegmentRelation::overlap, l, r};
     }
@@ -156,9 +156,9 @@ SegmentHit<T> segmentIntersection(Line<T> s, Line<T> t) {
 #define XCPC_GEOMETRY_POLYGON_HPP
 
 template<class T>
-T signedArea2(const std::vector<Point<T>>& p) {
+T signedArea2(const vector<Point<T>>& p) {
     T ans{};
-    for (std::size_t i = 1; i + 1 < p.size(); ++i) {
+    for (size_t i = 1; i + 1 < p.size(); ++i) {
         ans += cross(p[0], p[i], p[i + 1]);
     }
     return ans;
@@ -167,9 +167,9 @@ T signedArea2(const std::vector<Point<T>>& p) {
 enum class PointLocation { outside, boundary, inside };
 
 template<class T>
-PointLocation pointInPolygon(Point<T> q, const std::vector<Point<T>>& p) {
+PointLocation pointInPolygon(Point<T> q, const vector<Point<T>>& p) {
     bool inside = false;
-    for (std::size_t i = 0; i < p.size(); ++i) {
+    for (size_t i = 0; i < p.size(); ++i) {
         auto a = p[i], b = p[(i + 1) % p.size()];
         if (pointOnSegment(q, Line<T>{a, b})) return PointLocation::boundary;
 

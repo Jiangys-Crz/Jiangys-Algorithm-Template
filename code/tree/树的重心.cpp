@@ -7,8 +7,8 @@
 
 struct Tree {
     int n, root = 0;
-    std::vector<std::vector<int>> adj;
-    std::vector<int> fa, dep, siz, dfn, id;
+    vector<vector<int>> adj;
+    vector<int> fa, dep, siz, dfn, id;
 
     explicit Tree(int n)
         : n(n), adj(n + 1), fa(n + 1), dep(n + 1),
@@ -22,7 +22,7 @@ struct Tree {
     void work(int rt = 1) {
         root = rt;
         fa[root] = dep[root] = 0;
-        std::vector<int> stk{root};
+        vector<int> stk{root};
         int cnt = 0;
         while (!stk.empty()) {
             int u = stk.back();
@@ -44,7 +44,7 @@ struct Tree {
         }
     }
 
-    std::pair<int, int> subtree(int u) const {
+    pair<int, int> subtree(int u) const {
         return {dfn[u], dfn[u] + siz[u] - 1};
     }
 
@@ -56,12 +56,12 @@ struct Tree {
 
 #endif
 
-std::vector<int> treeCentroids(const Tree& tr) {
-    std::vector<int> res;
+vector<int> treeCentroids(const Tree& tr) {
+    vector<int> res;
     for (int u = 1; u <= tr.n; ++u) {
         int largest = tr.n - tr.siz[u];
         for (int v : tr.adj[u]) {
-            if (tr.fa[v] == u) largest = std::max(largest, tr.siz[v]);
+            if (tr.fa[v] == u) largest = max(largest, tr.siz[v]);
         }
         if (largest <= tr.n / 2) res.push_back(u);
     }

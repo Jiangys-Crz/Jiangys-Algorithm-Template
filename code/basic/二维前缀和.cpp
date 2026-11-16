@@ -2,9 +2,9 @@
 
 using ll = long long;
 
-// In solve: n by m matrix a with 1-based coordinates.
-// Query corners: (x1, y1), (x2, y2), inclusive.
-std::vector<std::vector<ll>> pre(n + 1, std::vector<ll>(m + 1));
+// a 为 n 行 m 列的矩阵，行列下标从 1 开始。
+// 查询包含左上角 (x1, y1) 和右下角 (x2, y2) 的闭矩形。
+vector<vector<ll>> pre(n + 1, vector<ll>(m + 1));
 for (int i = 1; i <= n; ++i) {
     ll row = 0;
     for (int j = 1; j <= m; ++j) {

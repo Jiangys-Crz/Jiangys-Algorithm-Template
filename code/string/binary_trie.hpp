@@ -9,7 +9,7 @@
 template<int B = 64>
 class BinaryTrie {
     static_assert(1 <= B && B <= 64);
-    using U64 = std::uint64_t;
+    using U64 = uint64_t;
 
 public:
     void insert(U64 x) {
@@ -27,7 +27,7 @@ public:
     }
 
     bool erase(U64 x) {
-        std::array<int, B + 1> path{};
+        array<int, B + 1> path{};
         int u = 0;
         for (int i = B - 1; i >= 0; --i) {
             u = tr[u].ch[(x >> i) & 1];
@@ -38,8 +38,8 @@ public:
         return true;
     }
 
-    std::optional<U64> maxXor(U64 x) const {
-        if (!tr[0].cnt) return std::nullopt;
+    optional<U64> maxXor(U64 x) const {
+        if (!tr[0].cnt) return nullopt;
         int u = 0;
         U64 ans = 0;
         for (int i = B - 1; i >= 0; --i) {
@@ -57,11 +57,11 @@ public:
 
 private:
     struct Node {
-        std::array<int, 2> ch{};
+        array<int, 2> ch{};
         int cnt = 0;
     };
 
-    std::vector<Node> tr{Node{}};
+    vector<Node> tr{Node{}};
 };
 
 #endif

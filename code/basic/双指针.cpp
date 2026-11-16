@@ -3,7 +3,7 @@
 using ll = long long;
 using lll = __int128;
 
-// In solve: sorted vector<ll> a and ll target.
+// a 为非递减数组，target 为目标和。
 
 int l = 0, r = static_cast<int>(a.size()) - 1;
 while (l < r) {
@@ -12,4 +12,4 @@ while (l < r) {
     if (sum < target) ++l;
     else --r;
 }
-// If l < r, (l, r) is a valid pair; otherwise no pair exists.
+// 若 l < r，则 (l, r) 为一组解，否则无解。

@@ -2,11 +2,11 @@
 #include <utility>
 #include <vector>
 
-// In solve: 1-based adjacency list adj, n vertices, and start s.
+// 先准备 n 个顶点的邻接表 adj 和起点 s，编号从 1 开始。
 
-std::vector<char> vis(n + 1);
-std::vector<int> order{s};
-std::vector<std::pair<int, std::size_t>> stk{{s, 0}};
+vector<char> vis(n + 1);
+vector<int> order{s};
+vector<pair<int, size_t>> stk{{s, 0}};
 vis[s] = true;
 while (!stk.empty()) {
     auto& [u, j] = stk.back();
@@ -21,9 +21,9 @@ while (!stk.empty()) {
     stk.push_back({v, 0});
 }
 
-std::vector<int> dist(n + 1, -1), q{s};
+vector<int> dist(n + 1, -1), q{s};
 dist[s] = 0;
-for (std::size_t i = 0; i < q.size(); ++i) {
+for (size_t i = 0; i < q.size(); ++i) {
     int u = q[i];
     for (int v : adj[u]) {
         if (dist[v] != -1) continue;

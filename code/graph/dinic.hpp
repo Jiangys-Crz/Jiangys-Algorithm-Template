@@ -14,8 +14,8 @@ struct Flow {
         T cap;
     };
 
-    std::vector<Edge> e;
-    std::vector<std::vector<int>> adj;
+    vector<Edge> e;
+    vector<vector<int>> adj;
 
     explicit Flow(int n) : adj(n + 1), cur(n + 1), h(n + 1) {}
 
@@ -34,29 +34,29 @@ struct Flow {
         while (true) {
             bfs(s);
             if (h[t] == -1) return ans;
-            std::fill(cur.begin(), cur.end(), 0);
-            while (T pushed = dfs(s, t, std::numeric_limits<T>::max())) {
+            fill(cur.begin(), cur.end(), 0);
+            while (T pushed = dfs(s, t, numeric_limits<T>::max())) {
                 ans += pushed;
             }
         }
     }
 
-    std::vector<char> cutSide(int s) {
+    vector<char> cutSide(int s) {
         bfs(s);
-        std::vector<char> side(h.size());
-        for (std::size_t u = 1; u < h.size(); ++u) side[u] = h[u] != -1;
+        vector<char> side(h.size());
+        for (size_t u = 1; u < h.size(); ++u) side[u] = h[u] != -1;
         return side;
     }
 
 private:
-    std::vector<std::size_t> cur;
-    std::vector<int> h;
+    vector<size_t> cur;
+    vector<int> h;
 
     void bfs(int s) {
-        std::fill(h.begin(), h.end(), -1);
+        fill(h.begin(), h.end(), -1);
         h[s] = 0;
-        std::vector<int> q{s};
-        for (std::size_t i = 0; i < q.size(); ++i) {
+        vector<int> q{s};
+        for (size_t i = 0; i < q.size(); ++i) {
             int u = q[i];
             for (int id : adj[u]) {
                 auto [v, cap] = e[id];
@@ -73,7 +73,7 @@ private:
             int id = adj[u][i];
             auto [v, cap] = e[id];
             if (cap <= 0 || h[v] != h[u] + 1) continue;
-            T pushed = dfs(v, t, std::min(f, cap));
+            T pushed = dfs(v, t, min(f, cap));
             if (!pushed) continue;
             e[id].cap -= pushed;
             e[id ^ 1].cap += pushed;

@@ -13,7 +13,7 @@ using ull = unsigned long long;
 
 template<class Key>
 using OrderedTree = __gnu_pbds::tree<
-    Key, __gnu_pbds::null_type, std::less<Key>, __gnu_pbds::rb_tree_tag,
+    Key, __gnu_pbds::null_type, less<Key>, __gnu_pbds::rb_tree_tag,
     __gnu_pbds::tree_order_statistics_node_update>;
 
 class OrderMultiset {
@@ -29,18 +29,18 @@ public:
         return true;
     }
 
-    std::size_t countLess(ll x) const {
+    size_t countLess(ll x) const {
         return tr.order_of_key({x, 0});
     }
 
-    std::optional<ll> kth(std::size_t k) const {
+    optional<ll> kth(size_t k) const {
         auto it = tr.find_by_order(k);
-        if (it == tr.end()) return std::nullopt;
+        if (it == tr.end()) return nullopt;
         return it->first;
     }
 
 private:
-    OrderedTree<std::pair<ll, ull>> tr;
+    OrderedTree<pair<ll, ull>> tr;
     ull idx = 0;
 };
 

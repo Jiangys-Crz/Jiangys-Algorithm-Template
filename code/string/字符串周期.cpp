@@ -1,10 +1,10 @@
 #include <string>
 #include <vector>
 
-// In solve: string or string_view s. step and block are the two period lengths.
+// 先准备字符串 s。step 为最短周期，block 为最短完整重复块的长度。
 
 int n = static_cast<int>(s.size());
-std::vector<int> nxt(n);
+vector<int> nxt(n);
 for (int i = 1, j = 0; i < n; ++i) {
     while (j && s[i] != s[j]) j = nxt[j - 1];
     if (s[i] == s[j]) ++j;

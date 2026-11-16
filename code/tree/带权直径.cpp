@@ -10,8 +10,8 @@ using ll = long long;
 
 struct Tree {
     int n, root = 0;
-    std::vector<std::vector<int>> adj;
-    std::vector<int> fa, dep, siz, dfn, id;
+    vector<vector<int>> adj;
+    vector<int> fa, dep, siz, dfn, id;
 
     explicit Tree(int n)
         : n(n), adj(n + 1), fa(n + 1), dep(n + 1),
@@ -25,7 +25,7 @@ struct Tree {
     void work(int rt = 1) {
         root = rt;
         fa[root] = dep[root] = 0;
-        std::vector<int> stk{root};
+        vector<int> stk{root};
         int cnt = 0;
         while (!stk.empty()) {
             int u = stk.back();
@@ -47,7 +47,7 @@ struct Tree {
         }
     }
 
-    std::pair<int, int> subtree(int u) const {
+    pair<int, int> subtree(int u) const {
         return {dfn[u], dfn[u] + siz[u] - 1};
     }
 
@@ -59,16 +59,16 @@ struct Tree {
 
 #endif
 
-ll weightedDiameter(const Tree& tr, const std::vector<ll>& w) {
+ll weightedDiameter(const Tree& tr, const vector<ll>& w) {
     if (tr.n == 1) return 0;
 
-    std::vector<ll> down(tr.n + 1);
-    ll ans = std::numeric_limits<ll>::lowest();
+    vector<ll> down(tr.n + 1);
+    ll ans = numeric_limits<ll>::lowest();
     for (int i = tr.n; i >= 2; --i) {
         int u = tr.id[i], p = tr.fa[u];
         ll branch = down[u] + w[u];
-        ans = std::max(ans, down[p] + branch);
-        down[p] = std::max(down[p], branch);
+        ans = max(ans, down[p] + branch);
+        down[p] = max(down[p], branch);
     }
     return ans;
 }

@@ -1,6 +1,6 @@
 using ull = unsigned long long;
 
-// In solve: elements contains indices in [0, 63]; ull b is another mask.
+// elements 保存 [0, 63] 内的元素编号，b 为另一集合的掩码。
 ull a = 0;
 for (int x : elements) a |= 1ULL << x;
 bool contains = (a & b) == b;

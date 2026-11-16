@@ -16,10 +16,10 @@ constexpr ull gcd(ull a, ull b) {
     return a;
 }
 
-inline std::optional<ull> lcmChecked(ull a, ull b) {
+inline optional<ull> lcmChecked(ull a, ull b) {
     if (!a || !b) return 0;
     a /= gcd(a, b);
-    if (a > std::numeric_limits<ull>::max() / b) return std::nullopt;
+    if (a > numeric_limits<ull>::max() / b) return nullopt;
     return a * b;
 }
 

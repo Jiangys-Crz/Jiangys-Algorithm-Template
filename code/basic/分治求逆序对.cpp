@@ -2,9 +2,9 @@
 
 using ll = long long;
 
-// In solve: vector<int> a (sorted in place).
+// 先准备数组 a，计算过程中将对其原地排序。
 
-std::vector<int> buffer(a.size());
+vector<int> buffer(a.size());
 auto solve = [&](auto&& self, int l, int r) -> ll {
     if (r - l <= 1) {
         return 0;

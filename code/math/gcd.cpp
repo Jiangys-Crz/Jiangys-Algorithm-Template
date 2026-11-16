@@ -1,6 +1,6 @@
 using ull = unsigned long long;
 
-// In solve: ull a, b. The GCD is stored in a.
+// a 和 b 为无符号整数。循环结束后，a 为最大公约数。
 
 while (b) {
     ull r = a % b;

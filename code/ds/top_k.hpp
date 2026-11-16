@@ -35,8 +35,8 @@ public:
         return sum;
     }
 
-    std::optional<ll> kth() const {
-        if (!k || static_cast<int>(q.size()) < k) return std::nullopt;
+    optional<ll> kth() const {
+        if (!k || static_cast<int>(q.size()) < k) return nullopt;
         return q.top();
     }
 
@@ -44,10 +44,10 @@ private:
     int k;
     ll sum = 0;
     Better better;
-    std::priority_queue<ll, std::vector<ll>, Better> q;
+    priority_queue<ll, vector<ll>, Better> q;
 };
 
-using KLargest = TopK<std::greater<ll>>;
-using KSmallest = TopK<std::less<ll>>;
+using KLargest = TopK<greater<ll>>;
+using KSmallest = TopK<less<ll>>;
 
 #endif

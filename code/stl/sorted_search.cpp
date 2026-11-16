@@ -3,8 +3,8 @@
 
 using ll = long long;
 
-// In solve: nondecreasing vector<ll> a and ll x.
+// a 为非递减数组，x 为待查值。
 
-auto l = std::lower_bound(a.begin(), a.end(), x);
-auto r = std::upper_bound(l, a.end(), x);
+auto l = lower_bound(a.begin(), a.end(), x);
+auto r = upper_bound(l, a.end(), x);
 auto first = l - a.begin(), last = r - a.begin();

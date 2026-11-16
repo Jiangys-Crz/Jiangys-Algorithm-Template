@@ -34,7 +34,7 @@ struct AlnumAlphabet {
 template<class Alphabet = AlnumAlphabet>
 class Trie {
 public:
-    void insert(std::string_view s) {
+    void insert(string_view s) {
         int u = 0;
         ++tr[u].pass;
         for (unsigned char c : s) {
@@ -50,7 +50,7 @@ public:
         ++tr[u].cnt;
     }
 
-    bool erase(std::string_view s) {
+    bool erase(string_view s) {
         int end = walk(s);
         if (end < 0 || !tr[end].cnt) return false;
         --tr[end].cnt;
@@ -63,12 +63,12 @@ public:
         return true;
     }
 
-    int query(std::string_view s) const {
+    int query(string_view s) const {
         int u = walk(s);
         return u < 0 ? 0 : tr[u].cnt;
     }
 
-    int prefixCount(std::string_view s) const {
+    int prefixCount(string_view s) const {
         int u = walk(s);
         return u < 0 ? 0 : tr[u].pass;
     }
@@ -79,13 +79,13 @@ public:
 
 private:
     struct Node {
-        std::array<int, Alphabet::size> ch{};
+        array<int, Alphabet::size> ch{};
         int cnt = 0, pass = 0;
     };
 
-    std::vector<Node> tr{Node{}};
+    vector<Node> tr{Node{}};
 
-    int walk(std::string_view s) const {
+    int walk(string_view s) const {
         int u = 0;
         for (unsigned char c : s) {
             int x = Alphabet::id(c);

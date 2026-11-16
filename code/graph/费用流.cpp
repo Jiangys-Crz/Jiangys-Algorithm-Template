@@ -20,8 +20,8 @@ struct MinCostFlow {
     };
 
     int n;
-    std::vector<Edge> e;
-    std::vector<std::vector<int>> adj;
+    vector<Edge> e;
+    vector<vector<int>> adj;
 
     explicit MinCostFlow(int n) : n(n), adj(n + 1) {}
 
@@ -34,21 +34,21 @@ struct MinCostFlow {
         return id;
     }
 
-    std::optional<std::pair<ll, ll>> work(
-        int s, int t, ll limit = std::numeric_limits<ll>::max()) {
+    optional<pair<ll, ll>> work(
+        int s, int t, ll limit = numeric_limits<ll>::max()) {
         ll flow = 0;
         lll cost = 0;
-        if (s == t || limit == 0) return std::pair{0LL, 0LL};
+        if (s == t || limit == 0) return pair{0LL, 0LL};
 
         constexpr lll inf = lll{1} << 126;
-        std::vector<lll> pi(n + 1), dist(n + 1);
-        std::vector<int> pre(n + 1);
-        if (!initPotential(pi)) return std::nullopt;
+        vector<lll> pi(n + 1), dist(n + 1);
+        vector<int> pre(n + 1);
+        if (!initPotential(pi)) return nullopt;
 
-        using State = std::pair<lll, int>;
+        using State = pair<lll, int>;
         while (flow < limit) {
-            std::fill(dist.begin(), dist.end(), inf);
-            std::priority_queue<State, std::vector<State>, std::greater<>> pq;
+            fill(dist.begin(), dist.end(), inf);
+            priority_queue<State, vector<State>, greater<>> pq;
             dist[s] = 0;
             pq.push({0, s});
             while (!pq.empty()) {
@@ -72,7 +72,7 @@ struct MinCostFlow {
 
             ll pushed = limit - flow;
             for (int u = t; u != s; u = e[pre[u] ^ 1].v) {
-                pushed = std::min(pushed, e[pre[u]].cap);
+                pushed = min(pushed, e[pre[u]].cap);
             }
             for (int u = t; u != s; u = e[pre[u] ^ 1].v) {
                 int id = pre[u];
@@ -82,11 +82,11 @@ struct MinCostFlow {
             flow += pushed;
             cost += pushed * (pi[t] - pi[s]);
         }
-        return std::pair{flow, static_cast<ll>(cost)};
+        return pair{flow, static_cast<ll>(cost)};
     }
 
 private:
-    bool initPotential(std::vector<lll>& pi) const {
+    bool initPotential(vector<lll>& pi) const {
         for (int k = 1; k <= n; ++k) {
             bool changed = false;
             for (int u = 1; u <= n; ++u) {

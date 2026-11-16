@@ -16,18 +16,18 @@ struct LinearResult {
     Solution x{};
 };
 
-inline LinearResult<std::vector<long double>> gauss(
-    std::vector<std::vector<long double>> a, int m, long double eps = 1e-12L) {
+inline LinearResult<vector<long double>> gauss(
+    vector<vector<long double>> a, int m, long double eps = 1e-12L) {
     int n = static_cast<int>(a.size()), row = 0;
-    std::vector<int> where(m, -1);
+    vector<int> where(m, -1);
     for (int col = 0; col < m && row < n; ++col) {
         int p = row;
         for (int i = row + 1; i < n; ++i) {
-            if (std::abs(a[i][col]) > std::abs(a[p][col])) p = i;
+            if (abs(a[i][col]) > abs(a[p][col])) p = i;
         }
-        if (std::abs(a[p][col]) <= eps) continue;
+        if (abs(a[p][col]) <= eps) continue;
 
-        std::swap(a[p], a[row]);
+        swap(a[p], a[row]);
         where[col] = row;
         long double d = a[row][col];
         for (int j = col; j <= m; ++j) a[row][j] /= d;
@@ -40,26 +40,26 @@ inline LinearResult<std::vector<long double>> gauss(
         ++row;
     }
     for (int i = row; i < n; ++i) {
-        if (std::abs(a[i][m]) > eps) return {LinearStatus::inconsistent, row};
+        if (abs(a[i][m]) > eps) return {LinearStatus::inconsistent, row};
     }
-    std::vector<long double> x(m);
+    vector<long double> x(m);
     for (int j = 0; j < m; ++j) {
         if (where[j] != -1) x[j] = a[where[j]][m];
     }
     auto status = row == m ? LinearStatus::unique : LinearStatus::infinite;
-    return {status, row, std::move(x)};
+    return {status, row, move(x)};
 }
 
-template<std::size_t M>
-LinearResult<std::bitset<M>> xorGauss(std::vector<std::bitset<M + 1>> a) {
+template<size_t M>
+LinearResult<bitset<M>> xorGauss(vector<bitset<M + 1>> a) {
     int n = static_cast<int>(a.size()), row = 0;
-    std::vector<int> where(M, -1);
-    for (std::size_t col = 0; col < M && row < n; ++col) {
+    vector<int> where(M, -1);
+    for (size_t col = 0; col < M && row < n; ++col) {
         int p = row;
         while (p < n && !a[p][col]) ++p;
         if (p == n) continue;
 
-        std::swap(a[p], a[row]);
+        swap(a[p], a[row]);
         where[col] = row;
         for (int i = 0; i < n; ++i) {
             if (i != row && a[i][col]) a[i] ^= a[row];
@@ -69,11 +69,11 @@ LinearResult<std::bitset<M>> xorGauss(std::vector<std::bitset<M + 1>> a) {
     for (int i = row; i < n; ++i) {
         if (a[i][M]) return {LinearStatus::inconsistent, row};
     }
-    std::bitset<M> x;
-    for (std::size_t j = 0; j < M; ++j) {
+    bitset<M> x;
+    for (size_t j = 0; j < M; ++j) {
         if (where[j] != -1) x[j] = a[where[j]][M];
     }
-    auto status = static_cast<std::size_t>(row) == M
+    auto status = static_cast<size_t>(row) == M
                       ? LinearStatus::unique : LinearStatus::infinite;
     return {status, row, x};
 }

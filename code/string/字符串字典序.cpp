@@ -3,11 +3,11 @@
 #include <string>
 #include <vector>
 
-// In solve: vector<string> a. Concatenating sorted a gives the smallest string.
+// 先准备字符串数组 a。排序后依次拼接，得到字典序最小的结果。
 
-std::sort(a.begin(), a.end(), [](const std::string& x, const std::string& y) {
+sort(a.begin(), a.end(), [](const string& x, const string& y) {
     if (x.empty() != y.empty()) return x.empty();
-    for (std::size_t i = 0; i < x.size() + y.size(); ++i) {
+    for (size_t i = 0; i < x.size() + y.size(); ++i) {
         unsigned char u = i < x.size() ? x[i] : y[i - x.size()];
         unsigned char v = i < y.size() ? y[i] : x[i - y.size()];
         if (u != v) return u < v;

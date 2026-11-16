@@ -1,10 +1,10 @@
 #include <algorithm>
 #include <vector>
 
-// In solve: a is the sequence to permute.
+// 先准备待枚举排列的序列 a。
 
-std::sort(a.begin(), a.end());
+sort(a.begin(), a.end());
 
 do {
-    // TODO: Process the current permutation, including the initial one.
-} while (std::next_permutation(a.begin(), a.end()));
+    // 待填写：处理当前排列，包含初始排列。
+} while (next_permutation(a.begin(), a.end()));

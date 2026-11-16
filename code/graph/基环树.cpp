@@ -7,7 +7,7 @@ using ll = long long;
 #ifndef XCPC_GRAPH_GRAPH_HPP
 #define XCPC_GRAPH_GRAPH_HPP
 
-inline constexpr ll graphInf = std::numeric_limits<ll>::max() / 4;
+inline constexpr ll graphInf = numeric_limits<ll>::max() / 4;
 
 struct Graph {
     struct Edge {
@@ -20,8 +20,8 @@ struct Graph {
 
     int n;
     bool directed;
-    std::vector<Edge> edges;
-    std::vector<std::vector<Arc>> adj;
+    vector<Edge> edges;
+    vector<vector<Arc>> adj;
 
     explicit Graph(int n, bool directed = true)
         : n(n), directed(directed), adj(n + 1) {}
@@ -38,16 +38,16 @@ struct Graph {
 #endif
 
 struct UnicyclicInfo {
-    std::vector<int> cycle, bel, dist;
+    vector<int> cycle, bel, dist;
 };
 
 UnicyclicInfo decomposeUnicyclic(const Graph& g) {
-    std::vector<int> deg(g.n + 1), q;
+    vector<int> deg(g.n + 1), q;
     for (int u = 1; u <= g.n; ++u) {
         deg[u] = static_cast<int>(g.adj[u].size());
         if (deg[u] == 1) q.push_back(u);
     }
-    for (std::size_t i = 0; i < q.size(); ++i) {
+    for (size_t i = 0; i < q.size(); ++i) {
         int u = q[i];
         deg[u] = 0;
         for (auto [v, id] : g.adj[u]) {
@@ -55,15 +55,15 @@ UnicyclicInfo decomposeUnicyclic(const Graph& g) {
         }
     }
 
-    UnicyclicInfo res{{}, std::vector<int>(g.n + 1),
-                         std::vector<int>(g.n + 1)};
+    UnicyclicInfo res{{}, vector<int>(g.n + 1),
+                         vector<int>(g.n + 1)};
     for (int u = 1; u <= g.n; ++u) {
         if (!deg[u]) continue;
         res.cycle.push_back(u);
         res.bel[u] = u;
     }
 
-    for (std::size_t i = q.size(); i > 0; --i) {
+    for (size_t i = q.size(); i > 0; --i) {
         int u = q[i - 1];
         for (auto [v, id] : g.adj[u]) {
             if (!res.bel[v]) continue;

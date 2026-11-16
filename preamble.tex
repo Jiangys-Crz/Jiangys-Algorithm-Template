@@ -1,6 +1,6 @@
 % =========================
-% XCPC Algorithm Template Book - Preamble
-% Compile with XeLaTeX
+% XCPC 算法竞赛模板册导言区
+% 使用 XeLaTeX 编译
 % =========================
 
 \usepackage{geometry}
@@ -26,7 +26,7 @@
 \usepackage[most]{tcolorbox}
 \tcbuselibrary{listings,breakable,skins,theorems}
 
-% ---------- Fonts ----------
+% ---------- 字体 ----------
 % 按平台选择字体。这里用“字体文件是否存在”来判断平台，而不是 \IfFontExistsTF：
 % 后者在字体确实缺失时会让 XeTeX 把字体名当文件名去找，触发 mktextfm 报错。
 % macOS
@@ -57,7 +57,7 @@
     }%
 }
 
-% ---------- Color palette ----------
+% ---------- 配色 ----------
 \definecolor{MainBlue}{RGB}{28, 87, 166}
 \definecolor{DeepBlue}{RGB}{20, 48, 96}
 \definecolor{CodeBg}{RGB}{248, 250, 252}
@@ -66,7 +66,7 @@
 \definecolor{CodeComment}{RGB}{92, 128, 92}
 \definecolor{CodeString}{RGB}{174, 65, 65}
 
-% ---------- Hyperref ----------
+% ---------- 超链接 ----------
 \hypersetup{
     colorlinks=true,
     linkcolor=MainBlue,
@@ -75,7 +75,7 @@
     bookmarksnumbered=true
 }
 
-% ---------- Header / footer ----------
+% ---------- 页眉与页脚 ----------
 \pagestyle{fancy}
 \setlength{\headheight}{15pt}
 \fancyhf{}
@@ -94,7 +94,7 @@
 }
 \makeatother
 
-% ---------- Chapter / section style ----------
+% ---------- 章与节的样式 ----------
 \ctexset{
     chapter = {
         name = {第 , 章},
@@ -133,16 +133,16 @@
 \renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
 \renewcommand{\thesubsection}{\arabic{chapter}.\arabic{section}.\arabic{subsection}}
 
-% ---------- Lists ----------
+% ---------- 列表 ----------
 \setlist[itemize]{itemsep=2pt, topsep=4pt}
 \setlist[enumerate]{itemsep=2pt, topsep=4pt}
 
-% ---------- Code style ----------
+% ---------- 代码排版 ----------
 \lstdefinestyle{cpplist}{
     language=C++,
     basicstyle=\ttfamily\footnotesize,
     keywordstyle=\color{CodeKeyword}\bfseries,
-    commentstyle=\color{CodeComment}\itshape,
+    commentstyle=\color{CodeComment},
     stringstyle=\color{CodeString},
     numbers=left,
     numberstyle=\scriptsize\color{gray},
@@ -157,7 +157,7 @@
     xrightmargin=0.4em
 }
 
-% External C++ file input. Usage: \cppfile{code/math/xxx.cpp}
+% 引入外部代码文件，例如 \cppfile{code/math/xxx.cpp}。
 \newtcbinputlisting{\cppfile}[2][]{
     enhanced,
     breakable,
@@ -178,7 +178,7 @@
     borderline west={2pt}{0pt}{MainBlue}
 }
 
-% Inline C++ block. Usage: \begin{cppcode} ... \end{cppcode}
+% 正文代码块使用 \begin{cppcode} 和 \end{cppcode}。
 \newtcblisting{cppcode}{
     enhanced,
     breakable,
@@ -197,10 +197,10 @@
     borderline west={2pt}{0pt}{MainBlue}
 }
 
-% Keep old \lstinputlisting usable, but use \cppfile for better boxes.
+% 为 \lstinputlisting 设置相同的代码样式。
 \lstset{style=cpplist}
 
-% ---------- Theorem environments ----------
+% ---------- 定理环境 ----------
 \newtheorem{theorem}{定理}[chapter]
 \newtheorem{lemma}[theorem]{引理}
 \newtheorem{corollary}[theorem]{推论}

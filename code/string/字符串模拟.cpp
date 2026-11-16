@@ -1,11 +1,11 @@
 #include <algorithm>
 #include <string>
 
-// In solve: nonempty decimal strings a and b. res is their sum.
+// 先准备非空十进制数字串 a 和 b。res 保存两数之和。
 
 auto i = a.size(), j = b.size();
 int carry = 0;
-std::string res;
+string res;
 while (i || j || carry) {
     int sum = carry;
     if (i) sum += a[--i] - '0';
@@ -14,4 +14,4 @@ while (i || j || carry) {
     carry = sum / 10;
 }
 while (res.size() > 1 && res.back() == '0') res.pop_back();
-std::reverse(res.begin(), res.end());
+reverse(res.begin(), res.end());

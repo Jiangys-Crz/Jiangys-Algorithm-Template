@@ -6,9 +6,9 @@
 template<class Info>
 struct SegmentTree {
     int base = 1;
-    std::vector<Info> tr;
+    vector<Info> tr;
 
-    explicit SegmentTree(const std::vector<Info>& a) {
+    explicit SegmentTree(const vector<Info>& a) {
         int n = static_cast<int>(a.size()) - 1;
         while (base < n) base *= 2;
         tr.resize(2 * base);

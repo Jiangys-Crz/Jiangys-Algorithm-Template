@@ -8,8 +8,8 @@ using ll = long long;
 
 struct Tree {
     int n, root = 0;
-    std::vector<std::vector<int>> adj;
-    std::vector<int> fa, dep, siz, dfn, id;
+    vector<vector<int>> adj;
+    vector<int> fa, dep, siz, dfn, id;
 
     explicit Tree(int n)
         : n(n), adj(n + 1), fa(n + 1), dep(n + 1),
@@ -23,7 +23,7 @@ struct Tree {
     void work(int rt = 1) {
         root = rt;
         fa[root] = dep[root] = 0;
-        std::vector<int> stk{root};
+        vector<int> stk{root};
         int cnt = 0;
         while (!stk.empty()) {
             int u = stk.back();
@@ -45,7 +45,7 @@ struct Tree {
         }
     }
 
-    std::pair<int, int> subtree(int u) const {
+    pair<int, int> subtree(int u) const {
         return {dfn[u], dfn[u] + siz[u] - 1};
     }
 
@@ -61,15 +61,15 @@ struct Tree {
 #define XCPC_TREE_LCA_HPP
 
 struct LCA {
-    std::vector<int> dep;
-    std::vector<std::vector<int>> up;
+    vector<int> dep;
+    vector<vector<int>> up;
 
     explicit LCA(const Tree& tr) : dep(tr.dep), up{tr.fa} {
         for (ll step = 2; step <= tr.n; step *= 2) {
             const auto& prev = up.back();
-            std::vector<int> next(tr.n + 1);
+            vector<int> next(tr.n + 1);
             for (int u = 1; u <= tr.n; ++u) next[u] = prev[prev[u]];
-            up.push_back(std::move(next));
+            up.push_back(move(next));
         }
     }
 
@@ -82,7 +82,7 @@ struct LCA {
     }
 
     int lca(int u, int v) const {
-        if (dep[u] < dep[v]) std::swap(u, v);
+        if (dep[u] < dep[v]) swap(u, v);
         u = jump(u, dep[u] - dep[v]);
         if (u == v) return u;
         for (int j = static_cast<int>(up.size()) - 1; j >= 0; --j) {

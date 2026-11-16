@@ -3,12 +3,12 @@
 
 using ll = long long;
 
-// In solve: multiset<ll> s and ll x. Erase at most one occurrence.
+// 先准备多重集合 s 和待删值 x，至多删除一份 x。
 
 auto it = s.find(x);
 if (it != s.end()) s.erase(it);
 
 auto l = s.lower_bound(x);
 auto r = s.upper_bound(x);
-// Strict predecessor exists if l != s.begin(); it is *std::prev(l).
-// Strict successor exists if r != s.end(); it is *r.
+// 若 l != s.begin()，则严格前驱为 *prev(l)。
+// 若 r != s.end()，则严格后继为 *r。

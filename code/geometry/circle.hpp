@@ -75,7 +75,7 @@ constexpr T dist2(Point<T> a, Point<T> b) {
 
 template<class T>
 Real length(Point<T> p) {
-    return std::hypot(static_cast<Real>(p.x), static_cast<Real>(p.y));
+    return hypot(static_cast<Real>(p.x), static_cast<Real>(p.y));
 }
 
 template<class T>
@@ -110,8 +110,8 @@ inline int sign(Real x, Real tol = eps) {
 }
 
 inline int dcmp(Real a, Real b, Real absTol = eps, Real relTol = eps) {
-    Real scale = std::max(std::abs(a), std::abs(b));
-    return sign(a - b, std::max(absTol, relTol * scale));
+    Real scale = max(abs(a), abs(b));
+    return sign(a - b, max(absTol, relTol * scale));
 }
 
 #endif
@@ -120,11 +120,11 @@ inline int dcmp(Real a, Real b, Real absTol = eps, Real relTol = eps) {
 #define XCPC_GEOMETRY_LINE_HPP
 
 template<class T>
-std::optional<Real> pointLineDistance(Point<T> p, Line<T> l) {
+optional<Real> pointLineDistance(Point<T> p, Line<T> l) {
     auto d = static_cast<RealPoint>(l.b - l.a);
     Real len = length(d);
-    if (len == 0) return std::nullopt;
-    return std::abs(cross(d / len, static_cast<RealPoint>(p - l.a)));
+    if (len == 0) return nullopt;
+    return abs(cross(d / len, static_cast<RealPoint>(p - l.a)));
 }
 
 enum class LineRelation { point, parallel, coincident, degenerate };
@@ -165,7 +165,7 @@ enum class CircleRelation { none, one, two, coincident, degenerate };
 
 struct CircleHit {
     CircleRelation kind;
-    std::array<RealPoint, 2> p{};
+    array<RealPoint, 2> p{};
 };
 
 inline CircleHit circleLineIntersection(Circle c, Line<Real> l,
@@ -176,13 +176,13 @@ inline CircleHit circleLineIntersection(Circle c, Line<Real> l,
     u = u / len;
 
     Real h = cross(u, l.a - c.o);
-    Real d = std::abs(h);
+    Real d = abs(h);
     int cmp = dcmp(d, c.r, absTol, relTol);
     if (cmp > 0) return {CircleRelation::none};
 
     auto foot = c.o + rotate90(u) * h;
     if (!cmp) return {CircleRelation::one, {c.r == 0 ? c.o : foot}};
-    Real t = std::sqrt(std::max(Real{}, (c.r - d) * (c.r + d)));
+    Real t = sqrt(max(Real{}, (c.r - d) * (c.r + d)));
     return {CircleRelation::two, {foot - u * t, foot + u * t}};
 }
 
@@ -195,7 +195,7 @@ inline CircleHit circleIntersection(Circle a, Circle b,
         return {CircleRelation::none};
     }
     if (a.r == 0 || b.r == 0) {
-        if (b.r == 0) std::swap(a, b);
+        if (b.r == 0) swap(a, b);
         if (!dcmp(d, b.r, absTol, relTol)) return {CircleRelation::one, {a.o}};
         return {CircleRelation::none};
     }
@@ -204,7 +204,7 @@ inline CircleHit circleIntersection(Circle a, Circle b,
                                                : CircleRelation::coincident};
     }
 
-    Real sum = a.r + b.r, gap = std::abs(a.r - b.r);
+    Real sum = a.r + b.r, gap = abs(a.r - b.r);
     int outer = dcmp(d, sum, absTol, relTol);
     int inner = dcmp(d, gap, absTol, relTol);
     if (outer > 0 || inner < 0) return {CircleRelation::none};
@@ -217,7 +217,7 @@ inline CircleHit circleIntersection(Circle a, Circle b,
 
     Real t = (d + (a.r - b.r) / d * sum) / 2;
     auto mid = a.o + u * t;
-    Real h = std::sqrt(std::max(Real{}, (a.r - t) * (a.r + t)));
+    Real h = sqrt(max(Real{}, (a.r - t) * (a.r + t)));
     auto delta = rotate90(u) * h;
     return {CircleRelation::two, {mid - delta, mid + delta}};
 }

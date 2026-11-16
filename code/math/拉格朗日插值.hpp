@@ -76,7 +76,7 @@ private:
 template<class Z>
 struct Comb {
     int n = 0;
-    std::vector<Z> _fac{1}, _invfac{1};
+    vector<Z> _fac{1}, _invfac{1};
 
     explicit Comb(int m = 0) { init(m); }
 
@@ -113,11 +113,11 @@ struct Comb {
 #define XCPC_MATH_LAGRANGE_INTERPOLATION_HPP
 
 template<class Z>
-Z lagrangeConsecutive(const std::vector<Z>& y, Z x, const Comb<Z>& comb) {
+Z lagrangeConsecutive(const vector<Z>& y, Z x, const Comb<Z>& comb) {
     int n = static_cast<int>(y.size()) - 1;
     if (x.val() < y.size()) return y[x.val()];
 
-    std::vector<Z> pre(n + 2, 1), suf(n + 2, 1);
+    vector<Z> pre(n + 2, 1), suf(n + 2, 1);
     for (int i = 0; i <= n; ++i) pre[i + 1] = pre[i] * (x - i);
     for (int i = n; i >= 0; --i) suf[i] = suf[i + 1] * (x - i);
 

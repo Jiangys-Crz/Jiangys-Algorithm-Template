@@ -1,12 +1,12 @@
 using ll = long long;
 using ull = unsigned long long;
 
-// In solve: ll l, r are the inclusive search bounds, l <= r.
-// The initial r must be feasible.
+// l 和 r 为整数搜索闭区间的端点，满足 l <= r。
+// 初始右端点 r 必须可行。
 auto check = [&](ll x) -> bool {
-    // Return true exactly when x satisfies the problem constraints.
-    // If x is feasible, every candidate >= x must be feasible.
-    return /* TODO: feasibility of x */;
+    // x 满足题目约束时返回 true，否则返回 false。
+    // 若 x 可行，则区间内所有不小于 x 的候选值均须可行。
+    return /* 待填写：判定候选值 x 是否可行 */;
 };
 
 while (l < r) {
