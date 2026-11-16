@@ -3,19 +3,7 @@
 并查集、区间结构和莫队默认从 $1$ 编号，区间为闭区间。采用此约定的数组将下标 $0$ 留作占位。
 下标、子树大小和节点编号须能用 \texttt{int} 表示，权值及中间结果须在相应类型的表示范围内。
 
-\section{基础数据结构}
-
-\subsection{栈}
-
-栈遵循后进先出。用 \texttt{push} 压入元素，\texttt{top} 读取栈顶，\texttt{pop} 弹出栈顶。括号匹配、表达式求值及撤销操作都可用栈保存尚未处理的状态。读取和弹出前须确认栈非空。
-
-\subsection{队列}
-
-队列遵循先进先出。用 \texttt{push} 在队尾加入元素，\texttt{front} 读取队首，\texttt{pop} 移除队首。广度优先搜索利用队列维持逐层访问顺序。
-
-\subsection{双端队列}
-
-双端队列支持在首尾插入及删除元素。常用接口为 \texttt{push\_front}、\texttt{push\_back}、\texttt{pop\_front} 和 \texttt{pop\_back}。两端的单次操作耗时为 $O(1)$。
+\section{堆、哈希与单调结构}
 
 \subsection{优先队列（堆）}
 
@@ -33,29 +21,12 @@
 \paragraph{复杂度}
 设有 $k$ 条序列、$n$ 个元素，总时间为 $O(k+n\log(k+1))$，除输出外额外空间为 $O(k)$。
 
-\subsection{哈希表}
+\subsection{整数键哈希}
 
-哈希表支持按键查找、去重和频次统计。用 \texttt{find} 查找时保持映射不变，下标运算符会在键缺失时插入该键并对映射值进行值初始化。
+散列不均时，哈希表的单次查找可能退化为 $O(n)$。
+\texttt{SplitMix64Hash} 将整数键与运行时生成的偏移相加后混合，可作为 \texttt{unordered\_map} 或 \texttt{unordered\_set} 的哈希类型。
 
-通常增删查均为平均 $O(1)$，集中碰撞时单次可达 $O(n)$。可通过 \texttt{reserve} 预留容量，减少重哈希。
-
-\subsection{有序集合}
-
-\texttt{set} 为每个键保存一份，\texttt{multiset} 保留重复键。它们都能按有序关系寻找元素的邻居。
-
-\begin{itemize}
-    \item \texttt{lower\_bound(x)} 找第一个 $\ge x$ 的元素，\texttt{upper\_bound(x)} 找第一个 $>x$ 的元素。
-    \item 严格前驱是 \texttt{lower\_bound} 的前一个元素，严格后继是 \texttt{upper\_bound} 指向的元素。
-\end{itemize}
-
-从多重集合删除至多一份 $x$，再定位其严格前驱和后继。解引用前须判断相应位置是否存在。
-
-\cppfile{code/ds/有序集合.cpp}
-
-\paragraph{复杂度}
-每次查找或修改为 $O(\log(n+1))$，存储 $n$ 个元素占 $O(n)$ 空间。
-
-使用 \texttt{s.erase(x)} 会按键删除所有相等项。只删一份时，先查找迭代器再删除。
+\cppfile{code/ds/splitmix_hash.hpp}
 
 \subsection{单调栈}
 
@@ -364,6 +335,14 @@ Treap 按键保持二叉搜索树顺序，按随机优先级保持堆序。旋�
 设当前保存 $n$ 个元素。插入、删除和查询的期望时间为 $O(\log(n+1))$，极端不平衡时为 $O(n)$。节点池占用与累计分配的节点数成正比。
 
 分裂时直接比较键值，以便处理最小整数。每次旋转、分裂或合并后都要更新子树大小。
+
+\subsection{PBDS 有序树}
+
+GNU libstdc++ 的 PBDS 有序树支持 $O(\log(n+1))$ 时间的增删和排名查询。
+\texttt{order\_of\_key(x)} 返回严格小于 $x$ 的元素数，\texttt{find\_by\_order(k)} 按从 $0$ 开始的排名查找。
+\texttt{OrderMultiset} 以值和唯一编号作为键来支持重复值。
+
+\cppfile{code/ds/pbds_ordered_tree.hpp}
 
 \subsection{分块}
 
