@@ -1,22 +1,19 @@
-// 先准备文本 s 和模式串 t。ans 保存从 0 开始的匹配起点。
-int n = static_cast<int>(s.size()), m = static_cast<int>(t.size());
-vector<int> nxt(m), ans;
-for (int i = 1, j = 0; i < m; ++i) {
-    while (j && t[i] != t[j]) j = nxt[j - 1];
-    if (t[i] == t[j]) ++j;
-    nxt[i] = j;
-}
-
-if (m == 0) {
-    ans.resize(s.size() + 1);
-    iota(ans.begin(), ans.end(), 0LL);
-} else {
-    for (int i = 0, j = 0; i < n; ++i) {
-        while (j && s[i] != t[j]) j = nxt[j - 1];
-        if (s[i] == t[j]) ++j;
+auto KMP = [&](std::string s, std::string t) -> void {
+    int n = s.size(), m = t.size();
+    std::vector<int> nxt(m + 1);
+    s = '-' + s;
+    t = '-' + t;
+    for (int i = 2, j = 0; i <= m; i++) {
+        while (j && t[i] != t[j + 1]) j = nxt[j];
+        if (t[i] == t[j + 1]) j++;
+        nxt[i] = j;
+    }
+    for (int i = 1, j = 0; i <= n; i++) {
+        while (j && s[i] != t[j + 1]) j = nxt[j];
+        if (s[i] == t[j + 1]) j++;
         if (j == m) {
-            ans.push_back(i - m + 1);
-            j = nxt[j - 1];
+            cout << i - m + 1 << "\n"; // t 在 s 中出现的位置
+            j = nxt[j];
         }
     }
-}
+};

@@ -1,406 +1,71 @@
 \chapter{计算几何}
 
-点和向量共用 \texttt{Point<T>}，直线和线段共用两个端点的 \texttt{Line<T>}。
-整数运算的中间值须在坐标类型的表示范围内，必要时在运算前转换为 \texttt{lll} 等宽类型。
-\texttt{Real} 是 \texttt{long double} 的别名，实数运算要求参数和中间值有限。
-
 \section{基础几何}
 
-\subsection{点、向量}
+\subsection{点、直线与常用运算}
 
-由 $a$ 指向 $b$ 的位移向量为 $b-a$。向量加减与数乘按分量执行。
-点按 $(x,y)$ 的字典序比较，两个坐标均相等时判定为同一点。
+统一描述点、直线及相关向量运算。其余平面几何模板使用这些几何量。
 
-整数坐标可用 \texttt{Point<ll>}，实数坐标用 \texttt{RealPoint}。
+\cppfile{code/geometry/g1.cpp}
 
-\cppfile{code/geometry/point.hpp}
+\subsection{曼哈顿距离与切比雪夫距离}
 
-\paragraph{复杂度}
-基础运算和比较均为 $O(1)$。
-
-\subsection{向量点积}
-
-点积 $u\cdot v=u_xv_x+u_yv_y$。两向量均非零时，点积等于 $|u||v|\cos\theta$，其中 $\theta$ 为夹角。
-
-\begin{itemize}
-    \item 点积为正、零、负时，分别有 $0\le\theta<\pi/2$、$\theta=\pi/2$、$\pi/2<\theta\le\pi$。
-    \item $v$ 在非零向量 $u$ 方向的有符号投影长度是 $(u\cdot v)/|u|$。
-    \item 向量长度平方等于 $u\cdot u$。
-\end{itemize}
-
-调用 \texttt{dot(u,v)} 或用 \texttt{square(u)} 取得长度平方。
+在变换 $(x,y)\mapsto(x+y,x-y)$ 下，曼哈顿距离变为切比雪夫距离。用新坐标两个分量的最大值与最小值即可计算点集的最大曼哈顿距离。
 
 \begin{pseudocode}
-dot = u.x * v.x + u.y * v.y
-len2 = u.x * u.x + u.y * u.y
+u = 所有点的 x+y
+v = 所有点的 x-y
+ans = max(max(u)-min(u), max(v)-min(v))
 \end{pseudocode}
-
-\paragraph{复杂度}
-点积、长度平方与投影均为 $O(1)$。
-
-\subsection{向量叉积}
-
-平面叉积 $u\times v=u_xv_y-u_yv_x$，绝对值是两向量张成的平行四边形面积。符号可以用来判断转向。
-
-\begin{itemize}
-    \item $\operatorname{cross}(a,b,c)=(b-a)\times(c-a)$。对有向边 $a\to b$，正值代表 $c$ 在左侧，负值代表在右侧。
-    \item 值为零表示共线，端点重合也会产生零叉积。
-    \item 三角形的有向面积是这个叉积的一半。
-\end{itemize}
-
-两向量使用 \texttt{cross(u,v)}，三点转向使用 \texttt{cross(a,b,c)}。
-
-\begin{pseudocode}
-u = b - a
-v = c - a
-turn = u.x * v.y - u.y * v.x
-\end{pseudocode}
-
-\paragraph{复杂度}
-时间与额外空间均为 $O(1)$。
-
-交换两个操作数会使符号反转。坐标轴向下的画布坐标也会颠倒几何转向的含义。
-
-\subsection{两点距离}
-
-两点 $a,b$ 的欧氏距离为 $\sqrt{(a_x-b_x)^2+(a_y-b_y)^2}$。只比较远近时可以比较距离平方。
-
-\begin{itemize}
-    \item 距离平方可用 \texttt{dist2(a,b)}，返回点坐标类型 $T$。
-    \item 需要实数距离时用 \texttt{dist(a,b)}。先做坐标差，再把差值转换为实数并用 \texttt{hypot} 计算长度。
-\end{itemize}
-
-\begin{pseudocode}
-d = a - b
-d2 = dot(d, d)
-distance = hypot(d.x, d.y)
-\end{pseudocode}
-
-\paragraph{复杂度}
-每次计算为 $O(1)$。
-
-\subsection{点到直线距离}
-
-点 $p$ 到由 $a,b$ 确定的直线的距离为 $|(b-a)\times(p-a)|/|b-a|$。
-分子为平行四边形面积，分母为底边长度。
-
-\texttt{pointLineDistance(p,l)} 可接收整数或实数坐标。退化直线返回空值。
-
-\cppfile{code/geometry/line.hpp}
-
-\paragraph{复杂度}
-时间和额外空间均为 $O(1)$。
-
-点到线段的最近距离还要检查投影是否落在两个端点之间。
-
-\subsection{线段相交}
-
-闭线段的交集可由叉积符号和端点顺序判定。
-
-\begin{itemize}
-    \item 两边的端点都严格位于对方直线的两侧时，发生内部交叉。
-    \item 叉积为零时检查端点是否落在另一条线段上。四个叉积均为零时，按端点字典序求两闭区间的交集。
-\end{itemize}
-
-整数版用精确叉积。单点接触和重叠返回相交区间的端点。
-内部交点可用直线相交模板求出。
-
-\cppfile{code/geometry/segment.hpp}
-
-\paragraph{复杂度}
-时间和额外空间均为 $O(1)$。
-
-\subsection{直线相交}
-
-令两条直线分别为 $a+tu$ 和 $b+sv$。当方向叉积非零，交点满足
-$t=((b-a)\times v)/(u\times v)$。
-
-\begin{itemize}
-    \item 将方向单位化后，叉积绝对值等于夹角正弦的绝对值。近似平行以该值与容差比较。
-    \item 平行时，再用到另一条直线的垂直距离区分重合和平行异线。
-    \item 只有返回唯一交点时，交点坐标有效。
-\end{itemize}
-
-用两个 \texttt{Line<Real>} 调用 \texttt{lineIntersection}。
-返回唯一交点、平行、重合或退化。\texttt{angleTol} 是正弦容差，\texttt{distTol} 是距离容差。
-
-\begin{pseudocode}
-u, v = 两条直线的单位方向  // 退化直线先单独处理
-den = cross(u, v)
-if den 在角度容差内:
-    用 cross(u, b-a) 区分平行与重合
-else:
-    return a + u * (cross(b-a, v) / den)
-\end{pseudocode}
-
-\paragraph{复杂度}
-时间和额外空间均为 $O(1)$。
-
-近乎平行时，交点坐标对输入误差很敏感。整数题可先以整数叉积做精确分类，再用实数计算坐标。
-
-\subsection{极角排序}
-
-极角排序把向量按绕原点逆时针的方向排列。整数坐标可用半平面和叉积比较，无需计算三角函数。
-
-\begin{itemize}
-    \item 先按是否位于上半平面划分，正横轴归前半，负横轴归后半。
-    \item 在同一半平面内，叉积符号决定先后。方向相同时再比较长度平方。
-    \item 零向量没有极角，模板约定它排在非零向量之前。
-\end{itemize}
-
-沿用本章的 \texttt{Point} 运算，给定极点 $o$ 后，直接按位移向量的极角对点集排序。
-
-\cppfile{code/geometry/polar_order.cpp}
-
-\paragraph{复杂度}
-每次比较为 $O(1)$，排序 $n$ 个向量耗时 $O(n\log n)$。
-
-叉积和平方中间量须精确且不溢出。实数极角排序可预先用 atan2 计算排序键，比较键时不加 EPS。
 
 \section{多边形}
 
-\subsection{多边形面积与鞋带公式}
+\subsection{多边形与圆相交面积}
 
-\texttt{signedArea2(p)} 接收按边界排列的顶点，返回两倍有向面积 $S_2$。
-简单多边形的面积为 $\lvert S_2\rvert/2$，逆时针排列时 $S_2>0$，顺时针排列时 $S_2<0$。
+把边界拆成与圆心相连的有向三角形，按边累加三角形与圆的相交面积。
 
-设顶点为 $p_0,\ldots,p_{n-1}$，且 $p_n=p_0$。两倍有向面积为
-$\sum_{i=0}^{n-1}(x_i y_{i+1}-y_i x_{i+1})$。
-平移原点至 $p_0$ 后，公式等价于累加以 $p_0$ 为共同顶点的三角形叉积。
-\texttt{signedArea2} 在顶点数不足三时返回零。
+\cppfile{code/geometry/g2.cpp}
 
-\cppfile{code/geometry/polygon.hpp}
+\subsection{二维凸包}
 
-\paragraph{复杂度}
-扫描时间为 $O(n)$，额外空间为 $O(1)$。
+将点按坐标排序，再分别构造上下边界。
 
-自交边界的计算结果为代数面积。
+\cppfile{code/geometry/g3.cpp}
 
-\subsection{点在多边形内判定}
+\subsection{共线情形的凸包周长}
 
-从查询点向右作水平射线。对于简单多边形，穿过边界奇数次表示在内部，穿过偶数次表示在外部。
+计算凸包周长时，单独考虑各点共线的退化情形。
 
-\begin{itemize}
-    \item 先用精确比较判断查询点是否在线段上。位于边或顶点时返回边界。
-    \item 设非水平边两端的纵坐标为 $y_{\min}$ 和 $y_{\max}$，仅在查询点纵坐标属于 $[y_{\min},y_{\max})$ 时计入射线交点。
-    \item 使用叉积判断交点是否在查询点右方，避免求交点坐标和做除法。
-\end{itemize}
+\cppfile{code/geometry/g3-1.cpp}
 
-\texttt{pointInPolygon(q,p)} 返回 \texttt{outside}、\texttt{boundary} 或 \texttt{inside}。
-输入可按顺时针或逆时针排列。
+\subsection{三维凸包}
 
-\begin{pseudocode}
-inside = false
-for 多边形的每条边 (a, b):
-    if q 在线段 [a, b] 上: return 边界
-    if a.y > b.y: swap(a, b)
-    if a.y <= q.y < b.y 且 cross(b-a, q-a) > 0:
-        inside = !inside
-return inside
-\end{pseudocode}
+以三角面描述空间凸包，并在加入点时更新可见面。
 
-\paragraph{复杂度}
-单次查询耗时 $O(n)$，额外空间为 $O(1)$。
-
-\subsection{凸包（Andrew、Graham）}
-
-凸包是包含所有输入点的最小凸集合。两种算法都在排序后用栈删去破坏凸性的点。
-
-\begin{itemize}
-    \item Andrew 按坐标字典序排序，再沿正序和逆序分别构建两条链。
-    \item Graham 选纵坐标最小的点为基点，若并列取横坐标最小。其余点按相对于基点的极角排序。
-    \item 扫描时遇到非左转就弹栈。两种模板都去重，并删除同一直边中间的共线点。
-\end{itemize}
-
-两者均返回逆时针顶点序列，首点只出现一次。共线点集仅保留相异的端点。
-
-\cppfile{code/geometry/convex_hull.hpp}
-
-\paragraph{复杂度}
-排序为 $O(n\log n)$，栈扫描为 $O(n)$，空间为 $O(n)$。
-
-两种实现选取的起点可能不同。Graham 的极角比较依赖叉积和长度平方，整数运算须避免溢出。
-
-\subsection{旋转卡壳}
-
-旋转卡壳利用凸多边形边界的单调性，在一端沿边移动时，另一端的支持点也只需沿同一方向移动。
-
-\begin{itemize}
-    \item 对固定的有向凸包边，各点到该边的距离与其构成的有向面积成正比。
-    \item 当下一点的面积更大时推进对侧指针。下一条凸包边可以从这个位置继续扫描。
-    \item 当两个连续对侧点面积相同，支持线包含一条边，需要检查两端。
-\end{itemize}
-
-输入为逆时针严格凸包，可用 Andrew 或 Graham 的输出。
-
-\cppfile{code/geometry/rotating_calipers.hpp}
-
-\paragraph{复杂度}
-设凸包有 $h$ 个点。两个指针总共推进 $O(h)$ 步，额外空间为 $O(1)$。
-
-\subsection{凸包直径}
-
-最远点对可在凸包顶点中取得，因为到固定点的距离在任一线段上的最大值可取于端点。
-
-\begin{itemize}
-    \item 先求严格凸包，再用卡壳枚举候选对。
-    \item 同一条凸包边的两个端点都参与比较，对侧有并列顶点时也都要检查。
-\end{itemize}
-
-调用 \texttt{convexDiameter(convexHullAndrew(p))}。
-返回端点和距离平方。单点的直径为零，空点集返回空值。
-
-\begin{pseudocode}
-h = convexHullAndrew(p)
-result = convexDiameter(h)
-\end{pseudocode}
-
-\paragraph{复杂度}
-散点求凸包再取直径共 $O(n\log n)$ 时间。已知凸包时仅需 $O(h)$。
+\cppfile[firstline=4]{code/geometry/g4.cpp}
 
 \section{常考进阶}
 
-\subsection{平面最近点对}
-
-按横坐标排序后分治，取两半各自的最近距离，再考察跨越分界的候选点对。
-
-\begin{itemize}
-    \item 递归前保存分界横坐标。当前最小距离为 $d$ 时，仅检查距分界线小于 $d$ 的点。
-    \item 递归返回时把两半归并成纵坐标有序的序列。扫描条带时，只需检查纵坐标之差小于当前最短距离的先前点。
-    \item 条带中每一半内的点间距至少为分治子结果。由平面上的间距限制，每个点只需与常数个候选比较。
-\end{itemize}
-
-点数不足两个时返回空值。重复点可以形成距离为零的点对。
-
-\cppfile{code/geometry/closest_pair.hpp}
-
-\paragraph{复杂度}
-时间为 $O(n\log n)$，额外空间为 $O(n)$。
-
-\subsection{扫描线}
-
-扫描线按位置处理事件，在截面统计值不变的相邻事件间累计贡献。
-
-\begin{itemize}
-    \item 以竖直扫描线为例，把矩形左边界记为加入，右边界记为删除。活跃对象的纵区间保存在覆盖长度树中。
-    \item 离散化的是区间端点，线段树的叶子对应两个相邻端点之间的实际区间。
-    \item 节点覆盖次数大于零时，整个区间都被覆盖。否则叶子长度为零，内部节点用两个孩子的覆盖长度之和。
-\end{itemize}
-
-输入至少两个严格递增的端点。\texttt{modify(l,r,delta)} 更新端点编号间的半开区间。
-删除时应对应此前加入且仍活跃的同一区间。
-
-\cppfile{code/geometry/covered_length.hpp}
-
-\paragraph{复杂度}
-$m$ 个端点占 $O(m)$ 空间，单次区间操作为 $O(\log m)$，读取总长度为 $O(1)$。
-
-覆盖长度以原坐标相减计算。
-
-\subsection{矩形面积并}
-
-矩形面积并统计至少被一个矩形覆盖的面积。扫描线按横坐标经过每组事件，用此前的纵向覆盖长度乘扫描宽度。
-
-\begin{itemize}
-    \item 每个非退化矩形恰产生两个事件。活跃纵区间为 $[y_1,y_2)$。
-    \item 到达某个横坐标时，先用旧截面结算上一段面积，再一并处理该坐标上的事件。
-    \item 零宽或零高矩形没有面积，可以跳过。
-\end{itemize}
-
-允许对角点以任意顺序给出。使用 \texttt{Rectangle<ll>} 或 \texttt{Rectangle<lll>} 时，面积及中间结果须能用该类型表示。
-
-\cppfile{code/geometry/rectangle_union.hpp}
-
-\paragraph{复杂度}
-排序与线段树更新总耗时 $O(n\log n)$，额外空间为 $O(n)$。
-
-事件排序与坐标离散化采用相同的精确比较规则。
-
-\subsection{圆与直线相交}
-
-设半径为 $r$，圆心到直线的距离为 $d$。$d>r$、$d=r$、$d<r$ 分别对应无交、相切和两个交点。
-两个交点位于垂足两侧，沿直线方向偏移 $\sqrt{(r-d)(r+d)}$。
-
-半径非负，直线用两个实数端点。
-结果为 \texttt{one} 或 \texttt{two} 时，数组依次给出有效交点。
-
-\cppfile{code/geometry/circle.hpp}
-
-\paragraph{复杂度}
-时间和额外空间均为 $O(1)$。
-
-端点重合构成退化直线，单独返回。近切情形按指定容差分类。
-
-\subsection{两圆相交}
-
-比较圆心距 $d$ 与半径和 $r_1+r_2$、半径差 $\lvert r_1-r_2\rvert$，即可识别分离、包含和相切。
-
-\begin{itemize}
-    \item 同心且半径相等的非退化圆有无穷多个公共点。半径为零的圆按一个点处理。
-    \item 有两个交点时，先沿圆心连线求出弦中点，其到第一圆心的有向投影长度为 $(d^2+r_1^2-r_2^2)/(2d)$。
-    \item 再计算弦半长，沿垂直于圆心连线的方向加减偏移。
-\end{itemize}
-
-调用 \texttt{circleIntersection(a,b)}。
-返回无交、单点、双点或重合。两个重合的零半径圆仅有一个公共点。
-
-\begin{pseudocode}
-d = 两圆心之间的距离
-先处理零半径圆与同心圆
-if d > r1+r2 或 d < abs(r1-r2): return 无交点
-t = (d*d + r1*r1 - r2*r2) / (2*d)
-mid = 圆心一 + t * 圆心连线单位向量
-if 两圆相切: return mid
-delta = sqrt(max(0, r1*r1 - t*t)) * 连线的单位垂向量
-return mid - delta, mid + delta
-\end{pseudocode}
-
-\paragraph{复杂度}
-时间和额外空间均为 $O(1)$。
-
-同心情形须在计算弦中点前处理。
-
 \subsection{最小覆盖圆}
 
-最小覆盖圆是能容纳所有点的最小半径圆。非空点集的答案由一个、两个或三个边界点决定。
+随机调整处理次序，逐步用边界点确定当前覆盖圆。
 
-\begin{itemize}
-    \item 先打乱点序，再逐点加入。若新点已经在圆内，当前答案仍可用。
-    \item 若新点在圆外，重算答案时让它位于边界上。进一步发现越界点，就依次固定第二、第三个边界点。
-    \item 两个边界点用直径圆，三个非共线边界点用外接圆。共线时用最远的两个点。
-\end{itemize}
+\cppfile{code/geometry/g5.cpp}
 
-\texttt{minEnclosingCircle} 返回圆心、半径，空输入返回空值。
-可传入随机种子重现点序。最后按输出圆心重新计算覆盖所需半径。
+\subsection{最小覆盖矩形}
 
-\cppfile{code/geometry/minimum_enclosing_circle.cpp}
+在凸包边的方向上考察包围矩形，用投影极值确定边界。
 
-\paragraph{复杂度}
-随机顺序下期望时间为 $O(n)$，三层扫描最坏为 $O(n^3)$。按值接收点集，占 $O(n)$ 空间。
+\cppfile{code/geometry/g6.cpp}
 
-外接圆对接近共线的数据敏感。输入尺度很大或点非常接近时，应根据允许误差调整容差，必要时先平移、缩放。
+\subsection{旋转卡壳}
 
-\subsection{浮点数精度处理}
+沿凸包的边推进对侧支撑点，减少对候选点对的重复检查。
 
-绝对容差与比较量同单位，相对容差无量纲。绝对容差应按坐标、角度或面积等量分别设定。
+\cppfile{code/geometry/g7.cpp}
 
-\begin{itemize}
-    \item 比较实数 $a,b$ 时，可取绝对容差与相对容差乘 $\max(|a|,|b|)$ 中的较大值。
-    \item 整数拓扑判定尽量用精确叉积，只在需要返回实数坐标时用浮点。
-    \item 排序需要严格弱序。可用精确坐标或预先算好的排序键，容差留到分类和查询阶段。
-    \item 开根前若理论值应非负，可对舍入产生的微小负值作截断。应先独立排除确实无交等情况。
-\end{itemize}
+\subsection{半平面交}
 
-\texttt{sgn} 精确取符号，\texttt{sign} 按给定阈值判断是否近零，
-\texttt{dcmp} 同时接收绝对容差与相对容差。
+按直线方向维护半平面的交，逐步剔除失效的边界。
 
-\cppfile{code/geometry/precision.hpp}
-
-\paragraph{复杂度}
-单次比较为 $O(1)$。
-
-\paragraph{参考资料}
-\href{https://raw.githubusercontent.com/kth-competitive-programming/kactl/main/content/geometry/ConvexHull.h}{KACTL：凸包}和
-\href{https://raw.githubusercontent.com/kth-competitive-programming/kactl/main/content/geometry/HullDiameter.h}{凸包直径}，
-\href{https://oi-wiki.org/geometry/scanning/}{OI Wiki：扫描线}，
-以及 \href{https://doi.org/10.1007/BFB0038202}{Welzl 的最小覆盖圆论文}。
+\cppfile{code/geometry/g8.cpp}

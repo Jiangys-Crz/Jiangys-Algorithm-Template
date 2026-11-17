@@ -23,8 +23,7 @@
 \usepackage{hyperref}
 \usepackage{fancyhdr}
 % \usepackage{titlesec}
-\usepackage[most]{tcolorbox}
-\tcbuselibrary{listings,breakable,skins,theorems}
+\usepackage{listings}
 
 % ---------- 字体 ----------
 % 按平台选择字体。这里用“字体文件是否存在”来判断平台，而不是 \IfFontExistsTF：
@@ -61,7 +60,6 @@
 \definecolor{MainBlue}{RGB}{28, 87, 166}
 \definecolor{DeepBlue}{RGB}{20, 48, 96}
 \definecolor{CodeBg}{RGB}{248, 250, 252}
-\definecolor{CodeFrame}{RGB}{218, 226, 236}
 \definecolor{CodeKeyword}{RGB}{0, 84, 166}
 \definecolor{CodeComment}{RGB}{92, 128, 92}
 \definecolor{CodeString}{RGB}{174, 65, 65}
@@ -147,48 +145,27 @@
     numbers=left,
     numberstyle=\scriptsize\color{gray},
     stepnumber=1,
-    numbersep=10pt,
+    numbersep=6pt,
     tabsize=4,
     showstringspaces=false,
     breaklines=true,
     columns=fullflexible,
     keepspaces=true,
-    xleftmargin=0.6em,
-    xrightmargin=0.4em
+    xleftmargin=8mm,
+    xrightmargin=2mm,
+    backgroundcolor=\color{CodeBg},
+    frame=l,
+    rulecolor=\color{MainBlue},
+    framerule=0.65pt,
+    framesep=2mm,
+    framexleftmargin=6mm,
+    aboveskip=8pt,
+    belowskip=10pt
 }
 
-\tcbset{template listing/.style={
-    enhanced,
-    breakable,
-    listing only,
-    colback=CodeBg,
-    colframe=CodeFrame,
-    boxrule=0.45pt,
-    arc=2.2mm,
-    left=5.5mm,
-    right=2mm,
-    top=1.5mm,
-    bottom=1.5mm,
-    before skip=8pt,
-    after skip=10pt,
-    borderline west={2pt}{0pt}{MainBlue}
-}}
-
-\newtcbinputlisting{\cppfile}[2][]{
-    template listing,
-    listing file={#2},
-    listing options={style=cpplist,#1}
-}
-
-\newtcblisting{cppcode}{
-    template listing,
-    listing options={style=cpplist}
-}
-
-\newtcblisting{pseudocode}{
-    template listing,
-    listing options={style=cpplist,language={},numbers=none}
-}
+\newcommand{\cppfile}[2][]{\lstinputlisting[style=cpplist,#1]{#2}}
+\lstnewenvironment{cppcode}{\lstset{style=cpplist}}{}
+\lstnewenvironment{pseudocode}{\lstset{style=cpplist,language={},numbers=none}}{}
 
 % 为 \lstinputlisting 设置相同的代码样式。
 \lstset{style=cpplist}
