@@ -2,6 +2,25 @@
 
 \section{自定义运算符}
 
+\subsection{结构体内重载比较、加法与输出}
+
+记录按分数降序、罚时升序确定优先级。
+
+\begin{itemize}
+    \item 二元成员运算符的左操作数为 \texttt{*this}。以 \texttt{const} 限定成员函数后可比较常量对象。
+    \item \texttt{+=} 修改左操作数并返回引用。\texttt{+} 复制左操作数后复用 \texttt{+=}。
+    \item 在结构体内用 \texttt{friend} 定义流输出。以流为左操作数，返回流引用以支持连续输出。
+\end{itemize}
+
+\cppfile{code/zx/operator_overload.hpp}
+
+默认排序将高优先级记录置于末尾，默认优先队列将其置于堆顶。\texttt{greater<Score>} 反转次序。
+
+\paragraph{复杂度}
+每次比较或加法为 $O(1)$。
+
+比较运算符须满足严格弱序。累加结果须能用 \texttt{ll} 表示。
+
 \subsection{128 位整数流输出}
 
 重载流输出，将 128 位整数转换为十进制字符。

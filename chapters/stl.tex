@@ -1,0 +1,87 @@
+\chapter{STL 常见函数}
+
+\section{常见容器}
+
+\begin{description}
+    \item[\texttt{vector}、\texttt{array}] 均支持常数时间下标访问。\texttt{vector} 可变长，尾部追加均摊为 $O(1)$。\texttt{reserve} 只预留容量，\texttt{resize} 改变长度。重新分配会使原迭代器、引用和指针失效。\texttt{array} 的长度在编译期确定。
+    \item[\texttt{string}] \texttt{find} 查找失败时返回 \texttt{string::npos}。\texttt{substr(pos,len)} 复制子串，第二个参数为长度。
+    \item[\texttt{stack}、\texttt{queue}、\texttt{deque}] 栈从同一端插入和弹出，队列从尾部插入、从头部弹出。双端队列支持两端插入和弹出。上述操作均为常数时间。
+    \item[\texttt{priority\_queue}] 默认弹出最大值。第三个模板参数取 \texttt{greater<T>} 时，最小值先出。查看堆顶为 $O(1)$，增删为 $O(\log n)$。
+    \item[\texttt{set}、\texttt{multiset}] 支持对数时间的插入、查找及上下界查询。\texttt{multiset.erase(x)} 删除所有等于 $x$ 的元素，只删除一项时传入查找到的迭代器。
+    \item[\texttt{map}、\texttt{multimap}] 键按序排列，查找为 $O(\log n)$。\texttt{map} 的下标访问会在键缺失时插入值初始化的元素。\texttt{multimap} 允许重复键，用 \texttt{equal\_range} 查找等键区间。
+    \item[\texttt{unordered\_map}、\texttt{unordered\_set}] 哈希表平均查找、单次插入和删除为 $O(1)$，最坏为 $O(n)$。重新散列会使迭代器失效。整数键可采用以下哈希函数。
+    \item[\texttt{bitset}] 固定长度位集，支持按位运算、移位及 \texttt{count}。可用左移和按位或并行更新可达状态。
+    \item[\texttt{pair}、\texttt{tuple}] 按成员依次作字典序比较。\texttt{auto\& [x, y]} 按引用绑定，\texttt{auto [x, y]} 按值绑定。
+\end{description}
+
+按单字符分隔时，以下语句片段保留空字段。
+
+\cppfile{code/stl/string_split.cpp}
+
+\cppfile{code/stl/splitmix_hash.hpp}
+
+\section{排序与二分}
+
+标准库算法的迭代器区间为 $[\mathrm{first},\mathrm{last})$。
+
+\begin{description}
+    \item[\texttt{sort}] 比较器须为严格弱序，比较次数为 $O(n\log n)$。
+    \item[\texttt{stable\_sort}] 保留等价元素的相对顺序。缓冲不足时比较次数为 $O(n\log^2 n)$。
+    \item[\texttt{lower\_bound}、\texttt{upper\_bound}] 在非递减序列上分别查找首个 $\ge x$ 和首个 $>x$ 的位置，失败返回尾后迭代器。比较次数为 $O(\log n)$。有序关联容器使用成员函数完成对数时间查找。
+    \item[\texttt{binary\_search}] 在有序区间查询与目标等价的元素是否存在。
+    \item[\texttt{nth\_element}] 将指定排名的元素移到目标位置，两侧各自无需有序。平均时间为 $O(n)$。
+    \item[\texttt{unique}] 将相邻等价元素合并为一项，返回新的逻辑尾。全局去重可先排序，再用 \texttt{erase} 删除逻辑尾到实际尾之间的区间。
+\end{description}
+
+\cppfile{code/stl/sorted_search.cpp}
+\cppfile{code/stl/kth_smallest.cpp}
+
+\section{数学与序列函数}
+
+\begin{description}
+    \item[\texttt{gcd}、\texttt{lcm}] 分别求最大公约数和最小公倍数。参数的绝对值及结果须能用相应公共类型表示。
+    \item[\texttt{accumulate}、\texttt{iota}] 分别进行折叠和连续赋值。\texttt{accumulate} 由初值的类型决定累加类型，求 64 位和时使用 \texttt{0LL}。
+    \item[\texttt{min\_element}、\texttt{max\_element}] 返回首个最小或最大元素的迭代器。空区间返回尾后迭代器。
+    \item[\texttt{reverse}、\texttt{rotate}] 分别反转区间和循环左移区间。\texttt{rotate(first,middle,last)} 把 \texttt{middle} 所指的位置移到区间首位。
+    \item[\texttt{next\_permutation}、\texttt{prev\_permutation}] 分别转到字典序下一项或上一项。不存在时返回假，并把序列恢复到相反的极值排列。
+    \item[\texttt{count}、\texttt{find}、\texttt{fill}、\texttt{swap}] 分别统计等值项、查找首个等值项、填充区间和交换对象。\texttt{find} 失败时返回尾后迭代器。
+\end{description}
+
+\cppfile{code/stl/permutations.cpp}
+
+\section{其他常用功能}
+
+Lambda 可用 \texttt{[\&]} 按引用捕获外部变量，用 \texttt{[=]} 按值捕获。
+容器保存的比较器按引用捕获时，被引用对象的生命周期必须覆盖比较器的调用。
+\texttt{mt19937} 的用法见第九章。
+
+\subsection{128 位整数}
+
+\texttt{lll} 与 \texttt{ulll} 分别表示有符号和无符号 128 位整数。乘法应在宽类型中进行，例如 \texttt{lll(a) * b}。
+十进制转换耗时 $O(d)$，其中 $d$ 为输入或输出的字符数。
+
+\cppfile{code/stl/int128_io.hpp}
+
+\subsection{位运算内建函数}
+
+\texttt{\_\_builtin\_popcountll} 统计置位数，\texttt{\_\_builtin\_ctzll} 和
+\texttt{\_\_builtin\_clzll} 分别统计尾零和前导零。后两者的参数须非零。
+处理零时取类型位宽，所得位宽不得用作移位量。
+
+\cppfile{code/stl/bit_ops.cpp}
+
+\subsection{PBDS 有序树（GCC 扩展）}
+
+GNU libstdc++ 的 PBDS 有序树可在 $O(\log n)$ 时间内增删元素和查询排名。
+\texttt{order\_of\_key(x)} 返回严格小于 $x$ 的元素数，\texttt{find\_by\_order(k)}
+按从 $0$ 开始的排名查找，越界返回尾后迭代器。
+\texttt{OrderMultiset} 以值和唯一编号作为键来支持重复值。
+
+声明位于 \texttt{ext/pb\_ds} 中的 \texttt{assoc\_container.hpp} 和 \texttt{tree\_policy.hpp}。
+
+\cppfile[firstline=4]{code/stl/pbds_ordered_tree.hpp}
+
+\paragraph{参考资料}
+\href{https://wyqz.top/p/870124582.html}{行码棋的 C++ STL 总结}、
+\href{https://timsong-cpp.github.io/cppwp/n4659/alg.sorting}{C++17 工作草案的排序与二分}和
+\href{https://gcc.gnu.org/onlinedocs/libstdc++/manual/policy_data_structures.html}{GNU libstdc++ 的 PBDS}。

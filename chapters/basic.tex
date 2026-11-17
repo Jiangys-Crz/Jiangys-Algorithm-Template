@@ -2,7 +2,7 @@
 
 \section{代码约定}
 
-本册代码取自 \href{https://github.com/CWNU-Open-Source-Community/xcpc-algorithm-template/tree/bf455fcb40671fcf89d548a5830c821c29e99172}{西华师范大学 XCPC 算法竞赛模板}，按本册目录重新编排。
+本册按章节编排 \href{https://github.com/CWNU-Open-Source-Community/xcpc-algorithm-template/tree/bf455fcb40671fcf89d548a5830c821c29e99172}{西华师范大学 XCPC 算法竞赛模板}，并补充基础算法、STL 与自定义运算符。
 
 \cppfile{code/types.hpp}
 
@@ -21,7 +21,101 @@ for i = n - 1 .. 0:
 前 k 项的 MEX = suffixMin[k]
 \end{pseudocode}
 
+\section{搜索算法}
+
+\subsection{折半搜索}
+
+当选与不选的方案可以由两半状态独立生成、再按某种条件组合时，可将 $n$ 项拆成两部分。
+每部分只保留合并所需的信息，例如和、选取数量或其他与组合条件相关的量。
+
+\begin{enumerate}
+    \item 将下标区间拆为 $[0,\lfloor n/2\rfloor)$ 和 $[\lfloor n/2\rfloor,n)$。
+    \item 从空状态出发逐项扩展。加入新元素时保留这一轮之前的状态，再各生成一个选入该元素的新状态。
+    \item 根据两侧状态的组合关系建立查询。等值条件可以排序后二分或用哈希统计，区间条件可以排序后求上下界。
+\end{enumerate}
+
+\cppfile{code/basic/meet_in_the_middle.cpp}
+
+若合并结果需要计数，相同状态的重复次数也是方案的一部分。排序后可用上下界差统计重复项，哈希表可按状态记录频次。
+
+\paragraph{复杂度}
+记左右两侧状态数为 $A=2^{\lfloor n/2\rfloor}$、$B=2^{\lceil n/2\rceil}$。
+若单次状态扩展为 $O(1)$，枚举时间和存储为 $O(A+B)$。
+对右侧排序并对每个左侧状态二分时，另需 $O((A+B)\log(B+1))$ 时间。
+
 \section{位运算技巧}
+
+\subsection{二进制位的读写与集合运算}
+
+从最低位起按 $0$ 编号。令 $m=2^k$，下列操作只涉及第 $k$ 位。移位量须小于无符号类型的位宽。
+
+\begin{cppcode}
+// x 为 ull，0 <= k < 64。
+ull mask = 1ULL << k;
+bool bit = (x & mask) != 0;
+ull setBit = x | mask;
+ull clearBit = x & ~mask;
+ull flipBit = x ^ mask;
+\end{cppcode}
+
+把置位的位置看作集合，按位与、按位或、按位异或分别对应交集、并集、对称差。
+若 $x$ 是全集掩码 $U$ 的子掩码，其补集为 $U\oplus x$。
+掩码 $y$ 是 $x$ 的子集当且仅当 $(x\mathbin{\mathtt{\&}}y)=y$。
+
+\subsection{异或恒等式与进位}
+
+异或满足交换律和结合律，且 $x\oplus 0=x$、$x\oplus x=0$。
+因此偶数次出现的值在整体异或中抵消。
+按二进制每一位分别考虑贡献，有
+\[
+a+b=(a\oplus b)+2(a\mathbin{\mathtt{\&}}b),\qquad
+a\mathbin{\mathtt{|}}b=(a\oplus b)+(a\mathbin{\mathtt{\&}}b).
+\]
+第一式中的异或给出无进位和，按位与的两倍给出应加入的进位贡献。按普通整数计算时须选用足够宽的类型。
+
+\subsection{最低置位}
+
+对于非零无符号数 $x$，$x\mathbin{\mathtt{\&}}(-x)$ 保留最低置位，$x\mathbin{\mathtt{\&}}(x-1)$ 清除最低置位。前一式在 $x=0$ 时返回零。正整数是二的幂当且仅当只有一个置位。
+
+\begin{cppcode}
+// x 为 ull。无符号取负按 2^64 取模。
+ull low = x & -x;
+bool isPowerOfTwo = x != 0 && (x & (x - 1)) == 0;
+int count = 0;
+for (ull s = x; s; s &= s - 1) ++count;
+\end{cppcode}
+
+循环次数等于置位数。直接求置位数、尾零与前导零的内建函数见第八章。
+
+\subsection{二进制枚举}
+
+$n$ 个元素分别对应掩码的低 $n$ 位。从 $0$ 到 $2^n-1$ 的掩码与所有子集一一对应。
+若只需访问已选元素，可以从低到高逐个取出置位，无须逐位检查整个掩码。
+
+\cppfile{code/basic/binary_enumeration.cpp}
+
+只枚举掩码耗时 $O(2^n)$。对每个掩码再遍历其置位时，$n\ge 1$ 下共访问 $n2^{n-1}$ 个元素。
+
+\subsection{子掩码与超掩码}
+
+将当前子掩码减一，再与原掩码取交，可得到数值更小的最大合法子掩码。在处理零以后立即退出。
+
+\cppfile{code/basic/submask.cpp}
+
+原掩码有 $k$ 个置位时，共枚举 $2^k$ 个子掩码。
+遍历所有 $n$ 位掩码及各自子掩码的总次数为 $3^n$，因为每一位可处于不选入原掩码、只选入原掩码、同时选入两者三种状态。
+
+若要求枚举 $x$ 在全集 $U$ 内的超掩码，先枚举 $U\oplus x$ 的子掩码 $s$，再取 $x\mathbin{\mathtt{|}}s$。
+
+\subsection{枚举恰有 $k$ 个置位的掩码}
+
+从最小的 $k$ 位掩码 $2^k-1$ 开始。对当前掩码加上最低置位，使最右侧可向高位移动的置位进一。
+再把剩余受影响的置位移到最低端，得到置位数相同的最小后继。$k=0$ 时只有空集。
+
+\cppfile{code/basic/fixed_popcount.cpp}
+
+设有效位数为 $n$。在 $0\le k\le n<64$ 下，生成所有掩码的时间为 $O\bigl(\binom nk\bigr)$，额外空间为 $O(1)$。
+
 
 \subsection{连续整数的按位异或}
 
