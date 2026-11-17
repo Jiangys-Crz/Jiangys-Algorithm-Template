@@ -1,81 +1,214 @@
 \chapter{STL 常见函数}
 
+\newenvironment{stlapi}{%
+    \small
+    \begin{longtable}{@{}%
+        >{\raggedright\arraybackslash}p{0.35\textwidth}%
+        >{\raggedright\arraybackslash}p{0.20\textwidth}%
+        >{\raggedright\arraybackslash}p{0.38\textwidth}@{}}
+    \toprule
+    调用与参数 & 返回值 & 作用 \\
+    \midrule
+    \endhead
+    \bottomrule
+    \endlastfoot
+}{\end{longtable}}
+
 \section{常见容器}
 
-\begin{description}
-    \item[\texttt{vector}、\texttt{array}] 均支持常数时间下标访问。\texttt{vector} 可变长，尾部追加均摊为 $O(1)$。\texttt{reserve} 只预留容量，\texttt{resize} 改变长度。重新分配会使原迭代器、引用和指针失效。\texttt{array} 的长度在编译期确定。
-    \item[\texttt{string}] \texttt{find} 查找失败时返回 \texttt{string::npos}。\texttt{substr(pos,len)} 复制子串，第二个参数为长度。
-    \item[\texttt{stack}、\texttt{queue}、\texttt{deque}] 栈从同一端插入和弹出，队列从尾部插入、从头部弹出。双端队列支持两端插入和弹出。上述操作均为常数时间。
-    \item[\texttt{priority\_queue}] 默认弹出最大值。第三个模板参数取 \texttt{greater<T>} 时，最小值先出。查看堆顶为 $O(1)$，增删为 $O(\log n)$。
-    \item[\texttt{set}、\texttt{multiset}] 支持对数时间的插入、查找及上下界查询。\texttt{multiset.erase(x)} 删除所有等于 $x$ 的元素，只删除一项时传入查找到的迭代器。
-    \item[\texttt{map}、\texttt{multimap}] 键按序排列，查找为 $O(\log n)$。\texttt{map} 的下标访问会在键缺失时插入值初始化的元素。\texttt{multimap} 允许重复键，用 \texttt{equal\_range} 查找等键区间。
-    \item[\texttt{unordered\_map}、\texttt{unordered\_set}] 哈希表平均查找、单次插入和删除为 $O(1)$，最坏为 $O(n)$。重新散列会使迭代器失效。整数键可采用以下哈希函数。
-    \item[\texttt{bitset}] 固定长度位集，支持按位运算、移位及 \texttt{count}。可用左移和按位或并行更新可达状态。
-    \item[\texttt{pair}、\texttt{tuple}] 按成员依次作字典序比较。\texttt{auto\& [x, y]} 按引用绑定，\texttt{auto [x, y]} 按值绑定。
-\end{description}
+容器对象记为 \texttt{a}，位置迭代器记为 \texttt{it}。共有接口 \texttt{size()} 返回元素数，\texttt{empty()} 返回是否为空。
+支持迭代的容器用 \texttt{begin()} 和 \texttt{end()} 取得首元素与尾后迭代器。
 
-按单字符分隔时，以下语句片段保留空字段。
+\subsection{\texttt{vector} 与 \texttt{array}}
+
+\begin{stlapi}
+    \texttt{vector<T> a(n, x)} & 构造对象 & 建立含 \texttt{n} 个 \texttt{x} 的序列。 \\
+    \texttt{array<T,N> a\{\}} & 构造对象 & 建立固定长度为 \texttt{N} 的数组，各元素值初始化。 \\
+    \texttt{a[i]}、\texttt{a.at(i)} & 元素引用 & 访问下标 \texttt{i}。\texttt{at} 越界时抛出异常。 \\
+    \texttt{a.front()}、\texttt{a.back()} & 元素引用 & 访问非空序列的首项或末项。 \\
+    \texttt{a.push\_back(x)} & 无 & 在 \texttt{vector} 尾部添加 \texttt{x}。 \\
+    \texttt{a.emplace\_back(args...)} & 新元素引用 & 在 \texttt{vector} 尾部用参数原地构造。 \\
+    \texttt{a.pop\_back()} & 无 & 删除非空 \texttt{vector} 的末项。 \\
+    \texttt{a.insert(it, x)} & 插入位置的迭代器 & 在 \texttt{vector} 的 \texttt{it} 之前插入 \texttt{x}。 \\
+    \texttt{a.erase(it)} \newline
+    \texttt{a.erase(f, l)} & 被删部分之后的迭代器 & 从 \texttt{vector} 删除单项或区间 \texttt{[f,l)}。 \\
+    \texttt{a.resize(n, x)} & 无 & 改变 \texttt{vector} 长度，新增位置填 \texttt{x}。 \\
+    \texttt{a.reserve(n)} & 无 & 为 \texttt{vector} 预留至少 \texttt{n} 项的容量，长度不变。 \\
+    \texttt{a.assign(n, x)} & 无 & 将 \texttt{vector} 替换为 \texttt{n} 个 \texttt{x}。 \\
+    \texttt{a.fill(x)} & 无 & 将 \texttt{array} 的全部元素置为 \texttt{x}。 \\
+\end{stlapi}
+
+\subsection{\texttt{string} 与 \texttt{string\_view}}
+
+\begin{stlapi}
+    \texttt{s.substr(pos, len)} & 新字符串或子视图 & 从 \texttt{pos} 取至多 \texttt{len} 个字符。省略长度时取到末尾。 \\
+    \texttt{s.find(t, pos)} & 首个匹配下标或 \texttt{npos} & 从 \texttt{pos} 向后查找 \texttt{t}，起点默认是 $0$。 \\
+    \texttt{s.rfind(t, pos)} & 最后匹配下标或 \texttt{npos} & 找起点不大于 \texttt{pos} 的最后一次匹配。 \\
+    \texttt{s += t} & \texttt{string\&} & 在字符串尾部追加 \texttt{t}。 \\
+    \texttt{s.erase(pos, len)} & \texttt{string\&} & 删除从 \texttt{pos} 开始的至多 \texttt{len} 个字符。 \\
+    \texttt{s.replace(pos, len, t)} & \texttt{string\&} & 将指定子串替换成 \texttt{t}。 \\
+    \texttt{stoi(s, \&pos, base)} \newline
+    \texttt{stoll(s, \&pos, base)} & \texttt{int}、\texttt{ll} & 以 \texttt{base} 进制读取整数，\texttt{pos} 接收已读取字符数。默认十进制，位置参数可传空指针。 \\
+    \texttt{to\_string(x)} & \texttt{string} & 将数值转成字符串。 \\
+\end{stlapi}
 
 \cppfile{code/stl/string_split.cpp}
 
-\cppfile{code/stl/splitmix_hash.hpp}
+\subsection{\texttt{stack}、\texttt{queue}、\texttt{deque} 与 \texttt{priority\_queue}}
 
-\section{排序与二分}
+\begin{stlapi}
+    \texttt{a.push(x)} & 无 & 给栈、队列或优先队列插入 \texttt{x}。 \\
+    \texttt{a.emplace(args...)} & 新元素引用或无 & 原地构造元素。采用默认底层容器时，栈和队列返回引用，优先队列无返回值。 \\
+    \texttt{a.top()} & 元素引用 & 查看非空栈或优先队列的顶部。 \\
+    \texttt{a.front()}、\texttt{a.back()} & 元素引用 & 查看非空队列或双端队列的首项或末项。 \\
+    \texttt{a.pop()} & 无 & 删除栈顶、队首或堆顶。 \\
+    \texttt{a.push\_front(x)} \newline
+    \texttt{a.push\_back(x)} & 无 & 在双端队列指定端插入 \texttt{x}。 \\
+    \texttt{a.pop\_front()} \newline
+    \texttt{a.pop\_back()} & 无 & 从非空双端队列指定端删除一项。 \\
+\end{stlapi}
 
-标准库算法的迭代器区间为 $[\mathrm{first},\mathrm{last})$。
+\begin{cppcode}
+priority_queue<ll> maxHeap;
+priority_queue<ll, vector<ll>, greater<ll>> minHeap;
+\end{cppcode}
 
-\begin{description}
-    \item[\texttt{sort}] 比较器须为严格弱序，比较次数为 $O(n\log n)$。
-    \item[\texttt{stable\_sort}] 保留等价元素的相对顺序。缓冲不足时比较次数为 $O(n\log^2 n)$。
-    \item[\texttt{lower\_bound}、\texttt{upper\_bound}] 在非递减序列上分别查找首个 $\ge x$ 和首个 $>x$ 的位置，失败返回尾后迭代器。比较次数为 $O(\log n)$。有序关联容器使用成员函数完成对数时间查找。
-    \item[\texttt{binary\_search}] 在有序区间查询与目标等价的元素是否存在。
-    \item[\texttt{nth\_element}] 将指定排名的元素移到目标位置，两侧各自无需有序。平均时间为 $O(n)$。
-    \item[\texttt{unique}] 将相邻等价元素合并为一项，返回新的逻辑尾。全局去重可先排序，再用 \texttt{erase} 删除逻辑尾到实际尾之间的区间。
-\end{description}
+\subsection{有序集合、映射与哈希容器}
+
+\begin{stlapi}
+    \texttt{a.insert(x)} & 迭代器或 \texttt{\{it,ok\}} & 插入键。映射容器传入 \texttt{\{key,value\}}。唯一键容器的 \texttt{ok} 表示是否新增。 \\
+    \texttt{a.find(x)} & 迭代器 & 查找键 \texttt{x}，缺失时返回 \texttt{end()}。 \\
+    \texttt{a.count(x)} & 匹配项数 & 统计等于 \texttt{x} 的键。 \\
+    \texttt{a.lower\_bound(x)} \newline
+    \texttt{a.upper\_bound(x)} & 迭代器 & 在有序容器内分别找首个 $\ge x$、首个 $>x$ 的键，默认按升序。 \\
+    \texttt{a.equal\_range(x)} & 一对迭代器 & 返回与键 \texttt{x} 等价的半开区间。 \\
+    \texttt{a.erase(x)}、\texttt{a.erase(it)} & 删除数量、下一迭代器 & 按键删除全部匹配项，或按迭代器删除一项。 \\
+    \texttt{a[key]} & 映射值引用 & 访问 \texttt{map} 或 \texttt{unordered\_map}。缺键时插入值初始化的元素。 \\
+    \texttt{a.at(key)} & 映射值引用 & 查找已有键，缺键时抛出异常。 \\
+    \texttt{a.reserve(n)} & 无 & 按负载因子为哈希容器预留可容纳 \texttt{n} 项的桶。 \\
+    \texttt{a.clear()} & 无 & 删除关联容器的全部元素。 \\
+\end{stlapi}
+
+\subsection{\texttt{bitset}、\texttt{pair} 与 \texttt{tuple}}
+
+\begin{stlapi}
+    \texttt{b.test(i)} & \texttt{bool} & 检查第 \texttt{i} 位，从最低位编号，越界时抛出异常。 \\
+    \texttt{b.set(i, v)}、\texttt{b.reset(i)} \newline
+    \texttt{b.flip(i)} & 位集引用 & 分别赋值、清零、取反。省略下标时可对全体位操作。 \\
+    \texttt{b.count()} & 置位数 & 统计值为 $1$ 的位。 \\
+    \texttt{b.any()}、\texttt{b.none()} \newline
+    \texttt{b.all()} & \texttt{bool} & 分别判断是否存在置位、是否全零、是否全为一。 \\
+    \texttt{p.first}、\texttt{p.second} & 成员 & 访问 \texttt{pair} 的两项。 \\
+    \texttt{get<I>(t)} & 第 \texttt{I} 项的引用 & 按从 $0$ 开始的编号访问 \texttt{pair} 或 \texttt{tuple}。 \\
+    \texttt{make\_pair(x,y)} \newline
+    \texttt{make\_tuple(args...)} & 二元组、元组 & 从传入值推导类型并构造对象。 \\
+\end{stlapi}
+
+\section{排序、二分与查找}
+
+函数区间用迭代器 \texttt{[f,l)} 表示。带 \texttt{cmp} 的排序和二分调用使用同一比较关系。
+二分查找与集合运算的输入区间须按该关系有序。
+
+\begin{stlapi}
+    \texttt{sort(f,l,cmp)} \newline
+    \texttt{stable\_sort(f,l,cmp)} & 无 & 按 \texttt{cmp} 排序。后者保留等价项的原顺序。省略比较器时按默认顺序。 \\
+    \texttt{nth\_element(f,nth,l)} & 无 & 把排序后应位于 \texttt{nth} 的元素放到该处，两侧分别满足划分关系。 \\
+    \texttt{partial\_sort(f,m,l)} & 无 & 将全部元素中最小的 \texttt{m-f} 项排序后放在前段。 \\
+    \texttt{lower\_bound(f,l,x)} \newline
+    \texttt{upper\_bound(f,l,x)} & 迭代器 & 默认升序下分别找首个 $\ge x$、首个 $>x$ 的位置，找不到返回 \texttt{l}。 \\
+    \texttt{equal\_range(f,l,x)} & 一对迭代器 & 同时取得上下界，返回和 \texttt{x} 等价的区间。 \\
+    \texttt{binary\_search(f,l,x)} & \texttt{bool} & 查询有序区间中是否有等价元素。 \\
+    \texttt{find(f,l,x)} \newline
+    \texttt{find\_if(f,l,pred)} & 迭代器 & 找首个等于 \texttt{x} 或满足 \texttt{pred} 的元素，找不到返回 \texttt{l}。 \\
+    \texttt{count(f,l,x)} \newline
+    \texttt{count\_if(f,l,pred)} & 匹配数量 & 统计等于 \texttt{x} 或满足 \texttt{pred} 的元素。 \\
+    \texttt{unique(f,l)} & 新的逻辑尾 & 合并相邻等价元素。对容器调用 \texttt{erase} 移除逻辑尾之后的元素。 \\
+    \texttt{remove(f,l,x)} \newline
+    \texttt{remove\_if(f,l,pred)} & 新的逻辑尾 & 保留不等于 \texttt{x} 或不满足 \texttt{pred} 的元素及其相对顺序，之后可调用 \texttt{erase}。 \\
+\end{stlapi}
 
 \cppfile{code/stl/sorted_search.cpp}
 \cppfile{code/stl/kth_smallest.cpp}
 
-\section{数学与序列函数}
+\begin{cppcode}
+sort(a.begin(), a.end());
+a.erase(unique(a.begin(), a.end()), a.end());
+\end{cppcode}
 
-\begin{description}
-    \item[\texttt{gcd}、\texttt{lcm}] 分别求最大公约数和最小公倍数。参数的绝对值及结果须能用相应公共类型表示。
-    \item[\texttt{accumulate}、\texttt{iota}] 分别进行折叠和连续赋值。\texttt{accumulate} 由初值的类型决定累加类型，求 64 位和时使用 \texttt{0LL}。
-    \item[\texttt{min\_element}、\texttt{max\_element}] 返回首个最小或最大元素的迭代器。空区间返回尾后迭代器。
-    \item[\texttt{reverse}、\texttt{rotate}] 分别反转区间和循环左移区间。\texttt{rotate(first,middle,last)} 把 \texttt{middle} 所指的位置移到区间首位。
-    \item[\texttt{next\_permutation}、\texttt{prev\_permutation}] 分别转到字典序下一项或上一项。不存在时返回假，并把序列恢复到相反的极值排列。
-    \item[\texttt{count}、\texttt{find}、\texttt{fill}、\texttt{swap}] 分别统计等值项、查找首个等值项、填充区间和交换对象。\texttt{find} 失败时返回尾后迭代器。
-\end{description}
+\section{数值与序列函数}
+
+\begin{stlapi}
+    \texttt{gcd(a,b)}、\texttt{lcm(a,b)} & 两实参的公共整数类型 & 求最大公约数、最小公倍数。参数绝对值和结果须可表示。 \\
+    \texttt{accumulate(f,l,init)} & 初值的类型 & 从 \texttt{init} 开始累加。传 \texttt{0LL} 可按 \texttt{ll} 累加。 \\
+    \texttt{iota(f,l,x)} & 无 & 从 \texttt{x} 开始逐项赋值，每次将当前值加一。 \\
+    \texttt{partial\_sum(f,l,out)} & 输出尾后迭代器 & 将各前缀的累加结果写入 \texttt{out}，累加类型取自输入元素。 \\
+    \texttt{min\_element(f,l)} \newline
+    \texttt{max\_element(f,l)} & 迭代器 & 返回首个最小或最大元素，空区间返回 \texttt{l}。 \\
+    \texttt{min(a,b)}、\texttt{max(a,b)} & 选中参数的常量引用 & 返回两值中的较小值或较大值。 \\
+    \texttt{clamp(x,lo,hi)} & 选中参数的常量引用 & 将值限制在闭区间 \texttt{[lo,hi]}，要求 \texttt{lo <= hi}。 \\
+    \texttt{fill(f,l,x)}、\texttt{swap(a,b)} & 无 & 填充区间或交换两个对象。 \\
+    \texttt{copy(f,l,out)} \newline
+    \texttt{transform(f,l,out,op)} & 输出尾后迭代器 & 将原值或逐项调用 \texttt{op} 的结果写到从 \texttt{out} 开始的位置。 \\
+    \texttt{reverse(f,l)} & 无 & 反转指定区间。 \\
+    \texttt{rotate(f,m,l)} & 旋转后的分界迭代器 & 交换前段 \texttt{[f,m)} 与后段 \texttt{[m,l)} 的位置。 \\
+    \texttt{next\_permutation(f,l)} \newline
+    \texttt{prev\_permutation(f,l)} & \texttt{bool} & 转到字典序下一项或上一项。到达端点后返回假，并回到另一端。 \\
+    \texttt{merge(f,l,g,h,out)} & 输出尾后迭代器 & 将有序区间 \texttt{[f,l)}、\texttt{[g,h)} 归并到从 \texttt{out} 开始的区间。 \\
+    \texttt{set\_intersection} \newline
+    \texttt{set\_union}、\texttt{set\_difference} & 输出尾后迭代器 & 调用参数同 \texttt{merge}，分别输出交集、并集与第一段减第二段的差集。 \\
+\end{stlapi}
 
 \cppfile{code/stl/permutations.cpp}
 
-\section{其他常用功能}
+\begin{cppcode}
+vector<int> common;
+set_intersection(a.begin(), a.end(), b.begin(), b.end(),
+                 back_inserter(common));
+\end{cppcode}
 
-Lambda 可用 \texttt{[\&]} 按引用捕获外部变量，用 \texttt{[=]} 按值捕获。
-容器保存的比较器按引用捕获时，被引用对象的生命周期必须覆盖比较器的调用。
-\texttt{mt19937} 的用法见第九章。
+\section{竞赛常用工具}
 
-\subsection{128 位整数}
+\subsection{比较器、迭代器与随机数}
 
-\texttt{lll} 与 \texttt{ulll} 分别表示有符号和无符号 128 位整数。乘法应在宽类型中进行，例如 \texttt{lll(a) * b}。
-十进制转换耗时 $O(d)$，其中 $d$ 为输入或输出的字符数。
+\begin{stlapi}
+    \texttt{[captures](args)\{...\}} & Lambda 对象 & \texttt{sort} 的比较器返回左项是否严格在右项之前。 \\
+    \texttt{auto\& [x, y] = p} & 引用绑定 & 分别绑定到 \texttt{pair} 或二元组的两项。去掉 \texttt{\&} 时按值绑定。 \\
+    \texttt{next(it, k)}、\texttt{prev(it, k)} & 移动后的迭代器 & 从 \texttt{it} 前进或后退 \texttt{k} 步，默认一步，原迭代器不变。 \\
+    \texttt{distance(f,l)} & 迭代器差值类型 & 计算从 \texttt{f} 到 \texttt{l} 的距离。 \\
+    \texttt{back\_inserter(a)} & 输出迭代器 & 每写入一项便向容器尾部追加一项。 \\
+    \texttt{mt19937 rng(seed)} & 生成器对象 & 用 \texttt{seed} 构造生成器，通过 \texttt{rng()} 取一个值。 \\
+    \texttt{uniform\_int\_distribution<T>} \newline
+    \texttt{dist(lo,hi)} & 分布对象 & 构造整数分布，调用 \texttt{dist(rng)} 从闭区间取值。 \\
+    \texttt{shuffle(f,l,rng)} & 无 & 用 \texttt{rng} 打乱随机访问区间。 \\
+\end{stlapi}
 
-\cppfile{code/stl/int128_io.hpp}
+\subsection{整数哈希、位运算与 128 位整数}
 
-\subsection{位运算内建函数}
+\begin{stlapi}
+    \texttt{\_\_builtin\_popcountll(x)} & \texttt{int} & 返回 64 位掩码的置位数。 \\
+    \texttt{\_\_builtin\_ctzll(x)} \newline
+    \texttt{\_\_builtin\_clzll(x)} & \texttt{int} & 返回尾零或前导零的个数，参数须非零。 \\
+    \texttt{toString(x)} & \texttt{string} & 将 \texttt{lll} 转成十进制字符串。 \\
+    \texttt{parseInt128(s)} & \texttt{optional<lll>} & 将字符串解析为 \texttt{lll}，失败时返回空值。 \\
+\end{stlapi}
 
-\texttt{\_\_builtin\_popcountll} 统计置位数，\texttt{\_\_builtin\_ctzll} 和
-\texttt{\_\_builtin\_clzll} 分别统计尾零和前导零。后两者的参数须非零。
-处理零时取类型位宽，所得位宽不得用作移位量。
+\begin{cppcode}
+unordered_map<ll, int, SplitMix64Hash> freq;
+\end{cppcode}
 
+\cppfile{code/stl/splitmix_hash.hpp}
 \cppfile{code/stl/bit_ops.cpp}
+\cppfile{code/stl/int128_io.hpp}
 
 \subsection{PBDS 有序树（GCC 扩展）}
 
-GNU libstdc++ 的 PBDS 有序树可在 $O(\log n)$ 时间内增删元素和查询排名。
-\texttt{order\_of\_key(x)} 返回严格小于 $x$ 的元素数，\texttt{find\_by\_order(k)}
-按从 $0$ 开始的排名查找，越界返回尾后迭代器。
-\texttt{OrderMultiset} 以值和唯一编号作为键来支持重复值。
+\begin{stlapi}
+    \texttt{a.order\_of\_key(x)} & 元素数量 & 统计严格小于 \texttt{x} 的键。 \\
+    \texttt{a.find\_by\_order(k)} & 迭代器 & 访问第 \texttt{k} 小的键，从 $0$ 开始，越界返回 \texttt{end()}。 \\
+    \texttt{ms.insert(x)}、\texttt{ms.erase(x)} & 无、\texttt{bool} & 以下封装允许重复值。插入一项或删除一项，删除成功时返回真。 \\
+    \texttt{ms.countLess(x)} & 元素数量 & 用下列封装统计严格小于 \texttt{x} 的项，计入重复值。 \\
+    \texttt{ms.kth(k)} & \texttt{optional<ll>} & 返回从 $0$ 开始的第 \texttt{k} 小值，越界返回空值。 \\
+\end{stlapi}
 
 声明位于 \texttt{ext/pb\_ds} 中的 \texttt{assoc\_container.hpp} 和 \texttt{tree\_policy.hpp}。
 
@@ -83,5 +216,5 @@ GNU libstdc++ 的 PBDS 有序树可在 $O(\log n)$ 时间内增删元素和查�
 
 \paragraph{参考资料}
 \href{https://wyqz.top/p/870124582.html}{行码棋的 C++ STL 总结}、
-\href{https://timsong-cpp.github.io/cppwp/n4659/alg.sorting}{C++17 工作草案的排序与二分}和
+\href{https://timsong-cpp.github.io/cppwp/n4659/alg.sorting}{C++17 工作草案的排序与二分}、
 \href{https://gcc.gnu.org/onlinedocs/libstdc++/manual/policy_data_structures.html}{GNU libstdc++ 的 PBDS}。
