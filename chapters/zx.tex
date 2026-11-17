@@ -30,7 +30,7 @@
 
 在 VS Code 终端进入样例目录。脚本以 \texttt{1.in} 为输入，依次显示 \texttt{1.ans} 中的标准答案、程序输出及判定结果 \texttt{Accepted} 或 \texttt{Wrong Answer}。
 
-确保终端可调用 \texttt{g++}。更换 C++ 版本时，修改脚本中的 \texttt{-std=c++23}。
+终端须可调用 \texttt{g++}。
 
 \paragraph{Linux 与 macOS}
 保存为 \texttt{run.sh} 后赋予执行权限。
@@ -48,8 +48,6 @@ chmod +x run.sh
 \begin{lstlisting}[language={},numbers=none]
 .\run.bat a.cpp 1
 \end{lstlisting}
-
-Windows 7 使用 VS Code 1.70.3 及兼容该系统的 MinGW \texttt{g++}。
 
 \cppfile[language={},numbers=none]{code/zx/run.bat}
 
