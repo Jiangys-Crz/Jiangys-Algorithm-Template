@@ -4,13 +4,15 @@
 
 \subsection{点、直线与常用运算}
 
-统一描述点、直线及相关向量运算。其余平面几何模板使用这些几何量。
+用 \texttt{Point<T>\{x,y\}} 和 \texttt{Line<T>\{a,b\}} 构造点与直线。
+
+用 \texttt{dot(a,b)}、\texttt{cross(a,b)} 和 \texttt{dis(a,b)} 求点积、叉积与距离。需要分数坐标时，点类型使用浮点数。
 
 \cppfile{code/geometry/g1.cpp}
 
 \subsection{曼哈顿距离与切比雪夫距离}
 
-在变换 $(x,y)\mapsto(x+y,x-y)$ 下，曼哈顿距离变为切比雪夫距离。用新坐标两个分量的最大值与最小值即可计算点集的最大曼哈顿距离。
+求非空点集的最大曼哈顿距离时，分别计算 \texttt{x+y} 与 \texttt{x-y} 的最大值减最小值，再取较大者。
 
 \begin{pseudocode}
 u = 所有点的 x+y
@@ -22,25 +24,25 @@ ans = max(max(u)-min(u), max(v)-min(v))
 
 \subsection{多边形与圆相交面积}
 
-把边界拆成与圆心相连的有向三角形，按边累加三角形与圆的相交面积。
+给定半径 \texttt{R}，将多边形顶点平移到以圆心为原点的坐标系，并沿边界顺序放入 \texttt{q}。调用 \texttt{work(q)} 返回交集面积。
 
 \cppfile{code/geometry/g2.cpp}
 
 \subsection{二维凸包}
 
-将点按坐标排序，再分别构造上下边界。
+对非空点集调用 \texttt{getConvex(a)}。它会重排 \texttt{a}，返回排序后数组中的凸包下标，末尾包含重复的起点。
 
 \cppfile{code/geometry/g3.cpp}
 
 \subsection{共线情形的凸包周长}
 
-计算凸包周长时，单独考虑各点共线的退化情形。
+准备 \texttt{getConvex(a)} 返回的 \texttt{res}，以及点数 \texttt{n}。执行下列片段，周长存于 \texttt{ans}。
 
 \cppfile{code/geometry/g3-1.cpp}
 
 \subsection{三维凸包}
 
-以三角面描述空间凸包，并在加入点时更新可见面。
+输入点数 \texttt{n}，随后逐行输入三维点坐标。至少给出四个非共面的点。程序输出凸包表面积，保留六位小数。
 
 \cppfile[firstline=4]{code/geometry/g4.cpp}
 
@@ -48,24 +50,26 @@ ans = max(max(u)-min(u), max(v)-min(v))
 
 \subsection{最小覆盖圆}
 
-随机调整处理次序，逐步用边界点确定当前覆盖圆。
+将非空点集放入 \texttt{q}，调用 \texttt{MinimumCircleCovering(q)} 返回包含所有点的圆。函数会调整 \texttt{q} 中的点序。
 
 \cppfile{code/geometry/g5.cpp}
 
 \subsection{最小覆盖矩形}
 
-在凸包边的方向上考察包围矩形，用投影极值确定边界。
+取非退化凸包的闭合下标序列 \texttt{ids} 和对应的浮点坐标数组 \texttt{q}。
+
+\texttt{MinimumRectangularCover(ids,q)} 返回最小面积和矩形四个顶点。
 
 \cppfile{code/geometry/g6.cpp}
 
 \subsection{旋转卡壳}
 
-沿凸包的边推进对侧支撑点，减少对候选点对的重复检查。
+用 \texttt{getConvex(a)} 得到闭合凸包下标 \texttt{id}。调用 \texttt{RotatingCalipers(id,a)} 返回最远点对距离，\texttt{a} 使用求凸包排序后的数组。
 
 \cppfile{code/geometry/g7.cpp}
 
 \subsection{半平面交}
 
-按直线方向维护半平面的交，逐步剔除失效的边界。
+用 \texttt{Line<T>} 存半平面的有向边界，取每条边的左侧为有效区域。调用 \texttt{hp(lines)}，返回有界交集的顶点。只需要在给定范围内求交时加入外包矩形的四条边。
 
 \cppfile{code/geometry/g8.cpp}

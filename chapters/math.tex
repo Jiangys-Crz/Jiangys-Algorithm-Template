@@ -4,49 +4,49 @@
 
 \subsection{欧拉函数}
 
-单点求值按质因子扣除与原数不互质的比例。
+传入正整数 \texttt{n}，用 \texttt{phi(n)} 返回 $\varphi(n)$。
 
 \cppfile{code/math/phi1.cpp}
 
 \subsection{线性筛欧拉函数}
 
-筛出合数时按当前质因子是否整除原数，递推欧拉函数。
+使用前将 \texttt{phi.resize(n)} 的大小改为 \texttt{n+1}。调用 \texttt{init(n)} 预处理到正整数 \texttt{n}，用 \texttt{phi[x]} 取欧拉函数。
 
 \cppfile{code/math/phi2.cpp}
 
 \subsection{扩展欧几里得}
 
-递归求最大公约数与 Bézout 系数。
+用同一种整数类型准备 \texttt{a,b,x,y}。调用 \texttt{d=exgcd(a,b,x,y)}，返回最大公约数，并通过引用写入满足 $ax+by=d$ 的系数。
 
 \cppfile{code/math/exgcd.cpp}
 
 \subsection{Miller--Rabin 质数检测}
 
-通过重复平方检验候选数是否通过指定底数的素性测试。
+对待测整数 \texttt{n} 调用 \texttt{isprime(n)}，返回质数判定结果。
 
 \cppfile{code/math/MR.cpp}
 
 \subsection{Pollard--Rho 分解}
 
-利用模迭代和最大公约数寻找非平凡的因子，配合素性测试递归分解。
+配合上一节的 \texttt{isprime} 和 \texttt{mul}，调用 \texttt{factorize(n)} 分解正整数。返回按值排序的质因子，重数以重复项表示。
 
 \cppfile{code/math/PR.cpp}
 
 \subsection{欧拉筛}
 
-按最小质因子生成合数，避免同一合数被重复标记。
+调用 \texttt{init(n)} 预处理到 \texttt{n}，要求 \texttt{n >= 1}。从 \texttt{primes} 读取质数，用 \texttt{!st[x]} 查询区间 $[2,n]$ 内的素性。
 
 \cppfile{code/math/els.cpp}
 
 \subsection{约数个数}
 
-在线性筛过程中跟踪最小质因子的指数，递推约数个数。
+调用 \texttt{init(n)}，再用 \texttt{d[x]} 读取 $1\le x\le n$ 的约数个数。
 
 \cppfile{code/math/ysgs.cpp}
 
 \subsection{约数之和}
 
-利用约数和函数的积性与最小质因子的幂之和递推。
+调用 \texttt{init(n)}，再用 \texttt{sd[x]} 读取 $1\le x\le n$ 的约数和。
 
 \cppfile{code/math/yszh.cpp}
 
@@ -54,49 +54,49 @@
 
 \subsection{模整数类（新版）}
 
-含固定模数和运行时模数的实现。此文件使用概念约束和三路比较，需要 C++20。
+编译使用 C++20。固定模数用 \texttt{ModInt<P>} 或 \texttt{ModInt64<P>}。运行时模数用 \texttt{DynModInt<Id>}，运算前调用其 \texttt{setMod(m)}。调用 \texttt{val()} 取标准余数。进行除法时除数须可逆。
 
 \cppfile{code/math/MInt-new.cpp}
 
 \subsection{模整数类（旧版）}
 
-把模数及常用运算收在同一数值类型中。各版本可按题目要求选用。
+用 \texttt{MInt<P>} 表示固定模数。运行时模数用 \texttt{MInt<0>}，先调用 \texttt{MInt<0>::setMod(m)}。以整数构造，直接使用算术运算符，用 \texttt{val()} 取余数。
 
 \cppfile{code/math/MInt-old.cpp}
 
 \subsection{带零值检查的模整数类}
 
-提供上游的零值处理版本。此文件的概念约束需要 C++20。
+编译使用 C++20。用 \texttt{ModInt<P>} 保存模值。调用 \texttt{val()} 读取结果，维护乘积和除去已计入的零因子时，调用方应保证相应因子存在。
 
 \cppfile{code/math/MInt-zero.cpp}
 
 \subsection{乘法逆元}
 
-当 $\gcd(a,m)=1$ 时可用扩展欧几里得求逆。质数模可用费马小定理，一般模可用欧拉定理。下列线性递推用于质数模 $p$，计算 $1$ 至 $n$ 的逆元，要求 $n<p$。
+调用 \texttt{mod\_inverse(n,p)}，其中 \texttt{p} 为质数且 $1\le n<p$。用 \texttt{inv[x]} 读取 $x$ 的逆元。单值求逆可用扩展欧几里得，或在质数模下计算 $x^{p-2}\bmod p$。
 
 \cppfile{code/math/lp.cpp}
 
 \subsection{中国剩余定理（CRT）}
 
-用于两两互质模数的同余组。
+准备从 $1$ 编号的余数数组 \texttt{r} 和两两互质的模数数组 \texttt{c}，配合 \texttt{exgcd} 调用 \texttt{CRT(k,r,c)}。返回模数乘积下的最小非负解，中间乘积须能用 \texttt{ll} 表示。
 
 \cppfile{code/math/CRT.cpp}
 
 \subsection{扩展中国剩余定理}
 
-逐条合并同余式，允许模数有公因数。
+以从 $1$ 编号的余数与模数调用 \texttt{EXCRT(k,r,c)}。模数取正，可有公因数。返回最小非负解，无解时返回 $-1$。
 
 \cppfile{code/math/exCRT.cpp}
 
 \subsection{离散对数（BSGS）}
 
-把指数写成大步和小步的组合，以哈希匹配两部分。
+调用 \texttt{bsgs(a,b,p)} 求 $a^x\equiv b\pmod p$ 的非负指数。要求底数与模数互质，无解时返回 $-1$。
 
 \cppfile{code/math/bsgs.cpp}
 
 \subsection{扩展 BSGS}
 
-先处理底数与模数不互质的部分，再求剩余同余式的离散对数。
+调用 \texttt{exbsgs(a,b,p)} 求 $a^x\equiv b\pmod p$ 的非负指数，允许底数和模数有公因数。无解时返回 $-1$。
 
 \cppfile{code/math/exbsgs.cpp}
 
@@ -104,13 +104,13 @@
 
 \subsection{组合数预处理}
 
-预处理阶乘与逆阶乘，支持同一模数下的多次组合数查询。
+先定义模整数类型 \texttt{Z}。构造 \texttt{Comb c(n)} 预处理至 \texttt{n}，阶乘须在模数下可逆。调用 \texttt{c.C(n,k)} 返回组合数。
 
 \cppfile{code/math/Comb1.cpp}
 
 \subsection{单次组合数计算}
 
-按组合数的乘除公式直接计算。
+定义模整数类型 \texttt{Z} 后调用 \texttt{C(a,b)}，返回组合数。计算用到的分母在模数下须可逆。
 
 \cppfile{code/math/Comb2.cpp}
 
@@ -118,13 +118,13 @@
 
 \subsection{矩阵}
 
-封装矩阵乘法及相关操作，用于线性变换和递推。
+构造 \texttt{Matrix<T> a(n)}，通过 \texttt{a.matrix[i][j]} 写入元素。用 \texttt{a*b} 乘同阶矩阵，用 \texttt{pow(a,k)} 求非负整数次幂。
 
 \cppfile{code/math/jz.cpp}
 
 \subsection{异或线性基}
 
-按最高置位保留主元，用异或消元维护可表示的值。
+用 \texttt{Basis b} 插入非负整数，输入只使用第 $0$ 至 $60$ 位。查询前调用 \texttt{b.build()}，再用 \texttt{b.kth(k)} 取从 $0$ 起算的第 $k$ 小不同异或值，越界时返回 $-1$。
 
 \cppfile{code/math/basis.cpp}
 
@@ -132,18 +132,18 @@
 
 \subsection{莫比乌斯反演}
 
-由约数和关系恢复原函数，使用莫比乌斯函数提供权重。
+调用 \texttt{init(n)} 后，\texttt{mu[x]} 为莫比乌斯函数前缀和。需要单点函数值时取 \texttt{mu[x]-mu[x-1]}。
 
 \cppfile{code/math/mu.cpp}
 
 \subsection{杜教筛}
 
-利用数论函数卷积和整除分块求前缀和，并缓存重复子问题。
+先调用 \texttt{init(n)} 预处理小范围。对正整数 \texttt{x} 用 \texttt{Sphi(x)} 和 \texttt{Smu(x)} 查询欧拉函数与莫比乌斯函数的前缀和。
 
 \cppfile{code/math/djs.cpp}
 
 \subsection{多项式}
 
-包含模意义下的多项式运算及其配套变换。
+配合旧版模整数类型与源码指定模数构造 \texttt{Poly}，系数按次数从低到高排列。用乘法运算符求卷积，用 \texttt{inv(m)}、\texttt{log(m)} 和 \texttt{exp(m)} 取前 \texttt{m} 项，调用前满足对应的常数项条件。
 
 \cppfile{code/math/poly.cpp}

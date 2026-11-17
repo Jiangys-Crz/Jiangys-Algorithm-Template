@@ -4,7 +4,9 @@
 
 \subsection{普通并查集}
 
-用代表元标识连通块，合并时更新根及其集合大小。
+用 \texttt{DSU d(n)} 维护从 $0$ 编号的元素。\texttt{merge(x,y)} 合并并返回是否合并了两个不同集合。
+
+\texttt{find(x)} 取代表元，\texttt{same(x,y)} 判断是否同组，\texttt{size(x)} 返回集合大小。
 
 \cppfile{code/ds/dsu.cpp}
 
@@ -12,25 +14,31 @@
 
 \subsection{ST 表（RMQ）}
 
-预处理长度为二的幂的区间。静态区间最值可由两个允许重叠的预处理区间取得。
+准备从 $1$ 编号的非空 \texttt{vector<ll> a}，下标 $0$ 留空。用 \texttt{RMQ<Info,ll> rmq(a)} 初始化。调用 \texttt{rmq.query(l,r)} 查询闭区间，返回值的 \texttt{min} 和 \texttt{max} 分别为区间最小值和最大值。
 
 \cppfile{code/ds/rmq.cpp}
 
 \subsection{树状数组}
 
-沿最低置位维护前缀统计量，区间结果由两个前缀结果合成。
+用 \texttt{Fenwick<ll> f(n)} 构造从 $1$ 编号的零初值数组。\texttt{add(i,x)} 对第 \texttt{i} 项加 \texttt{x}，\texttt{query(i)} 查询前缀和，\texttt{rangesum(l,r)} 查询闭区间和。维护非负频次、$n<2^{21}$ 且 $\texttt{1}\le k\le\texttt{query(n)}$ 时，用 \texttt{kth(k)} 找第一个前缀和不小于 \texttt{k} 的位置。
 
 \cppfile{code/ds/fen.cpp}
 
 \subsection{线段树}
 
-分治维护区间信息，完整覆盖时应用标记，递归进入子区间前下传标记。
+用下标 $0$ 留空的 \texttt{vector<int> a} 构造 \texttt{SegmentTree<Info,Tag> seg(a)}。
+
+\texttt{seg.modify(l,r,Tag(x))} 将闭区间赋为 \texttt{x}，\texttt{seg.query(l,r)} 返回区间最值。此版本把 \texttt{Tag(0)} 当作空标记，若要区间赋零，须另设有效标记。
 
 \cppfile{code/ds/segmetTree.cpp}
 
 \subsection{可持久化线段树}
 
-每个前缀形成一个版本，区间频次由两个前缀版本之差得到。
+用 \texttt{PresidentTree<Info> t(n,m)} 为 \texttt{n} 次修改初始化值域 $[1,m]$。
+
+调用 \texttt{modify(root[i],root[i-1],pos,x)} 建立新前缀版本。
+
+用 \texttt{query(root[L-1],root[R],l,r).sum} 查询原区间 $[L,R]$ 内值域 $[l,r]$ 的频次和。
 
 \cppfile{code/ds/Pt.cpp}
 
@@ -38,18 +46,22 @@
 
 \subsection{Splay}
 
-通过旋转把访问节点移至根，支持有序集合相关操作。
+用 \texttt{SplayTree t(n)} 预留节点，并插入小于和大于所有有效键的两个哨兵。用 \texttt{insert(v)}、\texttt{del(v)} 增删，用 \texttt{get\_rank(v)} 查询排名。查询实际值的第 $k$ 小时调用 \texttt{get\_val(k+1)}，前驱和后继接口返回节点下标。
 
 \cppfile{code/ds/splay.cpp}
 
 \subsection{FHQ Treap}
 
-利用随机优先级维持树形，通过分裂与合并改变有序集合。
+用 \texttt{FHQTreap t(N)} 预留足够节点。\texttt{insert(v)} 插入一项，\texttt{erase(v)} 删除一项。\texttt{get\_rank(v)} 按 $1$ 起算，\texttt{get\_val\_by\_rank(t.root,k)} 查询第 $k$ 小。\texttt{get\_prev(v)} 和 \texttt{get\_next(v)} 查询严格前驱与后继。
 
 \cppfile{code/ds/fhq.cpp}
 
 \subsection{动态树（LCT）}
 
-用辅助 Splay 表示动态树的路径，支持动态连边、断边及路径维护。
+创建 \texttt{LCT t(n)}，点号从 $1$ 开始。用 \texttt{link(x,y)}、\texttt{cut(x,y)} 连删边。
+
+改点权时先调用 \texttt{access(x)}，再写入 \texttt{tr[x].v} 并调用 \texttt{pushup(x)}。
+
+查询连通点的路径异或时先调用 \texttt{split(x,y)}，再读 \texttt{t.tr[y].sum}。
 
 \cppfile{code/ds/lct.cpp}

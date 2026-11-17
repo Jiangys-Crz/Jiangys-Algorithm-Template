@@ -4,7 +4,11 @@
 
 \subsection{树的重心、中心与直径}
 
-该封装用于求树的重心、中心和直径。重心由各连通块大小决定，中心由到最远节点的距离决定。
+用 \texttt{Tree t(n)} 建立从 $1$ 编号的树，用 \texttt{t.add(u,v,1)} 加边。
+
+依次调用 \texttt{t.dfs1(1,0)}、\texttt{t.dfs2(1,0)} 和 \texttt{t.getCenter()}，读取 \texttt{center} 和 \texttt{radius}。求直径时对各点的 \texttt{d1[u]+d2[u]} 取最大值，求节点数再加一。
+
+求重心时先将 \texttt{getCog()} 内的初始化改为 \texttt{vis.assign(n+1,false)}，再调用并读取 \texttt{cog}。
 
 \cppfile{code/tree/hld4.cpp}
 
@@ -12,13 +16,13 @@
 
 \subsection{倍增 LCA 与换根 DP}
 
-以父指针倍增求最近公共祖先，并在两遍树上遍历中传递子树信息。倍增层数采用源码中的固定上界。
+用 \texttt{HLD<ll> h(n)} 建树，令根为 $1$。如要求路径点权和，先向 \texttt{init(w)} 传入从 $1$ 编号的权值数组。用 \texttt{add(u,v)} 加边并调用 \texttt{work(1)}。用 \texttt{lca(u,v)}、\texttt{calc(u,v)}、\texttt{getSum(u,v)} 分别查询最近公共祖先、边数和点权和。到所有节点的距离和读 \texttt{dp[u]}，数组有 17 层倍增。
 
 \cppfile{code/tree/hld2.cpp}
 
 \subsection{树链剖分与线段树}
 
-剖分将路径拆成若干重链区间，由区间数据结构维护这些区间。
+用 \texttt{HLD<ll> h(n)} 建树，调用 \texttt{add(u,v)} 和 \texttt{work(root)}。按 \texttt{dfn[u]} 排列点权并建立闭区间线段树。路径用 \texttt{modify\_path}、\texttt{query\_path}，子树用 \texttt{modify\_tree}、\texttt{query\_tree}。传入的线段树须提供 \texttt{modify(l,r,k)} 和带 \texttt{sum} 的查询结果，路径接口使用 C++20。
 
 \cppfile{code/tree/hld1.cpp}
 
@@ -26,12 +30,12 @@
 
 \subsection{树上路径交}
 
-利用路径端点的最近公共祖先计算两条路径的公共节点数。代码中的 LCA 查询使用同一棵有根树。
+准备同一棵有根树的 \texttt{lca}、\texttt{dep} 和树距函数 \texttt{clac}。点号不按深度递增时，把代码中的排序比较改为按 \texttt{dep} 升序。调用 \texttt{intersection(x,y,X,Y)} 取得两条路径的公共节点数。
 
 \cppfile{code/tree/hld3.cpp}
 
 \subsection{树哈希与同构}
 
-自底向上合并孩子的哈希，用于比较树的结构。哈希判等存在碰撞的可能。
+用 \texttt{HashTree t(n)} 和 \texttt{t.addEdge(u,v)} 建立从 $1$ 编号的树。调用 \texttt{t.getHash(root)} 得到指定根的树哈希，在同一次运行中比较结果。
 
 \cppfile{code/tree/hld5.cpp}

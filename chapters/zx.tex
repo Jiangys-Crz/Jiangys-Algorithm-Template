@@ -16,14 +16,11 @@
 
 默认排序将高优先级记录置于末尾，默认优先队列将其置于堆顶。\texttt{greater<Score>} 反转次序。
 
-\paragraph{复杂度}
-每次比较或加法为 $O(1)$。
-
 比较运算符须满足严格弱序。累加结果须能用 \texttt{ll} 表示。
 
 \subsection{128 位整数流输出}
 
-重载流输出，将 128 位整数转换为十进制字符。
+让代码中的 \texttt{i128} 对应有符号 128 位类型后，可用 \texttt{cout << x} 输出十进制值。\texttt{x} 取最小负值时改用第八章的 \texttt{toString(x)}。
 
 \cppfile{code/zx/zx1.cpp}
 
@@ -31,13 +28,13 @@
 
 \subsection{线下赛运行脚本}
 
-编译并运行单组输入，适合比赛时快速验证。
+执行 \texttt{sh run.sh solution sample}，传入程序名和样例名。脚本编译程序，读取样例输入并与对应的期望输出比较。
 
 \cppfile[language=bash,numbers=none]{code/zx/run.sh}
 
 \subsection{循环对拍脚本}
 
-重复生成输入，对比待测解与独立实现的输出。
+准备名为 \texttt{gen.py} 的生成器和两个可执行程序 \texttt{std}、\texttt{sol}，分别充当参考解和待测解。执行 \texttt{sh stress.sh}，输出不同时结束，查看保留的输入和两份输出。
 
 \cppfile[language=bash,numbers=none]{code/zx/stress.sh}
 
@@ -45,12 +42,14 @@
 
 \subsection{随机化}
 
-提供上游随机数引擎的用法。
+调用 \texttt{rd(l,r)} 从闭区间 $[l,r]$ 取随机整数。
 
 \cppfile{code/zx/sjh.cpp}
 
 \subsection{模拟退火}
 
-按温度逐步调整接受较差候选解的概率，并记录已经找到的较优解。
+构造 \texttt{SA sa(n)} 并填入非空点集的 \texttt{xs} 和 \texttt{ys}。
+
+调用 \texttt{run(init\_T,end\_T,alpha,iter\_per\_T)}，从 \texttt{best\_x}、\texttt{best\_val} 读取位置与目标值。用于其他题目时按目标改写 \texttt{energy}。
 
 \cppfile{code/zx/SA.cpp}

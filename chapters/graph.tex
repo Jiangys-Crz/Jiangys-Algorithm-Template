@@ -4,7 +4,7 @@
 
 \subsection{Dijkstra}
 
-边权须非负。堆保存候选距离和顶点，弹出时跳过已失效的距离。邻接表元素是终点与边权，初始化哨兵由调用方提供。
+准备从 $1$ 编号的邻接表 \texttt{g}，每条记录为 \texttt{\{终点,非负边权\}}，并定义大于所有可达距离的 \texttt{inf}。调用 \texttt{dijkstra(n,g,s)}，返回从起点 \texttt{s} 到各点的距离，不可达项为 \texttt{inf}。
 
 \cppfile{code/graph/dijkstra.cpp}
 
@@ -12,7 +12,7 @@
 
 \subsection{Kruskal}
 
-按权值从小到大尝试连接不同连通块。原实现使用从零开始的顶点编号，并依赖并查集。
+搭配并查集模板 \texttt{DSU}，用 \texttt{Kruskal g(n,m)} 建立从 $0$ 编号的无向图，再用 \texttt{addEdge(u,v,w)} 加边。\texttt{work()} 返回最小生成树权值之和，无法连通时返回 $-1$。权值之和须能用 \texttt{int} 表示。
 
 \cppfile{code/graph/kruskal.cpp}
 
@@ -20,13 +20,13 @@
 
 \subsection{强连通分量与缩点}
 
-对有向图求强连通分量，并将分量作为新图的顶点。
+用 \texttt{SCC s(n)} 建立从 $0$ 编号的有向图，调用 \texttt{addEdge(u,v)} 加边。令 \texttt{bel=s.work()}，\texttt{bel[u]} 为点 \texttt{u} 的分量编号。缩点时对每条原边加入 \texttt{bel[u]} 到 \texttt{bel[v]} 的边，过滤同分量边，按需去重。
 
 \cppfile{code/graph/scc.cpp}
 
 \subsection{桥与边双连通分量}
 
-删除桥后所得连通块是边双连通分量。编号从零开始，缩点后每个原连通分量成为一棵树。
+用 \texttt{EDCC e(n)} 建立从 $0$ 编号的无向图，调用一次 \texttt{addEdge(u,v)} 加入一条无向边。\texttt{work()} 返回每个点的分量编号，之后可调用 \texttt{compress()} 取得桥连接的缩点图。
 
 \cppfile{code/graph/edcc.cpp}
 
@@ -34,6 +34,8 @@
 
 \subsection{Dinic 最大流}
 
-按残量网络的最短层数分层，再在层次图内寻找阻塞流。
+用 \texttt{Flow<ll> f(n)} 建图。调用 \texttt{addEdge(u,v,c)} 加入容量为 \texttt{c} 的有向边，容量须非负。
+
+\texttt{maxFlow(s,t)} 返回不同源汇之间的最大流量，并修改残量网络。
 
 \cppfile{code/graph/dinic.cpp}

@@ -4,19 +4,19 @@
 
 \subsection{KMP}
 
-以模式串的前后缀关系处理失配，文本位置保持向前。
+在解题函数内定义下列 Lambda。调用 \texttt{KMP(s,t)}，\texttt{s} 为文本，\texttt{t} 为非空模式串。每个匹配起点单独输出一行，下标从 $1$ 开始。
 
 \cppfile{code/string/kmp.cpp}
 
 \subsection{Z 函数}
 
-记录各后缀与原串的最长公共前缀长度，利用已知的匹配区间减少比较。
+调用 \texttt{zFunction(s)}。对 $0\le i<|s|$，返回值 \texttt{z[i]} 是后缀 \texttt{s[i..]} 与整个字符串的最长公共前缀长度。
 
 \cppfile{code/string/Z.cpp}
 
 \subsection{字符串双哈希}
 
-在两个模数下维护多项式哈希。代码使用本册数学章的模整数类型。
+选用本册旧版 \texttt{MInt}，调用 \texttt{init(n)} 预处理到最大串长。用 \texttt{String h(s)} 构造哈希。\texttt{get()} 返回整串哈希，\texttt{substring(l,r)} 返回下标从 $0$ 开始的闭区间哈希。\texttt{modify(i,c)} 只返回替换后的哈希对，保留原对象。要与 \texttt{get()} 比较，分别减去对应的 \texttt{val1[n]} 和 \texttt{val2[n]}。
 
 \cppfile{code/string/hash.cpp}
 
@@ -24,13 +24,13 @@
 
 \subsection{Trie 字典树}
 
-共用相同前缀的转移路径，通过节点记录匹配状态。
+用 \texttt{Trie t(n)} 预留节点，包含根和所有可能插入的字符。字符串只用大小写字母和数字。用 \texttt{insert(s)} 插入，\texttt{query(s)} 返回整串出现次数。调用 \texttt{del(s)} 前确认该串存在。
 
 \cppfile{code/string/trie.cpp}
 
 \subsection{AC 自动机}
 
-在字典树上建立失配链接，用同一次扫描匹配多条模式串。
+把所有非空小写模式串用 \texttt{insert(s)} 插入，调用一次 \texttt{build()}，再用 \texttt{query(t)} 统计至少出现一次的模式串数量。重复插入的模式按次数计。每次查询会消耗计数，多次独立查询需要重建。
 
 \cppfile{code/string/ac.cpp}
 
@@ -38,6 +38,6 @@
 
 \subsection{Manacher}
 
-利用回文对称性和最右回文边界，计算各中心的扩展范围。
+调用 \texttt{manacher(s)}，输入字符避开分隔符 \texttt{\#}。返回的 \texttt{r[i]} 对应插入分隔符后的中心下标，原串的最长回文子串长度取 \texttt{max(r)-1}。
 
 \cppfile{code/string/manacher.cpp}
