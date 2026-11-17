@@ -1,11 +1,15 @@
 #!/bin/sh
 
 if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 a.cpp|a.py sample-number" >&2
+    echo "Usage: $0 a.cpp sample-number" >&2
     exit 2
 fi
 case $2 in
     ''|*[!0-9]*) echo "Sample number must contain only digits." >&2; exit 2 ;;
+esac
+case $1 in
+    *.[cC][pP][pP]) ;;
+    *) echo "Use a .cpp source file." >&2; exit 2 ;;
 esac
 case $1 in
     /*) src=$1 ;;
@@ -25,21 +29,12 @@ trap 'rm -rf "$work"' 0
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-case $src in
-    *.[cC][pP][pP])
-        [ -n "$CXXSTD" ] || CXXSTD=c++23
-        g++ -x c++ -std="$CXXSTD" -O2 -Wall -Wextra -Wshadow -DLOCAL \
-            "$src" -o "$work/sol" || exit 2
-        set -- "$work/sol"
-        ;;
-    *.[pP][yY])
-        set -- python3 "$src"
-        ;;
-    *) echo "Use a .cpp or .py source file." >&2; exit 2 ;;
-esac
+[ -n "$CXXSTD" ] || CXXSTD=c++23
+g++ -x c++ -std="$CXXSTD" -O2 -Wall -Wextra -Wshadow -DLOCAL \
+    "$src" -o "$work/sol" || exit 2
 
 run_status=0
-"$@" < "$input" > "$work/actual" || run_status=$?
+"$work/sol" < "$input" > "$work/actual" || run_status=$?
 printf '%s\n' '=== Expected output ==='
 cat "$answer"
 printf '\n%s\n' '=== Actual output ==='

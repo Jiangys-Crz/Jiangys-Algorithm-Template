@@ -28,18 +28,17 @@
 
 \subsection{线下赛运行脚本}
 
-传入源码文件名和样例编号，例如 \texttt{a.cpp} 与 \texttt{1}。脚本按后缀选择 C++ 或 Python，读取 \texttt{1.in}，先找 \texttt{1.out} 再找 \texttt{1.ans}。终端依次显示标准答案、实际输出和差异，差异用红色标出。
+传入源码文件名和样例编号，例如 \texttt{a.cpp} 与 \texttt{1}。脚本编译 C++ 源码，读取 \texttt{1.in}，先找 \texttt{1.out} 再找 \texttt{1.ans}。终端依次显示标准答案、实际输出和差异，差异用红色标出。
 
 \paragraph{Linux 与 macOS}
-保存为 \texttt{run.sh} 后赋予执行权限。两个运行命令任选其一。
+保存为 \texttt{run.sh} 后赋予执行权限。
 
 \begin{lstlisting}[language=bash,numbers=none]
 chmod +x run.sh
 ./run.sh a.cpp 1
-./run.sh a.py 1
 \end{lstlisting}
 
-C++ 使用 \texttt{g++}，默认 C++23。可用 \texttt{CXXSTD=c++17 ./run.sh a.cpp 1} 切换标准。Python 使用 \texttt{python3}。
+C++ 使用 \texttt{g++}，默认 C++23。可用 \texttt{CXXSTD=c++17 ./run.sh a.cpp 1} 切换标准。
 
 \cppfile[language=bash,numbers=none]{code/zx/run.sh}
 
@@ -48,10 +47,9 @@ C++ 使用 \texttt{g++}，默认 C++23。可用 \texttt{CXXSTD=c++17 ./run.sh a.
 
 \begin{lstlisting}[language={},numbers=none]
 run.bat a.cpp 1
-run.bat a.py 1
 \end{lstlisting}
 
-Win7 上，C++ 使用兼容 Win7 的 MinGW \texttt{g++}，Python 使用 3.8。红色输出使用 Windows PowerShell。
+Win7 使用兼容该系统的 MinGW \texttt{g++}。红色输出使用 Windows PowerShell。
 
 编译器使用 C++17 时，先执行 \texttt{set CXXSTD=c++17}。
 
@@ -59,7 +57,17 @@ Win7 上，C++ 使用兼容 Win7 的 MinGW \texttt{g++}，Python 使用 3.8。�
 
 \subsection{循环对拍脚本}
 
-准备名为 \texttt{gen.py} 的生成器和两个可执行程序 \texttt{std}、\texttt{sol}，分别充当参考解和待测解。先执行 \texttt{chmod +x stress.sh}，再运行 \texttt{./stress.sh}。输出不同时查看保留的输入和两份输出。
+分别准备 C++ 数据生成器 \texttt{gen.cpp}、参考解 \texttt{std.cpp} 和待测解 \texttt{sol.cpp}。在 Linux 或 macOS 依次执行。
+
+\begin{lstlisting}[language=bash,numbers=none]
+g++ -std=c++17 -O2 gen.cpp -o gen
+g++ -std=c++17 -O2 std.cpp -o std
+g++ -std=c++17 -O2 sol.cpp -o sol
+chmod +x stress.sh
+./stress.sh
+\end{lstlisting}
+
+出现差异时查看 \texttt{data.in}、\texttt{std.out} 和 \texttt{sol.out}。比较时忽略行尾空白。
 
 \cppfile[language=bash,numbers=none]{code/zx/stress.sh}
 
@@ -69,11 +77,11 @@ Win7 上，C++ 使用兼容 Win7 的 MinGW \texttt{g++}，Python 使用 3.8。�
 
 \begin{lstlisting}[language=bash,numbers=none]
 submit A.cpp
-submit -p A -l py a.py
+submit -p A -l cpp a.cpp
 submit --help
 \end{lstlisting}
 
-\texttt{-p} 指定题号，\texttt{-l} 指定语言后缀，\texttt{-e} 指定程序入口，例如多文件 Python 的入口文件。核对题号、语言和文件后按提示确认。可用 \texttt{--help} 查看本场支持的后缀。
+\texttt{-p} 指定题号，\texttt{-l} 指定语言后缀。核对题号、语言和文件后按提示确认。可用 \texttt{--help} 查看本场支持的后缀。
 
 用 \texttt{printfile} 提交纯文本打印任务，参数为待打印的文件名。
 
