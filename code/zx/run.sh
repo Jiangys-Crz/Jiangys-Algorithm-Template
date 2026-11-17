@@ -11,13 +11,13 @@ g++ -x c++ -std=c++23 -O2 -DLOCAL "$src" -o "$work/sol" || exit 2
 "$work/sol" < "$2.in" > "$work/actual" || exit 2
 
 echo '=== Expected output ==='
-cat -- "$2.out" || exit 2
+cat -- "$2.ans" || exit 2
 printf '\n%s\n' '=== Actual output ==='
 cat "$work/actual" || exit 2
 printf '\n'
 
 cr=$(printf '\r')
-sed "s/$cr\$//" < "$2.out" > "$work/want" || exit 2
+sed "s/$cr\$//" < "$2.ans" > "$work/want" || exit 2
 sed "s/$cr\$//" "$work/actual" > "$work/got" || exit 2
 cmp -s "$work/want" "$work/got"
 case $? in

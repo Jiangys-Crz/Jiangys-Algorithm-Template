@@ -11,11 +11,11 @@ g++ -x c++ -std=c++23 -O2 -DLOCAL "%~f1" -o "%work%\sol.exe" || goto cleanup
 "%work%\sol.exe" < "%~2.in" > "%work%\actual" || goto cleanup
 
 echo === Expected output ===
-type "%~2.out" || goto cleanup
+type "%~2.ans" || goto cleanup
 echo. & echo === Actual output ===
 type "%work%\actual" || goto cleanup
 echo.
-fc.exe /L /T /LB100000 "%~2.out" "%work%\actual" >nul
+fc.exe /L /T /LB100000 "%~2.ans" "%work%\actual" >nul
 set "result=%errorlevel%"
 if "%result%"=="0" echo Accepted
 if "%result%"=="1" echo Wrong Answer
