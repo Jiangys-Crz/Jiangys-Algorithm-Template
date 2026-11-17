@@ -38,6 +38,13 @@
     \texttt{a.fill(x)} & 无 & 将 \texttt{array} 的全部元素置为 \texttt{x}。 \\
 \end{stlapi}
 
+\begin{cppcode}
+vector<int> a{1, 2};
+a.push_back(3);         // a 为 {1, 2, 3}
+a.resize(5, 9);         // a 为 {1, 2, 3, 9, 9}
+int last = a.back();   // last 为 9
+\end{cppcode}
+
 \subsection{\texttt{string} 与 \texttt{string\_view}}
 
 \begin{stlapi}
@@ -51,6 +58,13 @@
     \texttt{stoll(s, \&pos, base)} & \texttt{int}、\texttt{ll} & 以 \texttt{base} 进制读取整数，\texttt{pos} 接收已读取字符数。默认十进制，位置参数可传空指针。 \\
     \texttt{to\_string(x)} & \texttt{string} & 将数值转成字符串。 \\
 \end{stlapi}
+
+\begin{cppcode}
+string s = "ababa";
+auto first = s.find("ba");     // first 为 1
+auto last = s.rfind("ba");     // last 为 3
+auto part = s.substr(last, 2); // part 为 "ba"
+\end{cppcode}
 
 \cppfile{code/stl/string_split.cpp}
 
@@ -71,6 +85,9 @@
 \begin{cppcode}
 priority_queue<ll> maxHeap;
 priority_queue<ll, vector<ll>, greater<ll>> minHeap;
+for (ll x : {3, 1, 2}) { maxHeap.push(x); minHeap.push(x); }
+ll hi = maxHeap.top(); // hi 为 3
+ll lo = minHeap.top(); // lo 为 1
 \end{cppcode}
 
 \subsection{有序集合、映射与哈希容器}
@@ -89,6 +106,13 @@ priority_queue<ll, vector<ll>, greater<ll>> minHeap;
     \texttt{a.clear()} & 无 & 删除关联容器的全部元素。 \\
 \end{stlapi}
 
+\begin{cppcode}
+multiset<int> a{1, 2, 2, 5};
+auto it = a.lower_bound(2); // *it 为 2
+a.erase(it);                // a 为 {1, 2, 5}
+auto cnt = a.count(2);      // cnt 为 1
+\end{cppcode}
+
 \subsection{\texttt{bitset}、\texttt{pair} 与 \texttt{tuple}}
 
 \begin{stlapi}
@@ -103,6 +127,13 @@ priority_queue<ll, vector<ll>, greater<ll>> minHeap;
     \texttt{make\_pair(x,y)} \newline
     \texttt{make\_tuple(args...)} & 二元组、元组 & 从传入值推导类型并构造对象。 \\
 \end{stlapi}
+
+\begin{cppcode}
+bitset<8> b;
+b.set(1).set(4);      // 第 1、4 位为 1
+bool one = b.test(4); // one 为真
+auto cnt = b.count(); // cnt 为 2
+\end{cppcode}
 
 \section{排序、二分与查找}
 
@@ -127,12 +158,20 @@ priority_queue<ll, vector<ll>, greater<ll>> minHeap;
     \texttt{remove\_if(f,l,pred)} & 新的逻辑尾 & 保留不等于 \texttt{x} 或不满足 \texttt{pred} 的元素及其相对顺序，之后可调用 \texttt{erase}。 \\
 \end{stlapi}
 
+\begin{cppcode}
+vector<int> a{1, 2, 2, 5};
+auto f = lower_bound(a.begin(), a.end(), 2); // 下标为 1
+auto l = upper_bound(a.begin(), a.end(), 2); // 下标为 3
+auto cnt = l - f;                            // cnt 为 2
+\end{cppcode}
+
 \cppfile{code/stl/sorted_search.cpp}
 \cppfile{code/stl/kth_smallest.cpp}
 
 \begin{cppcode}
-sort(a.begin(), a.end());
-a.erase(unique(a.begin(), a.end()), a.end());
+vector<int> a{3, 1, 3, 2};
+sort(a.begin(), a.end());                     // a 为 {1, 2, 3, 3}
+a.erase(unique(a.begin(), a.end()), a.end()); // a 为 {1, 2, 3}
 \end{cppcode}
 
 \section{数值与序列函数}
@@ -158,12 +197,19 @@ a.erase(unique(a.begin(), a.end()), a.end());
     \texttt{set\_union}、\texttt{set\_difference} & 输出尾后迭代器 & 调用参数同 \texttt{merge}，分别输出交集、并集与第一段减第二段的差集。 \\
 \end{stlapi}
 
+\begin{cppcode}
+vector<int> a{2, 4, 6}, pre(3);
+ll sum = accumulate(a.begin(), a.end(), 0LL); // sum 为 12
+partial_sum(a.begin(), a.end(), pre.begin()); // pre 为 {2, 6, 12}
+\end{cppcode}
+
 \cppfile{code/stl/permutations.cpp}
 
 \begin{cppcode}
+vector<int> a{1, 2, 2, 4}, b{2, 2, 3, 4};
 vector<int> common;
 set_intersection(a.begin(), a.end(), b.begin(), b.end(),
-                 back_inserter(common));
+                 back_inserter(common)); // common 为 {2, 2, 4}
 \end{cppcode}
 
 \section{竞赛常用工具}
@@ -194,6 +240,8 @@ set_intersection(a.begin(), a.end(), b.begin(), b.end(),
 
 \begin{cppcode}
 unordered_map<ll, int, SplitMix64Hash> freq;
+for (ll x : {4, 9, 4}) ++freq[x];
+int cnt = freq.at(4); // cnt 为 2
 \end{cppcode}
 
 \cppfile{code/stl/splitmix_hash.hpp}
@@ -211,3 +259,10 @@ unordered_map<ll, int, SplitMix64Hash> freq;
 \end{stlapi}
 
 \cppfile[firstline=4]{code/stl/pbds_ordered_tree.hpp}
+
+\begin{cppcode}
+OrderMultiset ms;
+for (ll x : {3, 1, 3}) ms.insert(x);
+auto cnt = ms.countLess(3); // cnt 为 1
+ll x = *ms.kth(1);          // x 为 3
+\end{cppcode}

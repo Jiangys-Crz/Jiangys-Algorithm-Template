@@ -24,19 +24,65 @@
 
 \cppfile{code/zx/zx1.cpp}
 
-\section{对拍}
+\section{线下赛内容}
 
 \subsection{线下赛运行脚本}
 
-执行 \texttt{sh run.sh solution sample}，传入程序名和样例名。脚本编译程序，读取样例输入并与对应的期望输出比较。
+传入源码文件名和样例编号，例如 \texttt{a.cpp} 与 \texttt{1}。脚本按后缀选择 C++ 或 Python，读取 \texttt{1.in}，先找 \texttt{1.out} 再找 \texttt{1.ans}。终端依次显示标准答案、实际输出和差异，差异用红色标出。
+
+\paragraph{Linux 与 macOS}
+保存为 \texttt{run.sh} 后赋予执行权限。两个运行命令任选其一。
+
+\begin{lstlisting}[language=bash,numbers=none]
+chmod +x run.sh
+./run.sh a.cpp 1
+./run.sh a.py 1
+\end{lstlisting}
+
+C++ 使用 \texttt{g++}，默认 C++23。可用 \texttt{CXXSTD=c++17 ./run.sh a.cpp 1} 切换标准。Python 使用 \texttt{python3}。
 
 \cppfile[language=bash,numbers=none]{code/zx/run.sh}
 
+\paragraph{Windows}
+以 Windows 换行格式保存为 \texttt{run.bat}，在命令提示符中调用。
+
+\begin{lstlisting}[language={},numbers=none]
+run.bat a.cpp 1
+run.bat a.py 1
+\end{lstlisting}
+
+Win7 上，C++ 使用兼容 Win7 的 MinGW \texttt{g++}，Python 使用 3.8。红色输出使用 Windows PowerShell。
+
+编译器使用 C++17 时，先执行 \texttt{set CXXSTD=c++17}。
+
+\cppfile[language={},numbers=none]{code/zx/run.bat}
+
 \subsection{循环对拍脚本}
 
-准备名为 \texttt{gen.py} 的生成器和两个可执行程序 \texttt{std}、\texttt{sol}，分别充当参考解和待测解。执行 \texttt{sh stress.sh}，输出不同时结束，查看保留的输入和两份输出。
+准备名为 \texttt{gen.py} 的生成器和两个可执行程序 \texttt{std}、\texttt{sol}，分别充当参考解和待测解。先执行 \texttt{chmod +x stress.sh}，再运行 \texttt{./stress.sh}。输出不同时查看保留的输入和两份输出。
 
 \cppfile[language=bash,numbers=none]{code/zx/stress.sh}
+
+\subsection{提交与打印}
+
+赛场安装 DOMjudge 命令行客户端时，使用 \texttt{submit} 提交源码。文件名为题号加语言后缀时可以自动识别两项。
+
+\begin{lstlisting}[language=bash,numbers=none]
+submit A.cpp
+submit -p A -l py a.py
+submit --help
+\end{lstlisting}
+
+\texttt{-p} 指定题号，\texttt{-l} 指定语言后缀，\texttt{-e} 指定程序入口，例如多文件 Python 的入口文件。核对题号、语言和文件后按提示确认。可用 \texttt{--help} 查看本场支持的后缀。
+
+用 \texttt{printfile} 提交纯文本打印任务，参数为待打印的文件名。
+
+\begin{lstlisting}[language=bash,numbers=none]
+printfile A.cpp
+printfile "my notes.txt"
+\end{lstlisting}
+
+如需查看赛场的打印选项，尝试 \texttt{printfile --help}。
 
 \section{随机数与随机化}
 
