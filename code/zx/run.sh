@@ -1,41 +1,23 @@
 #!/bin/sh
+usage() { echo "Usage: $0 a.cpp sample-number" >&2; exit 2; }
+[ "$#" -eq 2 ] || usage
+case $1 in *.[cC][pP][pP]) ;; *) usage ;; esac
+case $2 in ''|*[!0-9]*) usage ;; esac
+case $1 in /*) src=$1 ;; *) src=./$1 ;; esac
 
-if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 a.cpp sample-number" >&2
-    exit 2
-fi
-case $2 in
-    ''|*[!0-9]*) echo "Sample number must contain only digits." >&2; exit 2 ;;
-esac
-case $1 in
-    *.[cC][pP][pP]) ;;
-    *) echo "Use a .cpp source file." >&2; exit 2 ;;
-esac
-case $1 in
-    /*) src=$1 ;;
-    *) src=./$1 ;;
-esac
-input=$2.in
 answer=$2.out
 [ -f "$answer" ] || answer=$2.ans
-for file in "$src" "$input" "$answer"; do
+for file in "$src" "$2.in" "$answer"; do
     [ -f "$file" ] || { echo "Missing file: $file" >&2; exit 2; }
 done
-
-tmpbase=$TMPDIR
-[ -n "$tmpbase" ] || tmpbase=/tmp
-work=$(mktemp -d "$tmpbase/xcpc-run.XXXXXXXX") || exit 2
+work=$(mktemp -d "${TMPDIR:-/tmp}/xcpc-run.XXXXXXXX") || exit 2
 trap 'rm -rf "$work"' 0
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-[ -n "$CXXSTD" ] || CXXSTD=c++23
-g++ -x c++ -std="$CXXSTD" -O2 -Wall -Wextra -Wshadow -DLOCAL \
-    "$src" -o "$work/sol" || exit 2
-
-run_status=0
-"$work/sol" < "$input" > "$work/actual" || run_status=$?
-printf '%s\n' '=== Expected output ==='
+g++ -x c++ -std=c++23 -O2 -DLOCAL "$src" -o "$work/sol" || exit 2
+"$work/sol" < "$2.in" > "$work/actual" || { echo 'Runtime error' >&2; exit 2; }
+echo '=== Expected output ==='
 cat "$answer"
 printf '\n%s\n' '=== Actual output ==='
 cat "$work/actual"
@@ -48,25 +30,15 @@ result=0
 diff -U 0 -L "$answer" -L 'actual output' \
     "$work/expected.txt" "$work/actual.txt" > "$work/diff" || result=$?
 case $result in
-    0) echo "No differences." ;;
+    0) echo Accepted ;;
     1)
-        if [ -t 1 ] && [ "$TERM" != dumb ]; then
-            awk 'NR <= 2 { print; next }
-                 /^[-+]/ { printf "\033[31m%s\033[0m\n", $0; next }
-                 { print }' "$work/diff"
-        else
-            cat "$work/diff"
-        fi
-        ;;
-    *) echo "Comparison failed." >&2; exit 2 ;;
+        red=0
+        [ -t 1 ] && [ "$TERM" != dumb ] && red=1
+        awk -v red="$red" '
+            red && NR > 2 && /^[-+]/ { $0 = "\033[31m" $0 "\033[0m" }
+            1
+        ' "$work/diff"
+        echo 'Wrong Answer' ;;
+    *) echo 'Comparison failed' >&2 ;;
 esac
-if [ "$run_status" -ne 0 ]; then
-    echo "Runtime error (exit $run_status)." >&2
-    exit 2
-fi
-if [ "$result" -eq 0 ]; then
-    echo "Accepted"
-else
-    echo "Wrong Answer"
-fi
 exit "$result"
