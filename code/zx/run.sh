@@ -1,13 +1,7 @@
 #!/bin/sh
-usage() { echo "Usage: $0 a.cpp sample-number" >&2; exit 2; }
-[ "$#" -eq 2 ] || usage
-case $1 in *.[cC][pP][pP]) ;; *) usage ;; esac
-case $1 in /*) src=$1 ;; *) src=./$1 ;; esac
-
 work=$(mktemp -d "${TMPDIR:-/tmp}/xcpc-run.XXXXXXXX") || exit 2
 trap 'rm -rf "$work"' 0
-trap 'exit 2' HUP INT TERM
-g++ -x c++ -std=c++23 -O2 -DLOCAL "$src" -o "$work/sol" || exit 2
+g++ -x c++ -std=c++23 -O2 -DLOCAL "$1" -o "$work/sol" || exit 2
 "$work/sol" < "$2.in" > "$work/actual" || exit 2
 
 echo '=== Expected output ==='

@@ -1,8 +1,5 @@
 @echo off
 setlocal EnableExtensions DisableDelayedExpansion
-if /i not "%~x1"==".cpp" goto usage
-if "%~2"=="" goto usage
-if not "%~3"=="" goto usage
 
 set "work=%TEMP%\xcpc-%RANDOM%-%RANDOM%"
 md "%work%" || exit /b 2
@@ -23,6 +20,3 @@ if "%result%"=="1" echo Wrong Answer
 :cleanup
 rd /s /q "%work%"
 exit /b %result%
-:usage
-echo Usage: %~nx0 a.cpp sample-number 1>&2
-exit /b 2
